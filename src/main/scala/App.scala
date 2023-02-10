@@ -19,13 +19,13 @@ object App:
         CreateAppParams(
           client_name = "Crescent UI",
           redirect_uris = "http://localhost:4000/oauth_redirect",
-          scopes = Some("read write push"),
+          scopes = Some("read write follow push"),
         )
       )
     yield window.location assign OAuthAuthorizeParams(
       client_id = resp.client_id,
       redirect_uri = "http://localhost:4000/oauth_redirect",
-      scope = Some("read write push"),
+      scope = Some("read write follow push"),
     ).browserURL.toString
   def body = div(
     h1("crescent ui"),
