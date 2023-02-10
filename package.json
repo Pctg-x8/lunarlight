@@ -1,0 +1,16 @@
+{
+    "name": "crescent-ui",
+    "private": true,
+    "devDependencies": {
+        "concurrently": "^7.6.0",
+        "vite": "^4.1.1"
+    },
+    "scripts": {
+        "dev:vite": "vite",
+        "dev:scala": "sbt ~fastLinkJS",
+        "dev": "concurrently -n vite,scala -k \"pnpm dev:vite\" \"pnpm dev:scala\""
+    },
+    "dependencies": {
+        "sass": "^1.58.0"
+    }
+}
