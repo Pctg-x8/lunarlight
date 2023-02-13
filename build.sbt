@@ -6,7 +6,7 @@ scalaVersion := "3.2.2"
 lazy val main = (project in file("."))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    name := "Crescent UI Main",
+    name := "lunarlight",
     scalaJSLinkerConfig ~= {
       _.withModuleKind(ModuleKind.ESModule)
         .withModuleSplitStyle(ModuleSplitStyle.FewestModules)
