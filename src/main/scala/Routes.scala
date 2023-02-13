@@ -1,5 +1,7 @@
 package io.ct2.crescent
 
+import com.raquo.airstream.core.Signal
+import com.raquo.laminar.api.L.HtmlElement
 import com.raquo.laminar.api.L.unsafeWindowOwner
 import com.raquo.laminar.api.L.windowEvents
 import com.raquo.waypoint.Route
@@ -7,6 +9,7 @@ import com.raquo.waypoint.Router
 import com.raquo.waypoint.SplitRender
 import com.raquo.waypoint.endOfSegments
 import com.raquo.waypoint.root
+import scalajs.js.dynamicImport
 import upickle.default.ReadWriter
 import upickle.default.web.*
 
@@ -30,6 +33,12 @@ val router = new Router[Page](
   owner = unsafeWindowOwner,
 )
 
-val pageRenderStream = SplitRender(router.$currentPage)
-  .collectStatic(RootPage) { pages.index.render() }
+val pageRenderStream = SplitRender[Page, HtmlElement](router.$currentPage)
+  .collectStatic(RootPage) {
+    com.raquo.laminar.api.L.div(
+      com.raquo.laminar.api.L.child <-- Signal
+        .fromFuture(dynamicImport { pages.index.render() }.toFuture)
+        .map { _ getOrElse com.raquo.laminar.api.L.div() }
+    )
+  }
   .collectSignal[NotFoundPage] { pages.notfound.render compose { _.map { case NotFoundPage(url) => url } } }
