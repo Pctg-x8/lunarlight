@@ -11,8 +11,9 @@ import sttp.client3.ResolveRelativeUrisBackend
 import sttp.client3.SttpBackend
 import sttp.client3.UriContext
 import sttp.client3.basicRequest
-import sttp.client3.circe.asJsonEither
+import sttp.client3.upicklejson.asJsonEither
 import sttp.model.Uri
+import upickle.default.Reader
 
 trait Server[F[_], P]:
   type EffectType[R] = F[R]
@@ -25,9 +26,9 @@ object ProdService extends Server[Future, sttp.capabilities.WebSockets]:
   val baseURI = uri"https://crescent.ct2.io/"
   val backend = ResolveRelativeUrisBackend(FetchBackend(), uri"${baseURI}api/")
 
-final case class MastodonGenericErrorResponse(val error: String) extends Error
+final case class MastodonGenericErrorResponse(val error: String) extends Error derives Reader
 
-final class PostAPI[Req: BodySerializer, Resp: Decoder](val uri: Uri):
+final class PostAPI[Req: BodySerializer, Resp: Reader](val uri: Uri):
   def send(params: Req)(using f: Functor[ProdService.EffectType]): ProdService.EffectType[Resp] =
     val resp = basicRequest
       .post(this.uri)

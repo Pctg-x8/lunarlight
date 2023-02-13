@@ -24,8 +24,8 @@ lazy val main = (project in file("."))
       "io.circe" %%% "circe-generic" % "0.14.4",
       "io.circe" %%% "circe-parser" % "0.14.4",
       "com.softwaremill.sttp.client3" %%% "core" % "3.8.11",
-      "com.softwaremill.sttp.client3" %%% "circe" % "3.8.11",
+      "com.softwaremill.sttp.client3" %%% "upickle" % "3.8.11",
       "org.typelevel" %%% "cats-core" % "2.9.0",
-      "com.lihaoyi" %%% "upickle" % "3.0.0-M2",
+      "com.lihaoyi" %%% "upickle" % "2.0.0",
     ),
   )

@@ -23,13 +23,13 @@ private def onClickLogin(): Future[Unit] =
       CreateAppParams(
         client_name = "LunarLight",
         redirect_uris = "http://localhost:4000/oauth_redirect",
-        scopes = Some("read write follow push"),
+        scopes = "read write follow push",
       )
     )
   yield window.location assign OAuthAuthorizeParams(
     client_id = resp.client_id,
     redirect_uri = "http://localhost:4000/oauth_redirect",
-    scope = Some("read write follow push"),
+    scope = "read write follow push",
   ).browserURL.toString
 
 def render() =
