@@ -31,4 +31,4 @@ final case class CreateAppResponse(
     val vapid_key: String,
 )
 
-lazy val create_app = PostAPI[CreateAppParams, CreateAppResponse](uri"v1/apps")
+lazy val createApp = PostAPI[CreateAppParams, CreateAppResponse](uri"v1/apps")

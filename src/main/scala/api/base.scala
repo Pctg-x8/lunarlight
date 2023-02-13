@@ -15,20 +15,23 @@ import sttp.client3.circe.asJsonEither
 import sttp.model.Uri
 
 trait Server[F[_], P]:
+  type EffectType[R] = F[R]
+  type BackendCapabilities = P
+
   val baseURI: Uri
   val backend: SttpBackend[F, P]
 
-given ProdService: Server[Future, sttp.capabilities.WebSockets] with
+object ProdService extends Server[Future, sttp.capabilities.WebSockets]:
   val baseURI = uri"https://crescent.ct2.io/"
   val backend = ResolveRelativeUrisBackend(FetchBackend(), uri"${baseURI}api/")
 
 final case class MastodonGenericErrorResponse(val error: String) extends Error
 
 final class PostAPI[Req: BodySerializer, Resp: Decoder](val uri: Uri):
-  def send[F[_]: Functor, P](params: Req)(using server: Server[F, P]): F[Resp] =
+  def send(params: Req)(using f: Functor[ProdService.EffectType]): ProdService.EffectType[Resp] =
     val resp = basicRequest
       .post(this.uri)
       .body(params)
       .response(asJsonEither[MastodonGenericErrorResponse, Resp])
-      .send(server.backend)
-    Functor[F].map(resp) { _.body.throwLeft }
+      .send(ProdService.backend)
+    f.map(resp) { _.body.throwLeft }

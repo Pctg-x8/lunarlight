@@ -26,5 +26,6 @@ lazy val main = (project in file("."))
       "com.softwaremill.sttp.client3" %%% "core" % "3.8.11",
       "com.softwaremill.sttp.client3" %%% "circe" % "3.8.11",
       "org.typelevel" %%% "cats-core" % "2.9.0",
+      "com.lihaoyi" %%% "upickle" % "3.0.0-M2",
     ),
   )
