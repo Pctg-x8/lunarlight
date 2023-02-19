@@ -5,7 +5,8 @@
   grid-template-areas:
     "avatar display_name"
     "avatar account_fullname"
-    "content content";
+    "content content"
+    "footer footer";
   background: var(--theme-single-card-bg);
 
   & > img {
@@ -21,6 +22,7 @@
     grid-area: display_name;
     font-size: 20px;
     font-weight: bolder;
+    padding-left: 4px;
   }
 
   h2 {
@@ -28,10 +30,18 @@
     color: var(--theme-subtext);
     font-size: 14px;
     font-weight: normal;
+    padding-left: 4px;
   }
 }
 
 .content {
   grid-area: content;
   padding: 8px;
+}
+
+.footer {
+  grid-area: footer;
+  color: var(--theme-subtext);
+  font-size: 12px;
+  margin-left: 8px;
 }

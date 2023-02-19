@@ -4,7 +4,9 @@ import ProdInstance from "@/models/api";
 import { getInstanceData } from "@/models/api/mastodon/instance";
 import { getStatus, isRemoteAccount } from "@/models/api/mastodon/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
+import dayjs from "dayjs";
 import Link from "next/link";
+import { useMemo } from "react";
 
 async function getPost(acct: string, postid: string) {
   const instance = new ProdInstance();
@@ -14,6 +16,13 @@ async function getPost(acct: string, postid: string) {
     : await getInstanceData.send(instance).then((x) => `${status.account.username}@${x.domain}`);
 
   return { status, full_account_path };
+}
+
+function LocaleFormattedDate({ children }: { readonly children: string }) {
+  // TODO: あとでbrowser localeを考慮した形に修正する たぶんそうするとuse clientが必要になるはず
+  const date = useMemo(() => dayjs(children), [children]);
+
+  return <span>{date.format()}</span>;
 }
 
 export default async function SinglePostPage({
@@ -33,11 +42,28 @@ export default async function SinglePostPage({
         <BackLinkRow />
         <article className={singleCardStyle.singleCard}>
           <img src={status.account.avatar} />
-          <h1>{status.account.display_name}</h1>
+          <h1>
+            <Link href={`/@${status.account.acct}`}>{status.account.display_name}</Link>
+          </h1>
           <h2>
             <Link href={`/@${status.account.acct}`}>@{full_account_path}</Link>
           </h2>
           <div className={singleCardStyle.content} dangerouslySetInnerHTML={{ __html: status.content }} />
+          <div className={singleCardStyle.footer}>
+            {status.application ? (
+              <>
+                {status.application.website ? (
+                  <a href={status.application.website}>{status.application.name}</a>
+                ) : (
+                  status.application.name
+                )}
+                ・
+              </>
+            ) : (
+              ""
+            )}
+            <LocaleFormattedDate>{status.created_at}</LocaleFormattedDate>
+          </div>
         </article>
       </main>
     </>

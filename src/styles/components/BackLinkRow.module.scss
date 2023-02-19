@@ -8,4 +8,10 @@
   text-align: start;
   color: var(--theme-text-link);
   position: relative;
+  background: rgba(var(--theme-em-bg), 0%);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--theme-em-bg);
+  }
 }
