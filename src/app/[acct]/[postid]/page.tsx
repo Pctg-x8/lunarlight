@@ -1,21 +1,30 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import Header from "@/components/Header";
-import ProdInstance from "@/models/api";
+import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { getInstanceData } from "@/models/api/mastodon/instance";
 import { getStatus, isRemoteAccount } from "@/models/api/mastodon/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { useMemo } from "react";
 
 async function getPost(acct: string, postid: string) {
   const instance = new ProdInstance();
-  const status = await getStatus(postid).send(instance);
-  const full_account_path = isRemoteAccount(status.account)
-    ? status.account.acct
-    : await getInstanceData.send(instance).then((x) => `${status.account.username}@${x.domain}`);
+  try {
+    const status = await getStatus(postid).send(instance);
+    const full_account_path = isRemoteAccount(status.account)
+      ? status.account.acct
+      : await getInstanceData.send(instance).then((x) => `${status.account.username}@${x.domain}`);
 
-  return { status, full_account_path };
+    return { status, full_account_path };
+  } catch (e) {
+    if (e instanceof NotFoundAPIResponseError) {
+      notFound();
+    } else {
+      throw e;
+    }
+  }
 }
 
 function LocaleFormattedDate({ children }: { readonly children: string }) {
@@ -41,7 +50,8 @@ export default async function SinglePostPage({
       <main>
         <BackLinkRow />
         <article className={singleCardStyle.singleCard}>
-          <img src={status.account.avatar} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={singleCardStyle.avatarImage} src={status.account.avatar} alt={full_account_path} />
           <h1>
             <Link href={`/@${status.account.acct}`}>{status.account.display_name}</Link>
           </h1>

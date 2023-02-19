@@ -1,0 +1,10 @@
+.next
+.vscode
+node_modules
+.dockerignore
+.editorconfig
+.gitignore
+.prettierrc.toml
+Dockerfile
+.git
+README.md

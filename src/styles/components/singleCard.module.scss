@@ -9,15 +9,6 @@
     "footer footer";
   background: var(--theme-single-card-bg);
 
-  & > img {
-    grid-area: avatar;
-    width: auto;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin: 4px;
-  }
-
   h1 {
     grid-area: display_name;
     font-size: 20px;
@@ -32,6 +23,15 @@
     font-weight: normal;
     padding-left: 4px;
   }
+}
+
+.avatarImage {
+  grid-area: avatar;
+  width: auto;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin: 4px;
 }
 
 .content {
