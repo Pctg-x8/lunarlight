@@ -26,6 +26,8 @@ export type Status = {
   readonly content: string;
   readonly account: Account;
   readonly application?: Application;
+  readonly spoiler_text?: string;
+  readonly text?: string;
 };
 
 export const getStatus = (id: string) => new GetAPI<Status>(`api/v1/statuses/${encodeURIComponent(id)}`);

@@ -4,7 +4,9 @@ import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { getInstanceData } from "@/models/api/mastodon/instance";
 import { getStatus, isRemoteAccount } from "@/models/api/mastodon/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
+import { ellipsisText, stripTags } from "@/utils";
 import dayjs from "dayjs";
+import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
@@ -32,6 +34,20 @@ function LocaleFormattedDate({ children }: { readonly children: string }) {
   const date = useMemo(() => dayjs(children), [children]);
 
   return <span>{date.format()}</span>;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  readonly params: { readonly acct: string; readonly postid: string };
+}): Promise<Metadata> {
+  const { status } = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
+
+  return {
+    title: `${status.account.display_name}: "${ellipsisText(
+      status.spoiler_text || status.text || stripTags(status.content)
+    )}" - Lunarlight`,
+  };
 }
 
 export default async function SinglePostPage({
