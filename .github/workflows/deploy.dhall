@@ -18,6 +18,8 @@ let buildJob =
         , ProvidedSteps/aws-actions/configure-aws-credentials.step
             ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
             , awsRegion = "us-east-1"
+            , roleToAssume = Some
+                "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
             }
         , GHA.Step::{
           , name = "login to ecr public repository"
@@ -64,6 +66,8 @@ let replaceContainerJob =
         [ ProvidedSteps/aws-actions/configure-aws-credentials.step
             ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
             , awsRegion = "ap-northeast-1"
+            , roleToAssume = Some
+                "arn:aws:iam::208140986057:role/crescent/lunarlight/auto-deployment-role"
             }
         , GHA.Step::{
           , name = "run replace command"
