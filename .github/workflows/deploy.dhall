@@ -15,6 +15,14 @@ let buildJob =
       , steps =
         [ ProvidedSteps/actions/checkout.stepv3
             ProvidedSteps/actions/checkout.Params::{=}
+        , GHA.Step::{
+          , name = "setup qemu for docker"
+          , uses = Some "docker/setup-qemu-action@v2"
+          }
+        , GHA.Step::{
+          , name = "setup docker buildx"
+          , uses = Some "docker/setup-buildx-action@v2"
+          }
         , ProvidedSteps/aws-actions/configure-aws-credentials.step
             ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
             , awsRegion = "us-east-1"
@@ -27,14 +35,6 @@ let buildJob =
           , uses = Some "aws-actions/amazon-ecr-login@v1"
           , `with` = Some
               (toMap { registry-type = GHA.WithParameterType.Text "public" })
-          }
-        , GHA.Step::{
-          , name = "setup qemu for docker"
-          , uses = Some "docker/setup-qemu-action@v2"
-          }
-        , GHA.Step::{
-          , name = "setup docker buildx"
-          , uses = Some "docker/setup-buildx-action@v2"
           }
         , GHA.Step::{
           , name = "build and push"
