@@ -2,10 +2,12 @@
   display: grid;
   grid-template-areas:
     "image displayName acct space ago"
-    "image text text text text";
+    "image text text text text"
+    "a a a a a";
   grid-template-columns: auto auto auto 1fr auto;
 
   padding: 12px;
+  padding-bottom: 8px;
   background: var(--theme-single-card-bg);
 }
 
@@ -41,5 +43,10 @@
 .text {
   grid-area: text;
   margin: 6px 2px;
-  margin-bottom: 0px;
+  margin-bottom: 8px;
+}
+
+.statusActions {
+  grid-area: a;
+  margin-top: 4px;
 }

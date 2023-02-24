@@ -1,5 +1,6 @@
 import { Status } from "@/models/api/mastodon/status";
 import AgoLabel from "../AgoLabel";
+import StatusActions from "../StatusActions";
 import styles from "./styles.module.scss";
 
 export default function StatusRow({ status }: { readonly status: Status }) {
@@ -11,6 +12,7 @@ export default function StatusRow({ status }: { readonly status: Status }) {
       <h2 className={styles.acct}>@{status.account.acct}</h2>
       <AgoLabel className={styles.ago} createdAt={status.created_at} />
       <div className={styles.text} dangerouslySetInnerHTML={{ __html: status.content }} />
+      <StatusActions className={styles.statusActions} />
     </article>
   );
 }
