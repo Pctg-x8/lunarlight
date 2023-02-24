@@ -1,14 +1,13 @@
 import BackLinkRow from "@/components/BackLinkRow";
+import DateTimeLabel from "@/components/DateTimeLabel";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
 import { buildWebFingerAccountString, decomposeWebFingerAccount, resolveWebFingerDomainPart } from "@/models/webfinger";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText, stripTags } from "@/utils";
-import dayjs from "dayjs";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useMemo } from "react";
 
 async function getPost(acct: string, postid: string) {
   const instance = new ProdInstance();
@@ -26,13 +25,6 @@ async function getPost(acct: string, postid: string) {
       throw e;
     }
   }
-}
-
-function LocaleFormattedDate({ children }: { readonly children: string }) {
-  // TODO: あとでbrowser localeを考慮した形に修正する たぶんそうするとuse clientが必要になるはず
-  const date = useMemo(() => dayjs(children), [children]);
-
-  return <span>{date.format()}</span>;
 }
 
 export async function generateMetadata({
@@ -86,7 +78,7 @@ export default async function SinglePostPage({
           ) : (
             ""
           )}
-          <LocaleFormattedDate>{status.created_at}</LocaleFormattedDate>
+          <DateTimeLabel at={status.created_at} />
         </div>
       </article>
     </>

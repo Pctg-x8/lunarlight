@@ -7,6 +7,7 @@ export type Application = {
 };
 
 export type Status = {
+  readonly id: string;
   readonly created_at: string;
   readonly in_reply_to_id: string | null;
   readonly in_reply_to_account_id: string | null;
