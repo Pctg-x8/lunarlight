@@ -24,7 +24,6 @@ export async function getData(acct: string) {
 export default async function UserPage({ params }: { readonly params: { readonly acct: string } }) {
   // strip prefixing @(%40)
   const { account, fullAcct } = await getData(params.acct.slice(3));
-  console.log("account", account);
 
   return (
     <>

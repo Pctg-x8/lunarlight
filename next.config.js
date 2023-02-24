@@ -12,6 +12,10 @@ const nextConfig = {
       {
         source: "/:acct(@[a-zA-Z0-9_-]+)",
         destination: "/user/:acct"
+      },
+      {
+        source: "/:acct(@[a-zA-Z0-9_-]+)/:id",
+        destination: "/user/:acct/:id"
       }
     ];
   }

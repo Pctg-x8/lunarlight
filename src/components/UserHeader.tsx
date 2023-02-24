@@ -13,6 +13,17 @@ export default function UserHeader({ account, fullAcct }: { readonly account: Ac
         <h2>@{fullAcct}</h2>
       </article>
       <div className={styles.note} dangerouslySetInnerHTML={{ __html: account.note }} />
+      <ul className={styles.numbers}>
+        <li>
+          <em>{account.statuses_count}</em> 投稿
+        </li>
+        <li>
+          <em>{account.following_count}</em> フォロー
+        </li>
+        <li>
+          <em>{account.followers_count}</em> フォロワー
+        </li>
+      </ul>
       <ul className={styles.fieldList}>
         {account.fields.map((m, x) => (
           <li key={x}>

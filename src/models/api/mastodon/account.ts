@@ -13,6 +13,9 @@ export type Account = {
   readonly header: string;
   readonly note: string;
   readonly fields: AccountField[];
+  readonly statuses_count: number;
+  readonly following_count: number;
+  readonly followers_count: number;
 };
 
 export function isRemoteAccount(a: Account): boolean {

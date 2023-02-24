@@ -64,10 +64,14 @@ export default async function SinglePostPage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={singleCardStyle.avatarImage} src={status.account.avatar} alt={fullAccountPath} />
           <h1>
-            <Link href={`/@${status.account.acct}`}>{status.account.display_name}</Link>
+            <Link className="non-colored" href={`/@${status.account.acct}`}>
+              {status.account.display_name}
+            </Link>
           </h1>
           <h2>
-            <Link href={`/@${status.account.acct}`}>@{fullAccountPath}</Link>
+            <Link className="sub-colored" href={`/@${status.account.acct}`}>
+              @{fullAccountPath}
+            </Link>
           </h2>
           <div className={singleCardStyle.content} dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className={singleCardStyle.footer}>

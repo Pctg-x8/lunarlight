@@ -44,6 +44,26 @@
   margin-left: 32px;
 }
 
+.numbers {
+  margin-left: 16px;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+
+  &>li {
+    color: var(--theme-subtext);
+    margin: 0px 16px;
+
+    &>em {
+      font-style: normal;
+      font-weight: bolder;
+      color: var(--theme-default-text);
+      font-size: 14px;
+    }
+  }
+}
+
 .fieldList {
   border-radius: 4px;
   margin: 16px;

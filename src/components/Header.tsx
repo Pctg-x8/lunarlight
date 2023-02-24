@@ -6,7 +6,10 @@ export default function Header() {
       <h1>
         Lunarlight{" "}
         <small>
-          for <a href="https://crescent.ct2.io/ll">crescent</a>
+          for{" "}
+          <a className="non-colored" href="https://crescent.ct2.io/ll">
+            crescent
+          </a>
         </small>
       </h1>
       <h2>BETA</h2>
