@@ -73,6 +73,8 @@ a {
   text-decoration: none;
   position: relative;
   color: var(--theme-text-link);
+  text-shadow: 0 0 0px var(--theme-text-link);
+  transition: text-shadow 0.15s ease;
 
   &::after {
     content: "";
@@ -86,15 +88,25 @@ a {
     opacity: 0;
   }
 
-  &:hover::after {
-    opacity: 1;
+  &:hover {
+    text-shadow: 0 0 2px var(--theme-text-link);
+
+    &::after {
+      opacity: 1;
+    }
   }
   
   &:visited {
     color: var(--theme-text-link-visited);
-  }
-  &:visited::after {
-    background: var(--theme-text-link-visited);
+    text-shadow: 0 0 0px var(--theme-text-link-visited);
+
+    &:hover {
+      text-shadow: 0 0 2px var(--theme-text-link-visited);
+    }
+
+    &::after {
+      background: var(--theme-text-link-visited);
+    }
   }
 }
 
