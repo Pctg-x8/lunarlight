@@ -10,14 +10,16 @@ import styles from "./styles.module.scss";
 export default function StaticTimeline({ accountId }: { readonly accountId: string }) {
   const server = useMemo(() => new ProdInstance(), []);
 
-  const { data } = useSWRInfinite(
+  const { data, isLoading } = useSWRInfinite(
     (_, prevPageData) => {
       return !prevPageData ? { limit: 20 } : { limit: 20, max_id: prevPageData[prevPageData.length - 1].id };
     },
     (req) => getStatusesForAccount(accountId).send(req, server)
   );
 
-  return (
+  return isLoading ? (
+    <p>Loading...</p>
+  ) : (
     <ul className={styles.staticTimeline}>
       {data?.flat().map((s, x) => (
         <li key={x}>

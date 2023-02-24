@@ -3,7 +3,7 @@ import styles from "./styles.module.scss";
 
 export default function UserHeader({ account, fullAcct }: { readonly account: Account; readonly fullAcct: string }) {
   return (
-    <article>
+    <article className={styles.userHeader}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className={styles.headerImage} src={account.header} alt={fullAcct} />
       <article className={styles.baseInfoGrid}>
