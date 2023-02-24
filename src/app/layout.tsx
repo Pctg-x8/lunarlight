@@ -14,7 +14,7 @@ export default function App({ children }: { readonly children: React.ReactNode }
       </head>
       <body>
         <Header />
-        {children}
+        <main>{children}</main>
       </body>
     </html>
   );

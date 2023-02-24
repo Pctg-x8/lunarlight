@@ -21,6 +21,7 @@
     grid-area: image;
     height: 120px;
     margin-right: 8px;
+    border-radius: 8px;
   }
 
   &>h1 {
@@ -73,7 +74,7 @@
   color: var(--theme-user-fields-text);
 
   &>li {
-    padding: 8px;
+    padding: 8px 12px;
     margin: 0;
 
     &:not(:last-child) {

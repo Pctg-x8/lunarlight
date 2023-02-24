@@ -1,6 +1,6 @@
 import { Status } from "@/models/api/mastodon/status";
-import styles from "@/styles/components/StatusRow.module.scss";
-import AgoLabel from "./AgoLabel";
+import AgoLabel from "../AgoLabel";
+import styles from "./styles.module.scss";
 
 export default function StatusRow({ status }: { readonly status: Status }) {
   return (

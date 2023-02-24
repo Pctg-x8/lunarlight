@@ -2,10 +2,10 @@
 
 import ProdInstance from "@/models/api";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
-import styles from "@/styles/components/StaticTimeline.module.scss";
 import { useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
-import StatusRow from "./StatusRow";
+import StatusRow from "../StatusRow";
+import styles from "./styles.module.scss";
 
 export default function StaticTimeline({ accountId }: { readonly accountId: string }) {
   const server = useMemo(() => new ProdInstance(), []);

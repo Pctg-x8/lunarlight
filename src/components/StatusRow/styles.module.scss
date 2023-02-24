@@ -5,15 +5,15 @@
     "image text text text text";
   grid-template-columns: auto auto auto 1fr auto;
 
-  padding: 8px;
+  padding: 12px;
   background: var(--theme-single-card-bg);
 }
 
 .avatar {
   grid-area: image;
   height: 36px;
-  border-radius: 2px;
-  margin-right: 4px;
+  border-radius: 4px;
+  margin-right: 8px;
 }
 
 .displayName {
@@ -40,6 +40,6 @@
 
 .text {
   grid-area: text;
-  margin: 4px 2px;
+  margin: 6px 2px;
   margin-bottom: 0px;
 }

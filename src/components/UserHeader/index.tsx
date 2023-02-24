@@ -1,5 +1,5 @@
 import { Account } from "@/models/api/mastodon/account";
-import styles from "@/styles/components/UserHeader.module.scss";
+import styles from "./styles.module.scss";
 
 export default function UserHeader({ account, fullAcct }: { readonly account: Account; readonly fullAcct: string }) {
   return (
