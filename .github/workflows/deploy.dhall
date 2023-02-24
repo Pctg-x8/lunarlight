@@ -11,6 +11,7 @@ let buildJob =
       GHA.Job::{
       , environment = Some "container-registry"
       , runs-on = GHA.RunnerPlatform.ubuntu-latest
+      , permissions = Some (toMap { id-token = "write" })
       , steps =
         [ ProvidedSteps/actions/checkout.stepv3
             ProvidedSteps/actions/checkout.Params::{=}
@@ -58,6 +59,7 @@ let replaceContainerJob =
       GHA.Job::{
       , environment = Some "prod"
       , runs-on = GHA.RunnerPlatform.ubuntu-latest
+      , permissions = Some (toMap { id-token = "write" })
       , steps =
         [ ProvidedSteps/aws-actions/configure-aws-credentials.step
             ProvidedSteps/aws-actions/configure-aws-credentials.Params::{

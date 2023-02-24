@@ -1,6 +1,8 @@
 jobs:
   build:
     environment: container-registry
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Checking out
@@ -30,6 +32,8 @@ jobs:
     environment: prod
     needs:
       - build
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials
