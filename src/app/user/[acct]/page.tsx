@@ -1,3 +1,4 @@
+import StaticTimeline from "@/components/StaticTimeline";
 import UserHeader from "@/components/UserHeader";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
@@ -8,7 +9,7 @@ export async function getData(acct: string) {
   try {
     const instance = new ProdInstance();
 
-    const account = await lookup(acct).send(instance);
+    const account = await lookup.send({ acct }, instance);
     const fullAcct = await resolveFullWebFingerString(account.acct, instance);
 
     return { account, fullAcct };
@@ -28,6 +29,7 @@ export default async function UserPage({ params }: { readonly params: { readonly
   return (
     <>
       <UserHeader account={account} fullAcct={fullAcct} />
+      <StaticTimeline accountId={account.id} />
     </>
   );
 }

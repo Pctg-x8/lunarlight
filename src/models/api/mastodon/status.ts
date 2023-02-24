@@ -20,4 +20,11 @@ export type Status = {
   readonly text?: string;
 };
 
-export const getStatus = (id: string) => new GetAPI<Status>(`api/v1/statuses/${encodeURIComponent(id)}`);
+export type AccountStatusRequestParams = {
+  readonly max_id?: string;
+  readonly limit?: number;
+};
+
+export const getStatus = (id: string) => new GetAPI<{}, Status>(`api/v1/statuses/${encodeURIComponent(id)}`);
+export const getStatusesForAccount = (id: string) =>
+  new GetAPI<AccountStatusRequestParams, Status>(`api/v1/accounts/${encodeURIComponent(id)}/statuses`);

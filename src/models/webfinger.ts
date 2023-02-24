@@ -28,7 +28,7 @@ export async function resolveWebFingerDomainPart(
   target: WebFingerAccount,
   instance: ServerInstance
 ): Promise<WebFingerAccount> {
-  return { ...target, domain: target.domain ?? (await getInstanceData.send(instance).then((x) => x.domain)) };
+  return { ...target, domain: target.domain ?? (await getInstanceData.send({}, instance).then((x) => x.domain)) };
 }
 
 export async function resolveFullWebFingerString(acct: string, instance: ServerInstance): Promise<string> {

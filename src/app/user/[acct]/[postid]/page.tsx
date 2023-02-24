@@ -13,7 +13,7 @@ import { useMemo } from "react";
 async function getPost(acct: string, postid: string) {
   const instance = new ProdInstance();
   try {
-    const status = await getStatus(postid).send(instance);
+    const status = await getStatus(postid).send({}, instance);
     const fullAccountPath = buildWebFingerAccountString(
       await resolveWebFingerDomainPart(decomposeWebFingerAccount(status.account.acct), instance)
     );

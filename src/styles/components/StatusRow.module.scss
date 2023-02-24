@@ -1,0 +1,45 @@
+.statusRow {
+  display: grid;
+  grid-template-areas:
+    "image displayName acct space ago"
+    "image text text text text";
+  grid-template-columns: auto auto auto 1fr auto;
+
+  padding: 8px;
+  background: var(--theme-single-card-bg);
+}
+
+.avatar {
+  grid-area: image;
+  height: 36px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
+.displayName {
+  grid-area: displayName;
+  font-size: 14px;
+  align-self: baseline;
+}
+
+.acct {
+  grid-area: acct;
+  font-weight: normal;
+  color: var(--theme-subtext);
+  font-style: italic;
+  font-size: 12px;
+  align-self: baseline;
+  margin-left: 4px;
+}
+
+.ago {
+  grid-area: ago;
+  color: var(--theme-subtext);
+  font-size: 12px;
+}
+
+.text {
+  grid-area: text;
+  margin: 4px 2px;
+  margin-bottom: 0px;
+}

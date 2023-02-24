@@ -6,6 +6,7 @@ export type AccountField = {
   readonly verified_at: string;
 };
 export type Account = {
+  readonly id: string;
   readonly display_name: string;
   readonly username: string;
   readonly acct: string;
@@ -23,4 +24,8 @@ export function isRemoteAccount(a: Account): boolean {
   return a.username !== a.acct;
 }
 
-export const lookup = (acct: string) => new GetAPI<Account>(`api/v1/accounts/lookup?acct=${encodeURIComponent(acct)}`);
+export type AccountLookupRequestParams = {
+  readonly acct: string;
+};
+
+export const lookup = new GetAPI<AccountLookupRequestParams, Account>(`api/v1/accounts/lookup`);
