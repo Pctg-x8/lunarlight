@@ -1,8 +1,7 @@
 import BackLinkRow from "@/components/BackLinkRow";
-import Header from "@/components/Header";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
-import { getInstanceData } from "@/models/api/mastodon/instance";
-import { getStatus, isRemoteAccount } from "@/models/api/mastodon/status";
+import { getStatus } from "@/models/api/mastodon/status";
+import { buildWebFingerAccountString, decomposeWebFingerAccount, resolveWebFingerDomainPart } from "@/models/webfinger";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText, stripTags } from "@/utils";
 import dayjs from "dayjs";
@@ -15,11 +14,11 @@ async function getPost(acct: string, postid: string) {
   const instance = new ProdInstance();
   try {
     const status = await getStatus(postid).send(instance);
-    const full_account_path = isRemoteAccount(status.account)
-      ? status.account.acct
-      : await getInstanceData.send(instance).then((x) => `${status.account.username}@${x.domain}`);
+    const fullAccountPath = buildWebFingerAccountString(
+      await resolveWebFingerDomainPart(decomposeWebFingerAccount(status.account.acct), instance)
+    );
 
-    return { status, full_account_path };
+    return { status, fullAccountPath };
   } catch (e) {
     if (e instanceof NotFoundAPIResponseError) {
       notFound();
@@ -55,24 +54,20 @@ export default async function SinglePostPage({
 }: {
   readonly params: { readonly acct: string; readonly postid: string };
 }) {
-  const { status, full_account_path } = await getPost(
-    decodeURIComponent(params.acct),
-    decodeURIComponent(params.postid)
-  );
+  const { status, fullAccountPath } = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
 
   return (
     <>
-      <Header />
       <main>
         <BackLinkRow />
         <article className={singleCardStyle.singleCard}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className={singleCardStyle.avatarImage} src={status.account.avatar} alt={full_account_path} />
+          <img className={singleCardStyle.avatarImage} src={status.account.avatar} alt={fullAccountPath} />
           <h1>
             <Link href={`/@${status.account.acct}`}>{status.account.display_name}</Link>
           </h1>
           <h2>
-            <Link href={`/@${status.account.acct}`}>@{full_account_path}</Link>
+            <Link href={`/@${status.account.acct}`}>@{fullAccountPath}</Link>
           </h2>
           <div className={singleCardStyle.content} dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className={singleCardStyle.footer}>

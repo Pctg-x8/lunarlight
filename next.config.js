@@ -6,7 +6,15 @@ const nextConfig = {
   },
   output: "standalone",
   assetPrefix: process.env.BASE_PATH || undefined,
-  basePath: process.env.BASE_PATH || ""
+  basePath: process.env.BASE_PATH || "",
+  async rewrites() {
+    return [
+      {
+        source: "/:acct(@[a-zA-Z0-9_-]+)",
+        destination: "/user/:acct"
+      }
+    ];
+  }
 };
 
 module.exports = nextConfig;

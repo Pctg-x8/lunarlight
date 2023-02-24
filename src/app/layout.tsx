@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import "@/styles/globals.scss";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -11,7 +12,10 @@ export default function App({ children }: { readonly children: React.ReactNode }
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

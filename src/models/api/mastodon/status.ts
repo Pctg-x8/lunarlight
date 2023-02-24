@@ -1,15 +1,5 @@
 import { GetAPI } from "..";
-
-export type Account = {
-  readonly display_name: string;
-  readonly username: string;
-  readonly acct: string;
-  readonly avatar: string;
-};
-export function isRemoteAccount(a: Account): boolean {
-  // from api docs: https://docs.joinmastodon.org/entities/Account/#acct
-  return a.username !== a.acct;
-}
+import { type Account } from "./account";
 
 export type Application = {
   readonly name: string;
