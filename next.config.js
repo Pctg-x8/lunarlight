@@ -10,11 +10,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/:acct(@[a-zA-Z0-9_-]+)",
+        source: "/:acct(@[a-zA-Z0-9_@\.-]+)",
         destination: "/user/:acct"
       },
       {
-        source: "/:acct(@[a-zA-Z0-9_-]+)/:id",
+        source: "/:acct(@[a-zA-Z0-9_@\.-]+)/:id",
         destination: "/user/:acct/:id"
       }
     ];

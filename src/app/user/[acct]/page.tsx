@@ -9,7 +9,7 @@ async function getData(acct: string) {
   try {
     const instance = new ProdInstance();
 
-    const account = await lookup.send({ acct }, instance);
+    const account = await lookup.send({ acct: decodeURIComponent(acct) }, instance);
     const fullAcct = await resolveFullWebFingerString(account.acct, instance);
 
     return { account, fullAcct };
