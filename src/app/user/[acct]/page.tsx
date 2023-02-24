@@ -5,7 +5,7 @@ import { lookup } from "@/models/api/mastodon/account";
 import { resolveFullWebFingerString } from "@/models/webfinger";
 import { notFound } from "next/navigation";
 
-export async function getData(acct: string) {
+async function getData(acct: string) {
   try {
     const instance = new ProdInstance();
 
