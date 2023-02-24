@@ -169,6 +169,14 @@ a {
       }
     }
   }
+
+  &.clickableImage {
+    height: fit-content;
+    
+    &::after {
+      display: none;
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
