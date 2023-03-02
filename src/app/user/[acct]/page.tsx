@@ -3,6 +3,7 @@ import UserHeader from "@/components/UserHeader";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
 import { resolveFullWebFingerString } from "@/models/webfinger";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 async function getData(acct: string) {
@@ -20,6 +21,12 @@ async function getData(acct: string) {
       throw e;
     }
   }
+}
+
+export async function generateMetadata({ params }: { readonly params: { readonly acct: string } }): Promise<Metadata> {
+  const { account, fullAcct } = await getData(params.acct.slice(3));
+
+  return { title: `${account.display_name}(@${fullAcct})` };
 }
 
 export default async function UserPage({ params }: { readonly params: { readonly acct: string } }) {

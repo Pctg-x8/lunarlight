@@ -37,7 +37,7 @@ export async function generateMetadata({
   return {
     title: `${status.account.display_name}: "${ellipsisText(
       status.spoiler_text || status.text || stripTags(status.content)
-    )}" - Lunarlight`,
+    )}"`,
   };
 }
 
