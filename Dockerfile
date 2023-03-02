@@ -1,23 +1,27 @@
-FROM node:18-alpine as base
+FROM --platform=$BUILDPLATFORM node:18-alpine as base
 
 ENV NODE_ENV=production
 ENV BASE_PATH=/ll
 RUN yarn global add pnpm
 
-FROM base as deps
+FROM --platform=$BUILDPLATFORM base as deps
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm i --frozen-lockfile
 
-FROM base as builder
+FROM --platform=$BUILDPLATFORM base as builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build
 
-FROM base as runner
+FROM node:18-alpine as runner
+
+ENV NODE_ENV=production
+ENV BASE_PATH=/ll
+RUN yarn global add pnpm
 
 RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 nextjs
 
