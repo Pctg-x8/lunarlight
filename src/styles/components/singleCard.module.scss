@@ -27,11 +27,14 @@
 
 .avatarImage {
   grid-area: avatar;
-  width: auto;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin: 4px;
+  margin-right: 4px;
+
+  &>img {
+    width: auto;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
 }
 
 .content {

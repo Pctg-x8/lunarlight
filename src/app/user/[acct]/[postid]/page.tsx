@@ -52,8 +52,10 @@ export default async function SinglePostPage({
     <>
       <BackLinkRow />
       <article className={singleCardStyle.singleCard}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={singleCardStyle.avatarImage} src={status.account.avatar} alt={fullAccountPath} />
+        <Link className={`${singleCardStyle.avatarImage} clickableImage`} href={`/@${status.account.acct}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={status.account.avatar} alt={fullAccountPath} />
+        </Link>
         <h1>
           <Link className="non-colored" href={`/@${status.account.acct}`}>
             {status.account.display_name}
