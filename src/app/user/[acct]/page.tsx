@@ -4,13 +4,18 @@ import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
 import { resolveFullWebFingerString } from "@/models/webfinger";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 async function getData(acct: string) {
   try {
+    const token = cookies().get("_lla")?.value;
     const instance = new ProdInstance();
 
-    const account = await lookup.send({ acct: decodeURIComponent(acct) }, instance);
+    const account = await lookup.send(
+      { acct: decodeURIComponent(acct) },
+      token ? instance.withAuthorizationToken(token) : instance
+    );
     const fullAcct = await resolveFullWebFingerString(account.acct, instance);
 
     return { account, fullAcct };

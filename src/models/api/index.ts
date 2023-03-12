@@ -1,15 +1,37 @@
 // @ts-ignore
 import { URL } from "universal-url";
 
-export interface ServerInstance {
+export interface RemoteInstance {
   buildFullUrl(path: string): URL;
+
+  setExtraHeaders<Ks extends string | number | symbol>(headers: Record<Ks, string>): Record<Ks, string>;
 }
 
-export default class ProdInstance implements ServerInstance {
+export default class ProdInstance implements RemoteInstance {
   readonly baseUrl = new URL("https://crescent.ct2.io/");
 
   buildFullUrl(path: string): URL {
     return new URL(path, this.baseUrl);
+  }
+
+  setExtraHeaders<Ks extends string | number | symbol>(headers: Record<Ks, string>): Record<Ks, string> {
+    return headers;
+  }
+
+  withAuthorizationToken(token: string) {
+    return new AuthorizedRemote(this, token);
+  }
+}
+
+export class AuthorizedRemote implements RemoteInstance {
+  constructor(private readonly parent: RemoteInstance, private readonly token: string) {}
+
+  buildFullUrl(path: string): URL {
+    return this.parent.buildFullUrl(path);
+  }
+
+  setExtraHeaders<Ks extends string | number | symbol>(headers: Record<Ks, string>): Record<Ks, string> {
+    return { ...this.parent.setExtraHeaders(headers), Authorization: `Bearer ${this.token}` };
   }
 }
 
@@ -24,13 +46,13 @@ export class NotFoundAPIResponseError extends Error {
 export type RequestType = Record<string, { toString(): string }> | { asSearchParams(): URLSearchParams };
 
 export interface API<Req, Resp> {
-  send(req: Req, client: ServerInstance): Promise<Resp>;
+  send(req: Req, client: RemoteInstance): Promise<Resp>;
 }
 
 export class GetAPI<Req extends RequestType, Resp> implements API<Req, Resp> {
   constructor(private readonly url: string, private readonly options: CacheOptions = {}) {}
 
-  generateURL(req: Req, client: ServerInstance): URL {
+  generateURL(req: Req, client: RemoteInstance): URL {
     let qs: URLSearchParams;
     if ("asSearchParams" in req && typeof req.asSearchParams === "function") {
       qs = req.asSearchParams();
@@ -47,23 +69,25 @@ export class GetAPI<Req extends RequestType, Resp> implements API<Req, Resp> {
     return url;
   }
 
-  async send(req: Req, client: ServerInstance): Promise<Resp> {
-    const resp = await fetch(this.generateURL(req, client), { method: "GET", cache: this.options.cacheOptions });
+  async send(req: Req, client: RemoteInstance): Promise<Resp> {
+    const resp = await fetch(this.generateURL(req, client), {
+      method: "GET",
+      cache: this.options.cacheOptions,
+      headers: client.setExtraHeaders({}),
+    });
 
-    if (resp.status === 404) {
-      throw new NotFoundAPIResponseError();
-    }
+    if (resp.status === 404) throw new NotFoundAPIResponseError();
 
     return await resp.json();
   }
 
-  bindParameters(req: Req, client: ServerInstance): ParameterBoundAPI<GetAPI<Req, Resp>, Req, Resp> {
+  bindParameters(req: Req, client: RemoteInstance): ParameterBoundAPI<GetAPI<Req, Resp>, Req, Resp> {
     return new ParameterBoundAPI(this, req, client);
   }
 }
 
 export class ParameterBoundAPI<Base extends API<Req, Resp>, Req, Resp> {
-  constructor(private readonly base: Base, private readonly req: Req, private readonly instance: ServerInstance) {}
+  constructor(private readonly base: Base, private readonly req: Req, private readonly instance: RemoteInstance) {}
 
   async send(): Promise<Resp> {
     return this.base.send(this.req, this.instance);
