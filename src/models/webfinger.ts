@@ -1,4 +1,4 @@
-import { ServerInstance } from "./api";
+import { RemoteInstance } from "./api";
 import { getInstanceData } from "./api/mastodon/instance";
 
 export type WebFingerAccount = {
@@ -26,11 +26,11 @@ export function buildWebFingerAccountString(a: WebFingerAccount): string {
 }
 export async function resolveWebFingerDomainPart(
   target: WebFingerAccount,
-  instance: ServerInstance
+  instance: RemoteInstance
 ): Promise<WebFingerAccount> {
   return { ...target, domain: target.domain ?? (await getInstanceData.send({}, instance).then((x) => x.domain)) };
 }
 
-export async function resolveFullWebFingerString(acct: string, instance: ServerInstance): Promise<string> {
+export async function resolveFullWebFingerString(acct: string, instance: RemoteInstance): Promise<string> {
   return buildWebFingerAccountString(await resolveWebFingerDomainPart(decomposeWebFingerAccount(acct), instance));
 }
