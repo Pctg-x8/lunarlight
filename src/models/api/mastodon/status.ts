@@ -13,6 +13,7 @@ export type Status = {
   readonly in_reply_to_account_id: string | null;
   readonly sensitive: boolean;
   readonly replies_count: number;
+  readonly favourites_count: number;
   readonly reblogs_count: number;
   readonly content: string;
   readonly account: Account;

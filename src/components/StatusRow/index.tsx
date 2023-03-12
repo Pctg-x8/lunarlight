@@ -47,7 +47,9 @@ export default function StatusRow({ status }: { readonly status: Status }) {
       </h2>
       <AgoLabel className={styles.ago} createdAt={status.created_at} />
       <div className={styles.text} dangerouslySetInnerHTML={{ __html: status.content }} />
-      <StatusActions className={styles.statusActions} />
+      <div className={styles.statusActions}>
+        <StatusActions status={status} />
+      </div>
     </article>
   );
 }

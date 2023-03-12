@@ -1,8 +1,17 @@
 .statusActions {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin: 0 32px;
   color: var(--theme-status-actions);
+
+  li {
+    &.nonCounter {
+      width: 100%;
+      &>button {
+        margin: 0 auto;
+      }
+    }
+  }
 
   button {
     border: none;
@@ -12,9 +21,18 @@
     cursor: pointer;
     transition: color 0.15s ease;
     padding: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
     &:hover {
       color: var(--theme-status-actions-lit);
+    }
+
+    &>span {
+      display: block;
+      margin-left: 6px;
+      font-size: 70%;
     }
   }
 }

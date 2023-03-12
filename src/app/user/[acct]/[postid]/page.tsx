@@ -1,5 +1,6 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
+import StatusActions from "@/components/StatusActions";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
 import { buildWebFingerAccountString, decomposeWebFingerAccount, resolveWebFingerDomainPart } from "@/models/webfinger";
@@ -81,6 +82,9 @@ export default async function SinglePostPage({
             ""
           )}
           <DateTimeLabel at={status.created_at} />
+        </div>
+        <div className={singleCardStyle.actions}>
+          <StatusActions status={status} />
         </div>
       </article>
     </>
