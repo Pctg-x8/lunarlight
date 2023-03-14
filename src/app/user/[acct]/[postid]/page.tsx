@@ -3,22 +3,20 @@ import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
-import { buildWebFingerAccountString, decomposeWebFingerAccount, resolveWebFingerDomainPart } from "@/models/webfinger";
+import { WebFingerAccount } from "@/models/webfinger";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText, stripTags } from "@/utils";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-async function getPost(acct: string, postid: string) {
+async function getPost(_acct: string, postid: string) {
   const instance = new ProdInstance();
   try {
     const status = await getStatus(postid).send({}, instance);
-    const fullAccountPath = buildWebFingerAccountString(
-      await resolveWebFingerDomainPart(decomposeWebFingerAccount(status.account.acct), instance)
-    );
+    const fullAcct = await WebFingerAccount.decompose(status.account.acct).resolveDomainPart(instance);
 
-    return { status, fullAccountPath };
+    return { status, fullAccountPath: fullAcct.toString() };
   } catch (e) {
     if (e instanceof NotFoundAPIResponseError) {
       notFound();

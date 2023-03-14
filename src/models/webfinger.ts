@@ -1,36 +1,50 @@
 import { RemoteInstance } from "./api";
 import { getInstanceData } from "./api/mastodon/instance";
 
-export type WebFingerAccount = {
-  readonly name: string;
-  readonly domain?: string;
-};
+export abstract class WebFingerAccount {
+  static decompose(acct: string): WebFingerAccount {
+    const acctFormed = acct.startsWith("@") ? acct.slice(1) : acct;
+    const atPosition = acctFormed.indexOf("@");
+
+    // no domain(maybe local account)
+    if (atPosition < 0) return new LocalWebFingerAccount(acctFormed);
+
+    return new RemoteWebFingerAccount(acctFormed.slice(0, atPosition), acctFormed.slice(atPosition + 1));
+  }
+
+  abstract toString(): string;
+  abstract resolveDomainPart(instance: RemoteInstance): Promise<RemoteWebFingerAccount>;
+}
+
+export class LocalWebFingerAccount extends WebFingerAccount {
+  constructor(readonly name: string) {
+    super();
+  }
+
+  override toString(): string {
+    return this.name;
+  }
+
+  override async resolveDomainPart(instance: RemoteInstance): Promise<RemoteWebFingerAccount> {
+    const { domain } = await getInstanceData.send({}, instance);
+    return new RemoteWebFingerAccount(this.name, domain);
+  }
+}
+
+export class RemoteWebFingerAccount extends WebFingerAccount {
+  constructor(readonly name: string, readonly domain: string) {
+    super();
+  }
+
+  override toString(): string {
+    return `${this.name}@${this.domain}`;
+  }
+
+  override async resolveDomainPart(_instance: RemoteInstance): Promise<RemoteWebFingerAccount> {
+    return this;
+  }
+}
 
 export function stripPrefixAtmark(acct: string): string {
   return acct.startsWith("@") ? acct.slice(1) : acct;
-}
-
-export function decomposeWebFingerAccount(acct: string): WebFingerAccount {
-  const acctFormed = acct.startsWith("@") ? acct.slice(1) : acct;
-  const atPosition = acctFormed.indexOf("@");
-
-  if (atPosition < 0) {
-    // no domain(maybe local account)
-    return { name: acctFormed };
-  } else {
-    return { name: acctFormed.slice(0, atPosition), domain: acctFormed.slice(atPosition + 1) };
-  }
-}
-export function buildWebFingerAccountString(a: WebFingerAccount): string {
-  return a.domain ? `${a.name}@${a.domain}` : a.name;
-}
-export async function resolveWebFingerDomainPart(
-  target: WebFingerAccount,
-  instance: RemoteInstance
-): Promise<WebFingerAccount> {
-  return { ...target, domain: target.domain ?? (await getInstanceData.send({}, instance).then((x) => x.domain)) };
-}
-
-export async function resolveFullWebFingerString(acct: string, instance: RemoteInstance): Promise<string> {
-  return buildWebFingerAccountString(await resolveWebFingerDomainPart(decomposeWebFingerAccount(acct), instance));
 }

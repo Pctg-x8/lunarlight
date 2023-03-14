@@ -2,7 +2,7 @@ import StaticTimeline from "@/components/StaticTimeline";
 import UserHeader from "@/components/UserHeader";
 import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
-import { resolveFullWebFingerString } from "@/models/webfinger";
+import { WebFingerAccount } from "@/models/webfinger";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -16,9 +16,9 @@ async function getData(acct: string) {
       { acct: decodeURIComponent(acct) },
       token ? instance.withAuthorizationToken(token) : instance
     );
-    const fullAcct = await resolveFullWebFingerString(account.acct, instance);
+    const fullAcct = await WebFingerAccount.decompose(account.acct).resolveDomainPart(instance);
 
-    return { account, fullAcct };
+    return { account, fullAcct: fullAcct.toString() };
   } catch (e) {
     if (e instanceof NotFoundAPIResponseError) {
       notFound();
