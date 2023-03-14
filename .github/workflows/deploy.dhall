@@ -33,13 +33,13 @@ let buildJob =
           , name = "login to ecr public repository"
           , id = Some "login-ecr"
           , uses = Some "aws-actions/amazon-ecr-login@v1"
-          , `with` = Some
+          , with = Some
               (toMap { registry-type = GHA.WithParameterType.Text "public" })
           }
         , GHA.Step::{
           , name = "build and push"
           , uses = Some "docker/build-push-action@v4"
-          , `with` = Some
+          , with = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
@@ -86,8 +86,12 @@ in  GHA.Workflow::{
           GHA.OnDetails::{
           , push = Some GHA.OnPush::{ branches = Some [ "main" ] }
           }
+    , concurrency = Some GHA.ConcurrencyGroup::{
+      , group = "prodbuild"
+      , cancel-in-progress = Some True
+      }
     , jobs = toMap
         { build = buildJob
-        , replaceContainer = replaceContainerJob // { needs = Some [ "build" ] }
+        , replaceContainer = replaceContainerJob ⫽ { needs = Some [ "build" ] }
         }
     }

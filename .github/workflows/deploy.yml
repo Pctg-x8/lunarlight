@@ -1,52 +1,55 @@
+concurrency:
+  "cancel-in-progress": true
+  group: prodbuild
 jobs:
   build:
-    environment: container-registry
+    environment: "container-registry"
     permissions:
-      id-token: write
-    runs-on: ubuntu-latest
+      "id-token": write
+    "runs-on": "ubuntu-latest"
     steps:
-      - name: Checking out
-        uses: "actions/checkout@v3"
-      - name: setup qemu for docker
-        uses: "docker/setup-qemu-action@v2"
-      - name: setup docker buildx
-        uses: "docker/setup-buildx-action@v2"
-      - name: Configure AWS Credentials
-        uses: "aws-actions/configure-aws-credentials@v1"
-        with:
-          aws-region: us-east-1
-          role-to-assume: arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role
-      - id: login-ecr
-        name: login to ecr public repository
-        uses: "aws-actions/amazon-ecr-login@v1"
-        with:
-          registry-type: public
-      - name: build and push
-        uses: "docker/build-push-action@v4"
-        with:
-          context: '.'
-          file: "./Dockerfile"
-          platforms: "linux/amd64,linux/arm64"
-          push: true
-          tags: "${{ steps.login-ecr.outputs.registry }}/t1p5j4i4/ct2-crescent-lunarlight:latest"
+    - name: Checking out
+      uses: "actions/checkout@v3"
+    - name: setup qemu for docker
+      uses: "docker/setup-qemu-action@v2"
+    - name: setup docker buildx
+      uses: "docker/setup-buildx-action@v2"
+    - name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "us-east-1"
+        "role-to-assume": "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
+    - id: "login-ecr"
+      name: login to ecr public repository
+      uses: "aws-actions/amazon-ecr-login@v1"
+      with:
+        "registry-type": public
+    - name: build and push
+      uses: "docker/build-push-action@v4"
+      with:
+        context: '.'
+        file: ./Dockerfile
+        platforms: "linux/amd64,linux/arm64"
+        push: true
+        tags: "${{ steps.login-ecr.outputs.registry }}/t1p5j4i4/ct2-crescent-lunarlight:latest"
   replaceContainer:
     environment: prod
     needs:
-      - build
+    - build
     permissions:
-      id-token: write
-    runs-on: ubuntu-latest
+      "id-token": write
+    "runs-on": "ubuntu-latest"
     steps:
-      - name: Configure AWS Credentials
-        uses: "aws-actions/configure-aws-credentials@v1"
-        with:
-          aws-region: ap-northeast-1
-          role-to-assume: arn:aws:iam::208140986057:role/crescent/lunarlight/auto-deployment-role
-      - name: run replace command
-        run: |
-          aws ssm send-command --document-name "Crescent-ReplaceLunarlightContainer" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1
+    - name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam::208140986057:role/crescent/lunarlight/auto-deployment-role"
+    - name: run replace command
+      run: |
+        aws ssm send-command --document-name "Crescent-ReplaceLunarlightContainer" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1
 name: deploy
 on:
   push:
     branches:
-      - main
+    - main
