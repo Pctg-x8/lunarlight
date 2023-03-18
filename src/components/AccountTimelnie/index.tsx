@@ -4,11 +4,14 @@ import ProdInstance from "@/models/api";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
-import StatusRow from "../StatusRow";
-import styles from "./styles.module.scss";
+import Timeline from "../Timeline";
 
-export default function StaticTimeline({ accountId }: { readonly accountId: string }) {
-  const server = useMemo(() => new ProdInstance(), []);
+export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
+  const server = useMemo(() => {
+    const instance = new ProdInstance();
+    console.log("cookie", document.cookie);
+    return instance;
+  }, []);
 
   const { data, isLoading } = useSWRInfinite(
     (_, prevPageData) => {
@@ -17,15 +20,5 @@ export default function StaticTimeline({ accountId }: { readonly accountId: stri
     (req) => getStatusesForAccount(accountId).send(req, server)
   );
 
-  return isLoading ? (
-    <p>Loading...</p>
-  ) : (
-    <ul className={styles.staticTimeline}>
-      {data?.flat().map((s, x) => (
-        <li key={x}>
-          <StatusRow status={s} />
-        </li>
-      ))}
-    </ul>
-  );
+  return isLoading ? <p>Loading...</p> : <Timeline statuses={data?.flat() ?? []} />;
 }

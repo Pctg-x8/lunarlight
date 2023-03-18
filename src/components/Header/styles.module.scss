@@ -20,7 +20,7 @@
       font-weight: normal;
       opacity: 0.75;
 
-      &>a {
+      & > a {
         color: inherit;
 
         &::after {
@@ -37,5 +37,9 @@
     font-weight: normal;
     background: var(--theme-normal-label-background);
     color: var(--theme-normal-label-text);
+  }
+
+  & > .spacer {
+    flex: 1;
   }
 }

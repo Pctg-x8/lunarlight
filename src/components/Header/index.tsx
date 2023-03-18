@@ -1,6 +1,8 @@
+import { CredentialAccount } from "@/models/api/mastodon/account";
+import LoginStatus from "../LoginStatus";
 import styles from "./styles.module.scss";
 
-export default function Header() {
+export default function Header({ login }: { readonly login?: CredentialAccount }) {
   return (
     <header className={styles.appHeader}>
       <h1>
@@ -13,6 +15,10 @@ export default function Header() {
         </small>
       </h1>
       <h2>BETA</h2>
+      <div className={styles.spacer} />
+      <section className={styles.loginStatus}>
+        <LoginStatus account={login} />
+      </section>
     </header>
   );
 }

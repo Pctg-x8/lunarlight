@@ -1,15 +1,15 @@
-import StaticTimeline from "@/components/StaticTimeline";
+import AccountTimeline from "@/components/AccountTimelnie";
 import UserHeader from "@/components/UserHeader";
-import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
+import ProdInstance, { HTTPError } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
 import { WebFingerAccount } from "@/models/webfinger";
+import { cookie } from "@/utils/cookie";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 async function getData(acct: string) {
   try {
-    const token = cookies().get("_lla")?.value;
+    const token = cookie.token();
     const instance = new ProdInstance();
 
     const account = await lookup.send(
@@ -20,7 +20,7 @@ async function getData(acct: string) {
 
     return { account, fullAcct: fullAcct.toString() };
   } catch (e) {
-    if (e instanceof NotFoundAPIResponseError) {
+    if (e instanceof HTTPError.NotFoundError) {
       notFound();
     } else {
       throw e;
@@ -41,7 +41,7 @@ export default async function UserPage({ params }: { readonly params: { readonly
   return (
     <>
       <UserHeader account={account} fullAcct={fullAcct} />
-      <StaticTimeline accountId={account.id} />
+      <AccountTimeline accountId={account.id} />
     </>
   );
 }

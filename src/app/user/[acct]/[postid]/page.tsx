@@ -1,7 +1,7 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
-import ProdInstance, { NotFoundAPIResponseError } from "@/models/api";
+import ProdInstance, { HTTPError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
 import { WebFingerAccount } from "@/models/webfinger";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
@@ -18,7 +18,7 @@ async function getPost(_acct: string, postid: string) {
 
     return { status, fullAccountPath: fullAcct.toString() };
   } catch (e) {
-    if (e instanceof NotFoundAPIResponseError) {
+    if (e instanceof HTTPError.NotFoundError) {
       notFound();
     } else {
       throw e;

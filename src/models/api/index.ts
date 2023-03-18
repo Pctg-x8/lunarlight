@@ -6,6 +6,7 @@ export interface RemoteInstance {
 
   setExtraHeaders<Ks extends string | number | symbol>(headers: Record<Ks, string>): Record<Ks, string>;
 }
+export interface IAuthorizationProvider {}
 
 export default class ProdInstance implements RemoteInstance {
   readonly baseUrl = new URL("https://crescent.ct2.io/");
@@ -23,7 +24,7 @@ export default class ProdInstance implements RemoteInstance {
   }
 }
 
-export class AuthorizedRemote implements RemoteInstance {
+export class AuthorizedRemote implements RemoteInstance, IAuthorizationProvider {
   constructor(private readonly parent: RemoteInstance, private readonly token: string) {}
 
   buildFullUrl(path: string): URL {
@@ -37,9 +38,29 @@ export class AuthorizedRemote implements RemoteInstance {
 
 export type CacheOptions = { readonly cacheOptions?: RequestCache };
 
-export class NotFoundAPIResponseError extends Error {
-  constructor() {
-    super("Not Found");
+export namespace HTTPError {
+  export class UnauthorizedError extends Error {
+    constructor() {
+      super("Unauthorized")
+    }
+  }
+
+  export class ForbiddenError extends Error {
+    constructor() {
+      super("Forbidden");
+    }
+  }
+
+  export class NotFoundError extends Error {
+    constructor() {
+      super("Not Found");
+    }
+  }
+
+  export class UnprocessableEntityError extends Error {
+    constructor() {
+      super("Unprocessable Entity");
+    }
   }
 }
 
@@ -76,13 +97,19 @@ export class GetAPI<Req extends RequestType, Resp> implements API<Req, Resp> {
       headers: client.setExtraHeaders({}),
     });
 
-    if (resp.status === 404) throw new NotFoundAPIResponseError();
+    if (resp.status === 404) throw new HTTPError.NotFoundError();
 
     return await resp.json();
   }
 
   bindParameters(req: Req, client: RemoteInstance): ParameterBoundAPI<GetAPI<Req, Resp>, Req, Resp> {
     return new ParameterBoundAPI(this, req, client);
+  }
+}
+
+export class AuthorizedGetAPI<Req extends RequestType, Resp> extends GetAPI<Req, Resp> {
+  override async send(req: Req, client: RemoteInstance & IAuthorizationProvider): Promise<Resp> {
+    return super.send(req, client);
   }
 }
 

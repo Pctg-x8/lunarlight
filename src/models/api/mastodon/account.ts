@@ -1,4 +1,4 @@
-import { GetAPI } from "..";
+import { AuthorizedGetAPI, GetAPI } from "..";
 
 export type AccountField = {
   readonly name: string;
@@ -18,6 +18,7 @@ export type Account = {
   readonly following_count: number;
   readonly followers_count: number;
 };
+export type CredentialAccount = Account;
 
 export function isRemoteAccount(a: Account): boolean {
   // from api docs: https://docs.joinmastodon.org/entities/Account/#acct
@@ -29,3 +30,4 @@ export type AccountLookupRequestParams = {
 };
 
 export const lookup = new GetAPI<AccountLookupRequestParams, Account>(`api/v1/accounts/lookup`);
+export const verifyCredentials = new AuthorizedGetAPI<{}, CredentialAccount>("api/v1/accounts/verify_credentials");
