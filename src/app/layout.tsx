@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { getAuthorizedUserServerProps } from "@/models/auth";
+import rpcClient from "@/rpc/client";
 import "@/styles/globals.scss";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -11,7 +11,7 @@ config.autoAddCss = false;
 export const metadata = { title: { default: "Lunarlight", template: "%s - Lunarlight" } } satisfies Metadata;
 
 export default async function App({ children }: { readonly children: React.ReactNode }) {
-  const { account } = await getAuthorizedUserServerProps();
+  const account = await rpcClient.getAuthorizedAccount.query();
 
   return (
     <html lang="ja">
@@ -19,7 +19,7 @@ export default async function App({ children }: { readonly children: React.React
         <meta charSet="utf-8" />
       </head>
       <body>
-        <Header login={account} />
+        <Header login={account ?? undefined} />
         <main>{children}</main>
       </body>
     </html>
