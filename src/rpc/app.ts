@@ -26,7 +26,7 @@ export async function createContext(opts: CreateNextContextOptions) {
 
 const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create();
 export const appRpcRouter = t.router({
-  getAuthorizedAccount: t.procedure.query(async ({ ctx }) => {
+  authorizedAccount: t.procedure.query(async ({ ctx }) => {
     const token = ctx.getAuthorizedToken();
     if (!token) return null;
 

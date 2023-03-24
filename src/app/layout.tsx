@@ -11,7 +11,7 @@ config.autoAddCss = false;
 export const metadata = { title: { default: "Lunarlight", template: "%s - Lunarlight" } } satisfies Metadata;
 
 export default async function App({ children }: { readonly children: React.ReactNode }) {
-  const account = await rpcClient.getAuthorizedAccount.query();
+  const account = await rpcClient.authorizedAccount.query();
 
   return (
     <html lang="ja">
