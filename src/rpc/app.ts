@@ -13,6 +13,7 @@ export async function createContext(opts: CreateNextContextOptions) {
       cookie.serialize("_lla", newToken, {
         httpOnly: true,
         maxAge: 30 * DAY_SECONDS,
+        sameSite: "lax",
       })
     );
   };

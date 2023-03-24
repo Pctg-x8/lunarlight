@@ -1,4 +1,4 @@
-"use server";
+"use client";
 
 import { CredentialAccount } from "@/models/api/mastodon/account";
 
