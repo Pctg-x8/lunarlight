@@ -11,7 +11,7 @@ export interface RemoteInstance {
 }
 export interface IAuthorizationProvider {}
 
-const db = new PrismaClient();
+const db = typeof window === "undefined" ? new PrismaClient() : null;
 
 export default class ProdInstance implements RemoteInstance {
   readonly baseUrl = new URL("https://crescent.ct2.io");
@@ -26,6 +26,8 @@ export default class ProdInstance implements RemoteInstance {
 
   private appinfo: Application | null = null;
   async queryAppInfo(createOps: (instance: RemoteInstance) => Promise<Application>): Promise<Application> {
+    if (!db) throw new Error("AppInfo cannot query from client-side");
+
     if (this.appinfo) return this.appinfo;
 
     const connectedInstanceRecord = await db.connectedInstance.findFirst({ where: { domain: this.baseUrl.host } });
