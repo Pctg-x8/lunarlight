@@ -7,6 +7,14 @@ let ProvidedSteps/actions/checkout =
 let ProvidedSteps/aws-actions/configure-aws-credentials =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/aws-actions/configure-aws-credentials.dhall
 
+let setupContainerImagePushRole =
+      ProvidedSteps/aws-actions/configure-aws-credentials.step
+        ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
+        , awsRegion = "us-east-1"
+        , roleToAssume = Some
+            "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
+        }
+
 let buildJob =
       GHA.Job::{
       , environment = Some "container-registry"
@@ -23,12 +31,7 @@ let buildJob =
           , name = "setup docker buildx"
           , uses = Some "docker/setup-buildx-action@v2"
           }
-        , ProvidedSteps/aws-actions/configure-aws-credentials.step
-            ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
-            , awsRegion = "us-east-1"
-            , roleToAssume = Some
-                "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
-            }
+        , setupContainerImagePushRole
         , GHA.Step::{
           , name = "login to ecr public repository"
           , id = Some "login-ecr"

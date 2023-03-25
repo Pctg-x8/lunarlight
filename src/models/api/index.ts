@@ -1,5 +1,6 @@
 // @ts-ignore
 import { PrismaClient } from "@prisma/client";
+// @ts-ignore
 import { URL } from "universal-url";
 import { Application } from "./mastodon/apps";
 

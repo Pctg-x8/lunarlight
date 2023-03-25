@@ -17,3 +17,7 @@ model ConnectedInstance {
   client_secret String
   vapid_key     String
 }
+
+model Test {
+  id Int @id
+}

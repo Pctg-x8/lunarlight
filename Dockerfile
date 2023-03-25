@@ -8,7 +8,7 @@ FROM --platform=$BUILDPLATFORM base as deps
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --frozen-lockfile && pnpm generate-db-client
 
 FROM --platform=$BUILDPLATFORM base as builder
 
