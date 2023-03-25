@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import LoginStatus from "../LoginStatus";
 import styles from "./styles.module.scss";
 
@@ -17,9 +16,7 @@ export default function Header() {
       <h2>BETA</h2>
       <div className={styles.spacer} />
       <section className={styles.loginStatus}>
-        <Suspense>
-          <LoginStatus />
-        </Suspense>
+        <LoginStatus />
       </section>
     </header>
   );

@@ -1,6 +1,6 @@
 import AccountTimeline from "@/components/AccountTimelnie";
 import UserHeader from "@/components/UserHeader";
-import ProdInstance, { HTTPError } from "@/models/api";
+import ProdInstance, { HTTPError, SearchParamsRequestBody } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
 import { WebFingerAccount } from "@/models/webfinger";
 import { cookie } from "@/utils/cookie";
@@ -13,7 +13,7 @@ async function getData(acct: string) {
     const instance = new ProdInstance();
 
     const account = await lookup.send(
-      { acct: decodeURIComponent(acct) },
+      new SearchParamsRequestBody({ acct: decodeURIComponent(acct) }),
       token ? instance.withAuthorizationToken(token) : instance
     );
     const fullAcct = await WebFingerAccount.decompose(account.acct).resolveDomainPart(instance);

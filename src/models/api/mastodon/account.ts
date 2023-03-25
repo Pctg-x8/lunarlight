@@ -1,4 +1,4 @@
-import { AuthorizedGetAPI, GetAPI } from "..";
+import { AuthorizedGetAPI, EmptyRequestBody, GetAPI, SearchParamsRequestBody } from "..";
 
 export type AccountField = {
   readonly name: string;
@@ -29,5 +29,9 @@ export type AccountLookupRequestParams = {
   readonly acct: string;
 };
 
-export const lookup = new GetAPI<AccountLookupRequestParams, Account>(`api/v1/accounts/lookup`);
-export const verifyCredentials = new AuthorizedGetAPI<{}, CredentialAccount>("api/v1/accounts/verify_credentials");
+export const lookup = new GetAPI<SearchParamsRequestBody<AccountLookupRequestParams>, Account>(
+  `api/v1/accounts/lookup`
+);
+export const verifyCredentials = new AuthorizedGetAPI<EmptyRequestBody, CredentialAccount>(
+  "api/v1/accounts/verify_credentials"
+);

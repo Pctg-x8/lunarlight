@@ -1,5 +1,6 @@
-import ProdInstance, { HTTPError } from "@/models/api";
+import { DefaultInstance, EmptyRequestBody, FormDataRequestBody, HTTPError } from "@/models/api";
 import { verifyCredentials } from "@/models/api/mastodon/account";
+import { buildAuthorizeUrl, buildScopes, createApp } from "@/models/api/mastodon/apps";
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import cookie from "cookie";
@@ -31,9 +32,9 @@ export const appRpcRouter = t.router({
     const token = ctx.getAuthorizedToken();
     if (!token) return null;
 
-    const instance = new ProdInstance().withAuthorizationToken(token);
+    const instance = DefaultInstance.withAuthorizationToken(token);
     try {
-      return await verifyCredentials.send({}, instance);
+      return await verifyCredentials.send(EmptyRequestBody.instance, instance);
     } catch (e) {
       if (
         e instanceof HTTPError.ForbiddenError ||
@@ -45,6 +46,38 @@ export const appRpcRouter = t.router({
       }
 
       // unprocessable
+      throw e;
+    }
+  }),
+  loginUrl: t.procedure.query(async () => {
+    try {
+      const redirect_to = "http://localhost:3000/api/authorize";
+      const scopes = buildScopes("read", "write", "push");
+      const app = await DefaultInstance.queryAppInfo((instance) =>
+        createApp.send(
+          new FormDataRequestBody({
+            client_name: "Lunarlight",
+            redirect_uris: redirect_to,
+            scopes,
+            website: "https://crescent.ct2.io/ll/",
+          }),
+          instance
+        )
+      );
+
+      return buildAuthorizeUrl(DefaultInstance, {
+        response_type: "code",
+        client_id: app.client_id,
+        redirect_uri: redirect_to,
+        scope: scopes,
+      });
+    } catch (e) {
+      if (e instanceof HTTPError.HTTPErrorBase) {
+        console.error(e, await e.readResponseJson());
+      } else {
+        console.error(e);
+      }
+
       throw e;
     }
   }),

@@ -1,4 +1,4 @@
-import { GetAPI } from "..";
+import { EmptyRequestBody, GetAPI, SearchParamsRequestBody } from "..";
 import { type Account } from "./account";
 
 export type Application = {
@@ -27,6 +27,9 @@ export type AccountStatusRequestParams = {
   readonly limit?: number;
 };
 
-export const getStatus = (id: string) => new GetAPI<{}, Status>(`api/v1/statuses/${encodeURIComponent(id)}`);
+export const getStatus = (id: string) =>
+  new GetAPI<EmptyRequestBody, Status>(`api/v1/statuses/${encodeURIComponent(id)}`);
 export const getStatusesForAccount = (id: string) =>
-  new GetAPI<AccountStatusRequestParams, Status>(`api/v1/accounts/${encodeURIComponent(id)}/statuses`);
+  new GetAPI<SearchParamsRequestBody<AccountStatusRequestParams>, Status>(
+    `api/v1/accounts/${encodeURIComponent(id)}/statuses`
+  );

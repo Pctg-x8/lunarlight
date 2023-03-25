@@ -1,4 +1,4 @@
-import { RemoteInstance } from "./api";
+import { EmptyRequestBody, RemoteInstance } from "./api";
 import { getInstanceData } from "./api/mastodon/instance";
 
 export abstract class WebFingerAccount {
@@ -26,7 +26,7 @@ export class LocalWebFingerAccount extends WebFingerAccount {
   }
 
   override async resolveDomainPart(instance: RemoteInstance): Promise<RemoteWebFingerAccount> {
-    const { domain } = await getInstanceData.send({}, instance);
+    const { domain } = await getInstanceData.send(EmptyRequestBody.instance, instance);
     return new RemoteWebFingerAccount(this.name, domain);
   }
 }
