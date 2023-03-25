@@ -40,12 +40,13 @@ let buildJob =
               (toMap { registry-type = GHA.WithParameterType.Text "public" })
           }
         , GHA.Step::{
-          , name = "build and push"
+          , name = "build and push(runner)"
           , uses = Some "docker/build-push-action@v4"
           , with = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
+                  , target = GHA.WithParameterType.Text "runner"
                   , platforms =
                       GHA.WithParameterType.Text "linux/amd64,linux/arm64"
                   , push = GHA.WithParameterType.Boolean True
@@ -53,7 +54,26 @@ let buildJob =
                       GHA.WithParameterType.Text
                         "${GHA.mkRefStepOutputExpression
                              "login-ecr"
-                             "registry"}/t1p5j4i4/ct2-crescent-lunarlight:latest"
+                             "registry"}/ct2pub/ct2-crescent-lunarlight:latest"
+                  }
+              )
+          }
+        , GHA.Step::{
+          , name = "build and push(managetools)"
+          , uses = Some "docker/build-push-action@v4"
+          , with = Some
+              ( toMap
+                  { context = GHA.WithParameterType.Text "."
+                  , file = GHA.WithParameterType.Text "./Dockerfile"
+                  , target = GHA.WithParameterType.Text "managetools"
+                  , platforms =
+                      GHA.WithParameterType.Text "linux/amd64,linux/arm64"
+                  , push = GHA.WithParameterType.Boolean True
+                  , tags =
+                      GHA.WithParameterType.Text
+                        "${GHA.mkRefStepOutputExpression
+                             "login-ecr"
+                             "registry"}/ct2pub/ct2-crescent-lunarlight-managetools:latest"
                   }
               )
           }

@@ -52,6 +52,7 @@ dependencies:
   next: 13.2.3_5y7qh6ykubtj2qr2evk3di7hpa
   prettier: 2.8.7
   prettier-plugin-organize-imports: 3.2.2_erhqnhond52bpeyvirmp3gjrp4
+  prisma: 4.11.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   sass: 1.60.0
@@ -60,9 +61,6 @@ dependencies:
   typescript: 4.9.5
   universal-url: 2.0.0
   zod: 3.21.4
-
-devDependencies:
-  prisma: 4.11.0
 
 packages:
 
@@ -324,6 +322,7 @@ packages:
   /@prisma/engines/4.11.0:
     resolution: {integrity: sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==}
     requiresBuild: true
+    dev: false
 
   /@rushstack/eslint-patch/1.2.0:
     resolution: {integrity: sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==}
@@ -2047,6 +2046,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.11.0
+    dev: false
 
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
