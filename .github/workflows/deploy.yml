@@ -31,7 +31,7 @@ jobs:
         file: ./Dockerfile
         platforms: "linux/amd64,linux/arm64"
         push: true
-        tags: "${{ steps.login-ecr.outputs.registry }}/ct2pub/ct2-crescent-lunarlight:latest"
+        tags: "${{ steps.login-ecr.outputs.registry }}/t1p5j4i4/ct2-crescent-lunarlight:latest"
         target: runner
     - name: "build and push(managetools)"
       uses: "docker/build-push-action@v4"
@@ -40,7 +40,7 @@ jobs:
         file: ./Dockerfile
         platforms: "linux/amd64,linux/arm64"
         push: true
-        tags: "${{ steps.login-ecr.outputs.registry }}/ct2pub/ct2-crescent-lunarlight-managetools:latest"
+        tags: "${{ steps.login-ecr.outputs.registry }}/t1p5j4i4/ct2-crescent-lunarlight/managetools:latest"
         target: managetools
   replaceContainer:
     environment: prod

@@ -54,7 +54,7 @@ let buildJob =
                       GHA.WithParameterType.Text
                         "${GHA.mkRefStepOutputExpression
                              "login-ecr"
-                             "registry"}/ct2pub/ct2-crescent-lunarlight:latest"
+                             "registry"}/t1p5j4i4/ct2-crescent-lunarlight:latest"
                   }
               )
           }
@@ -73,7 +73,7 @@ let buildJob =
                       GHA.WithParameterType.Text
                         "${GHA.mkRefStepOutputExpression
                              "login-ecr"
-                             "registry"}/ct2pub/ct2-crescent-lunarlight-managetools:latest"
+                             "registry"}/t1p5j4i4/ct2-crescent-lunarlight/managetools:latest"
                   }
               )
           }
