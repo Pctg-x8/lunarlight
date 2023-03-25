@@ -1,4 +1,5 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
 import { AppRpcRouter } from "./app";
 
 function baseUrl() {
@@ -16,7 +17,7 @@ function baseUrl() {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
-const rpcClient = createTRPCProxyClient<AppRpcRouter>({
+export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
   links: [httpBatchLink({ url: `${baseUrl()}/api/trpc` })],
 });
-export default rpcClient;
+export const rpcSuspenseClient = createTRPCReact<AppRpcRouter, unknown, "ExperimentalSuspense">();
