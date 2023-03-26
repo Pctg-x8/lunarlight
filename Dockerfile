@@ -1,7 +1,7 @@
 FROM --platform=$BUILDPLATFORM node:18-alpine as base
 
 ENV NODE_ENV=production
-ENV BASE_PATH=/ll
+ENV NEXT_PUBLIC_BASE_PATH=/ll
 RUN yarn global add pnpm
 
 FROM --platform=$BUILDPLATFORM base as deps
@@ -21,7 +21,7 @@ RUN pnpm build
 FROM node:18-alpine as runtime
 
 ENV NODE_ENV=production
-ENV BASE_PATH=/ll
+ENV NEXT_PUBLIC_BASE_PATH=/ll
 RUN yarn global add pnpm
 RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 nextjs
 

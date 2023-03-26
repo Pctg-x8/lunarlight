@@ -39,6 +39,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": true,
+    "typeRoots": ["./src/@types"]
   },
   "include": [
     "next-env.d.ts",

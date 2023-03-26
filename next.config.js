@@ -5,8 +5,8 @@ const nextConfig = {
     appDir: true
   },
   output: "standalone",
-  assetPrefix: process.env.BASE_PATH || undefined,
-  basePath: process.env.BASE_PATH || "",
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH ?? undefined,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
   async rewrites() {
     return [
       {
