@@ -28,12 +28,13 @@ RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 nextjs
 FROM runtime as runner
 
 WORKDIR /app
+
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+RUN pnpx prisma generate
 
 USER nextjs
-RUN pnpx prisma generate
 EXPOSE 3000
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLE=1
