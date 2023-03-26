@@ -49,4 +49,5 @@ COPY ./prisma/schema.prisma ./prisma/
 COPY ./prisma/migrations ./prisma/migrations
 RUN pnpm i prisma @prisma/client
 
+USER nextjs
 ENTRYPOINT ["pnpm"]
