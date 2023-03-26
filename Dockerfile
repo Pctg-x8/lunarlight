@@ -9,7 +9,7 @@ FROM --platform=$BUILDPLATFORM base as deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY prisma/schema.prisma ./prisma/
-RUN pnpm i --frozen-lockfile && pnpm generate-db-client
+RUN pnpm i --frozen-lockfile
 
 FROM --platform=$BUILDPLATFORM base as builder
 
