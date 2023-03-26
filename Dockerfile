@@ -28,12 +28,9 @@ RUN addgroup -S -g 1001 nodejs && adduser -S -u 1001 nextjs
 FROM runtime as runner
 
 WORKDIR /app
-
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY ./prisma/schema.prisma ./prisma/
-RUN pnpx prisma generate && rm -rf ./prisma
 
 USER nextjs
 EXPOSE 3000
