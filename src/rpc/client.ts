@@ -3,17 +3,17 @@ import { AppRpcRouter } from "./app";
 
 function baseUrl() {
   // browser: use relative path
-  if (typeof window !== "undefined") return "";
+  if (typeof window !== "undefined") return process.env.BASE_PATH ?? "";
 
   if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+    return `https://${process.env.VERCEL_URL}${process.env.BASE_PATH ?? ""}`;
   }
 
   if (process.env.RENDER_INTERNAL_HOSTNAME) {
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}${process.env.BASE_PATH ?? ""}`;
   }
 
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:${process.env.PORT ?? 3000}${process.env.BASE_PATH ?? ""}`;
 }
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
