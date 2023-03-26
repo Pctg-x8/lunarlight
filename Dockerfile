@@ -31,6 +31,8 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY prisma/schema.prisma ./prisma/
+RUN pnpx prisma generate
 
 USER nextjs
 EXPOSE 3000
