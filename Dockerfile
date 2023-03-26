@@ -11,12 +11,12 @@ COPY package.json pnpm-lock.yaml ./
 COPY prisma/schema.prisma ./prisma/
 RUN pnpm i --frozen-lockfile
 
-FROM base as builder
+FROM --platform=$BUILDPLATFORM base as builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm db:generate-client && pnpm build
+RUN pnpm build
 
 FROM node:18-alpine as runtime
 
@@ -33,6 +33,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
+RUN pnpx prisma generate
 EXPOSE 3000
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLE=1
