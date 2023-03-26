@@ -47,7 +47,6 @@ COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY ./prisma/schema.prisma ./prisma/
 COPY ./prisma/migrations ./prisma/migrations
-RUN pnpm i prisma @prisma/client
 
 USER nextjs
 ENTRYPOINT ["pnpm"]
