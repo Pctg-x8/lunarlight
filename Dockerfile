@@ -41,11 +41,10 @@ CMD ["node", "server.js"]
 FROM runtime as managetools
 
 WORKDIR /app
-COPY --from=builder /app/package.json ./
-COPY --from=deps /app/node_modules ./node_modules
-RUN pnpm i prisma @prisma/client
-
 USER nextjs
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
+RUN pnpm i prisma @prisma/client
 
 ENTRYPOINT ["pnpm"]
