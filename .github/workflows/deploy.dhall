@@ -7,12 +7,13 @@ let ProvidedSteps/actions/checkout =
 let ProvidedSteps/aws-actions/configure-aws-credentials =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/aws-actions/configure-aws-credentials.dhall
 
-let setupContainerImagePushRole = ProvidedSteps/aws-actions/configure-aws-credentials.step
-  ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
-  , awsRegion = "us-east-1"
-  , roleToAssume = Some
-      "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
-  }
+let setupContainerImagePushRole =
+      ProvidedSteps/aws-actions/configure-aws-credentials.step
+        ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
+        , awsRegion = "us-east-1"
+        , roleToAssume = Some
+            "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
+        }
 
 let buildJob =
       GHA.Job::{
@@ -35,13 +36,13 @@ let buildJob =
           , name = "login to ecr public repository"
           , id = Some "login-ecr"
           , uses = Some "aws-actions/amazon-ecr-login@v1"
-          , with = Some
+          , `with` = Some
               (toMap { registry-type = GHA.WithParameterType.Text "public" })
           }
         , GHA.Step::{
           , name = "build and push(runner)"
           , uses = Some "docker/build-push-action@v4"
-          , with = Some
+          , `with` = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
@@ -60,7 +61,7 @@ let buildJob =
         , GHA.Step::{
           , name = "build and push(managetools)"
           , uses = Some "docker/build-push-action@v4"
-          , with = Some
+          , `with` = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
