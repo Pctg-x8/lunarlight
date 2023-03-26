@@ -1,28 +1,15 @@
 import { DefaultInstance, EmptyRequestBody, FormDataRequestBody, HTTPError } from "@/models/api";
 import { verifyCredentials } from "@/models/api/mastodon/account";
 import { buildAuthorizeUrl, buildScopes, createApp } from "@/models/api/mastodon/apps";
+import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import cookie from "cookie";
-
-const DAY_SECONDS = 24 * 60 * 60;
 
 export async function createContext(opts: CreateNextContextOptions) {
-  const setAuthorizedToken = (newToken: string) => {
-    opts.res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("_lla", newToken, {
-        httpOnly: true,
-        maxAge: 30 * DAY_SECONDS,
-        sameSite: "lax",
-      })
-    );
-  };
-
   return {
-    getAuthorizedToken: () => opts.req.cookies["_lla"],
-    setAuthorizedToken: (newToken: string) => setAuthorizedToken(newToken),
-    clearAuthorizedToken: () => setAuthorizedToken(""),
+    getAuthorizedToken: () => getAuthorizationToken(opts.req),
+    setAuthorizedToken: (newToken: string) => setAuthorizationToken(newToken)(opts.res),
+    clearAuthorizedToken: () => setAuthorizationToken("")(opts.res),
   };
 }
 

@@ -1,9 +1,7 @@
 import { DefaultInstance, FormDataRequestBody, HTTPError } from "@/models/api";
 import { buildScopes, createApp, obtainToken } from "@/models/api/mastodon/apps";
-import cookie from "cookie";
+import { setAuthorizationToken } from "@/models/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-
-const DAY_SECONDS = 24 * 60 * 60;
 
 export default async function handler(req: NextApiRequest, resp: NextApiResponse) {
   const code = req.query["code"];
@@ -38,14 +36,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
       DefaultInstance
     );
 
-    resp.setHeader(
-      "Set-Cookie",
-      cookie.serialize("_lla", token.access_token, {
-        httpOnly: true,
-        maxAge: 30 * DAY_SECONDS,
-        sameSite: "lax",
-      })
-    );
+    setAuthorizationToken(token.access_token)(resp);
     resp.redirect(302, "/");
   } catch (e) {
     if (e instanceof HTTPError.HTTPErrorBase) {
