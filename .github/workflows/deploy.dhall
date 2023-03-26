@@ -7,13 +7,12 @@ let ProvidedSteps/actions/checkout =
 let ProvidedSteps/aws-actions/configure-aws-credentials =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/aws-actions/configure-aws-credentials.dhall
 
-let setupContainerImagePushRole =
-      ProvidedSteps/aws-actions/configure-aws-credentials.step
-        ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
-        , awsRegion = "us-east-1"
-        , roleToAssume = Some
-            "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
-        }
+let setupContainerImagePushRole = ProvidedSteps/aws-actions/configure-aws-credentials.step
+  ProvidedSteps/aws-actions/configure-aws-credentials.Params::{
+  , awsRegion = "us-east-1"
+  , roleToAssume = Some
+      "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
+  }
 
 let buildJob =
       GHA.Job::{
@@ -96,7 +95,7 @@ let replaceContainerJob =
           , name = "run replace command"
           , run = Some
               ''
-              aws ssm send-command --document-name "Crescent-ReplaceLunarlightContainer" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1
+              aws ssm send-command --document-name "Crescent-Lunarlight-DeploymentContainers" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1
               ''
           }
         ]
