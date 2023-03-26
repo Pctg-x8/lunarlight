@@ -10,4 +10,3 @@ Dockerfile
 README.md
 .env
 prisma/*.db
-prisma/migrations/*
