@@ -10,6 +10,8 @@ export function baseUrl() {
   // browser: use relative path
   if (typeof window !== "undefined") return process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+  if (process.env.APP_BASE_URL) return process.env.APP_BASE_URL;
+
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
   }
