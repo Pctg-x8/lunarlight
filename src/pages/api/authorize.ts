@@ -1,5 +1,6 @@
 import { DefaultInstance, FormDataRequestBody, HTTPError } from "@/models/api";
-import { buildScopes, createApp, obtainToken } from "@/models/api/mastodon/apps";
+import { createApp, obtainToken } from "@/models/api/mastodon/apps";
+import { AppData } from "@/models/app";
 import { setAuthorizationToken } from "@/models/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -11,18 +12,8 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
   }
 
   try {
-    const redirect_to = "http://localhost:3000/api/authorize";
-    const scopes = buildScopes("read", "write", "push");
     const app = await DefaultInstance.queryAppInfo((instance) =>
-      createApp.send(
-        new FormDataRequestBody({
-          client_name: "Lunarlight",
-          redirect_uris: redirect_to,
-          scopes,
-          website: "https://crescent.ct2.io/ll/",
-        }),
-        instance
-      )
+      createApp.send(new FormDataRequestBody(AppData), instance)
     );
     const token = await obtainToken.send(
       new FormDataRequestBody({
@@ -30,8 +21,8 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
         code,
         client_id: app.client_id,
         client_secret: app.client_secret,
-        redirect_uri: redirect_to,
-        scope: scopes,
+        redirect_uri: AppData.redirect_uris,
+        scope: AppData.scopes,
       }),
       DefaultInstance
     );

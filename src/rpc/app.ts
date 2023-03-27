@@ -1,6 +1,7 @@
 import { DefaultInstance, EmptyRequestBody, FormDataRequestBody, HTTPError } from "@/models/api";
 import { verifyCredentials } from "@/models/api/mastodon/account";
-import { buildAuthorizeUrl, buildScopes, createApp } from "@/models/api/mastodon/apps";
+import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
+import { AppData } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
@@ -38,25 +39,15 @@ export const appRpcRouter = t.router({
   }),
   loginUrl: t.procedure.query(async () => {
     try {
-      const redirect_to = "http://localhost:3000/api/authorize";
-      const scopes = buildScopes("read", "write", "push");
       const app = await DefaultInstance.queryAppInfo((instance) =>
-        createApp.send(
-          new FormDataRequestBody({
-            client_name: "Lunarlight",
-            redirect_uris: redirect_to,
-            scopes,
-            website: "https://crescent.ct2.io/ll/",
-          }),
-          instance
-        )
+        createApp.send(new FormDataRequestBody(AppData), instance)
       );
 
       return buildAuthorizeUrl(DefaultInstance, {
         response_type: "code",
         client_id: app.client_id,
-        redirect_uri: redirect_to,
-        scope: scopes,
+        redirect_uri: AppData.redirect_uris,
+        scope: AppData.scopes,
       });
     } catch (e) {
       if (e instanceof HTTPError.HTTPErrorBase) {
