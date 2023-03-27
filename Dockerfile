@@ -29,7 +29,7 @@ RUN pnpx prisma generate
 EXPOSE 3000
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLE=1
-CMD ["node", "server.js"]
+CMD ["pnpm", "start"]
 
 FROM runtime as managetools
 
