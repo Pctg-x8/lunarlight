@@ -34,7 +34,7 @@ CMD ["node", "server.js"]
 FROM runtime as managetools
 
 WORKDIR /app
-COPY ./package.json /app/pnpm-lock.yaml ./
+COPY ./package.json ./pnpm-lock.yaml ./
 COPY ./prisma ./prisma
 RUN pnpm i prisma @prisma/client
 
