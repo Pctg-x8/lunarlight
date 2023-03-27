@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
     );
 
     setAuthorizationToken(token.access_token)(resp);
-    resp.redirect(302, "/");
+    resp.redirect(302, process.env.NEXT_PUBLIC_BASE_PATH ?? "/");
   } catch (e) {
     if (e instanceof HTTPError.HTTPErrorBase) {
       console.error("api error", e, await e.readResponseJson());
