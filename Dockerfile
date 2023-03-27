@@ -41,6 +41,7 @@ ENV NEXT_TELEMETRY_DISABLE=1
 CMD ["node", "server.js"]
 
 FROM runtime as managetools
+USER nextjs
 
 WORKDIR /app
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
@@ -49,5 +50,4 @@ COPY ./prisma/schema.prisma ./prisma/
 COPY ./prisma/migrations ./prisma/migrations
 RUN pnpm i prisma @prisma/client
 
-USER nextjs
 ENTRYPOINT ["pnpm"]
