@@ -19,4 +19,11 @@
   --theme-user-fields-bg: #123;
   --theme-user-fields-border: #245;
   --theme-user-fields-text: #aab;
+
+  --theme-primary-button-bg: #29d;
+  --theme-primary-button-bg-hover: #3af;
+  --theme-primary-button-bg-active: #058;
+  --theme-primary-button-bg-disable: #999;
+  --theme-primary-button-text: var(--theme-default-text);
+  --theme-primary-button-text-disable: #ccc;
 }
