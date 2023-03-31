@@ -72,7 +72,7 @@ body {
   font-size: 14px;
 }
 
-a {
+a:not(.no-default) {
   text-decoration: none;
   position: relative;
   color: var(--theme-text-link);
@@ -98,7 +98,7 @@ a {
       opacity: 1;
     }
   }
-  
+
   &:visited {
     color: var(--theme-text-link-visited);
     text-shadow: 0 0 0px var(--theme-text-link-visited);
@@ -114,27 +114,27 @@ a {
 
   &.non-colored {
     color: var(--theme-default-text);
-  
+
     &::after {
       background: var(--theme-default-text);
     }
-  
+
     &:hover {
       text-shadow: 0 0 2px var(--theme-default-text);
-  
+
       &::after {
         opacity: 1;
       }
     }
-    
+
     &:visited {
       color: var(--theme-default-text);
       text-shadow: 0 0 0px var(--theme-default-text);
-  
+
       &:hover {
         text-shadow: 0 0 2px var(--theme-default-text);
       }
-  
+
       &::after {
         background: var(--theme-default-text);
       }
@@ -143,27 +143,27 @@ a {
 
   &.sub-colored {
     color: var(--theme-subtext);
-  
+
     &::after {
       background: var(--theme-subtext);
     }
-  
+
     &:hover {
       text-shadow: 0 0 2px var(--theme-subtext);
-  
+
       &::after {
         opacity: 1;
       }
     }
-    
+
     &:visited {
       color: var(--theme-subtext);
       text-shadow: 0 0 0px var(--theme-subtext);
-  
+
       &:hover {
         text-shadow: 0 0 2px var(--theme-subtext);
       }
-  
+
       &::after {
         background: var(--theme-subtext);
       }
@@ -172,7 +172,7 @@ a {
 
   &.clickableImage {
     height: fit-content;
-    
+
     &::after {
       display: none;
     }

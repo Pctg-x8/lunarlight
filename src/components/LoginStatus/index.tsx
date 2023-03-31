@@ -1,6 +1,7 @@
 "use client";
 
 import { rpcClient } from "@/rpc/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
@@ -10,12 +11,13 @@ export default function LoginStatus() {
 
   const nav = useRouter();
   const [loginPending, setLoginPending] = useState(false);
-  const doLogin = () => {
+  const doLogin = async () => {
     setLoginPending(true);
-    rpcClient.loginUrl
-      .query()
-      .then((l) => nav.push(l))
-      .finally(() => setLoginPending(false));
+    try {
+      nav.push(await rpcClient.loginUrl.query());
+    } finally {
+      setLoginPending(false);
+    }
   };
 
   if (isLoading) return <></>;
@@ -25,6 +27,9 @@ export default function LoginStatus() {
       ログイン
     </button>
   ) : (
-    <img src={account.avatar} />
+    <Link href={`/@${account.acct}`} title={`@${account.acct}`} className="no-default">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={account.avatar} alt={account.acct} />
+    </Link>
   );
 }
