@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
+import styles from "./styles.module.scss";
 
 export default function LoginStatus() {
   const { data: account, isLoading } = useSWR("authorizedAccount", () => rpcClient.authorizedAccount.query());
@@ -23,11 +24,11 @@ export default function LoginStatus() {
   if (isLoading) return <></>;
 
   return !account ? (
-    <button onClick={doLogin} disabled={loginPending}>
+    <button onClick={doLogin} disabled={loginPending} className={styles.button}>
       ログイン
     </button>
   ) : (
-    <Link href={`/@${account.acct}`} title={`@${account.acct}`} className="no-default">
+    <Link href={`/@${account.acct}`} title={`@${account.acct}`} className={`no-default ${styles.account}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={account.avatar} alt={account.acct} />
     </Link>
