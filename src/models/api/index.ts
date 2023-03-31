@@ -157,13 +157,28 @@ export class EmptyRequestBody extends RequestBody {
     super();
   }
 }
-export class SearchParamsRequestBody<Params extends Record<string, { toString(): string }>> extends RequestBody {
+export class SearchParamsRequestBody<
+  Params extends Record<string, { toString(): string } | string | undefined>
+> extends RequestBody {
   constructor(readonly data: Params) {
     super();
   }
 
   override tweakURL(url: URL) {
-    url.search = new URLSearchParams(Object.fromEntries(Object.entries(this.data).map(([k, v]) => [k, v.toString()])));
+    url.search = new URLSearchParams(
+      Object.fromEntries(
+        Object.entries(this.data).flatMap(([k, v]) => {
+          switch (typeof v) {
+            case "undefined":
+              return [];
+            case "string":
+              return [[k, v]];
+            default:
+              return [[k, v.toString()]];
+          }
+        })
+      )
+    );
 
     return url;
   }

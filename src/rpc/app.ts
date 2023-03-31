@@ -1,10 +1,18 @@
-import { DefaultInstance, EmptyRequestBody, FormDataRequestBody, HTTPError } from "@/models/api";
+import {
+  DefaultInstance,
+  EmptyRequestBody,
+  FormDataRequestBody,
+  HTTPError,
+  SearchParamsRequestBody,
+} from "@/models/api";
 import { verifyCredentials } from "@/models/api/mastodon/account";
 import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
+import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { AppData } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import z from "zod";
 
 export async function createContext(opts: CreateNextContextOptions) {
   return {
@@ -58,6 +66,22 @@ export const appRpcRouter = t.router({
 
       throw e;
     }
+  }),
+  account: t.router({
+    statuses: t.procedure
+      .input(z.object({ accountId: z.string(), max_id: z.string().optional(), limit: z.number().optional() }))
+      .query(({ input, ctx }) => {
+        const tok = ctx.getAuthorizedToken();
+        const instance = tok ? DefaultInstance.withAuthorizationToken(tok) : DefaultInstance;
+
+        return getStatusesForAccount(input.accountId).send(
+          new SearchParamsRequestBody({
+            max_id: input.max_id,
+            limit: input.limit,
+          }),
+          instance
+        );
+      }),
   }),
 });
 export type AppRpcRouter = typeof appRpcRouter;

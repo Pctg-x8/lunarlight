@@ -1,22 +1,15 @@
 import AccountTimeline from "@/components/AccountTimelnie";
 import UserHeader from "@/components/UserHeader";
-import ProdInstance, { HTTPError, SearchParamsRequestBody } from "@/models/api";
+import { DefaultInstance, HTTPError, SearchParamsRequestBody } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
 import { WebFingerAccount } from "@/models/webfinger";
-import { cookie } from "@/utils/cookie";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 async function getData(acct: string) {
   try {
-    const token = cookie.token();
-    const instance = new ProdInstance();
-
-    const account = await lookup.send(
-      new SearchParamsRequestBody({ acct: decodeURIComponent(acct) }),
-      token ? instance.withAuthorizationToken(token) : instance
-    );
-    const fullAcct = await WebFingerAccount.decompose(account.acct).resolveDomainPart(instance);
+    const account = await lookup.send(new SearchParamsRequestBody({ acct: decodeURIComponent(acct) }), DefaultInstance);
+    const fullAcct = await WebFingerAccount.decompose(account.acct).resolveDomainPart(DefaultInstance);
 
     return { account, fullAcct: fullAcct.toString() };
   } catch (e) {
