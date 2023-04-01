@@ -28,7 +28,6 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
     );
 
     setAuthorizationToken(token.access_token)(resp);
-    await resp.revalidate(process.env.NEXT_PUBLIC_BASE_PATH ?? "/");
     resp.redirect(302, process.env.NEXT_PUBLIC_BASE_PATH ?? "/");
   } catch (e) {
     if (e instanceof HTTPError.HTTPErrorBase) {
