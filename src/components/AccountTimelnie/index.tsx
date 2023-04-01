@@ -8,8 +8,7 @@ import Timeline from "../Timeline";
 
 export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, isLoading, setSize } = useSWRInfinite(
-    (pageId, prevPageData): { readonly max_id?: string; readonly limit?: number } | null => {
-      console.log(pageId, prevPageData);
+    (_, prevPageData): { readonly max_id?: string; readonly limit?: number } | null => {
       if (!prevPageData) return { limit: 20 };
       if (prevPageData.length === 0) return null;
       return { limit: 20, max_id: prevPageData[prevPageData.length - 1].id };
