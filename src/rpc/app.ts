@@ -1,17 +1,10 @@
-import {
-  DefaultInstance,
-  EmptyRequestBody,
-  FormDataRequestBody,
-  HTTPError,
-  SearchParamsRequestBody,
-} from "@/models/api";
-import { verifyCredentials } from "@/models/api/mastodon/account";
+import { DefaultInstance, FormDataRequestBody, HTTPError, SearchParamsRequestBody } from "@/models/api";
 import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
-import { homeTimeline, HomeTimelineRequestParamsZ } from "@/models/api/mastodon/timeline";
+import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
 import { AppData } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
-import { inferAsyncReturnType, initTRPC, TRPCError } from "@trpc/server";
+import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import z from "zod";
 
@@ -30,27 +23,10 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
 
   return await next({ ctx: { token } });
 });
+
 export const appRpcRouter = t.router({
-  authorizedAccount: t.procedure.query(async ({ ctx }) => {
-    const token = ctx.getAuthorizedToken();
-    if (!token) return null;
-
-    const instance = DefaultInstance.withAuthorizationToken(token);
-    try {
-      return await verifyCredentials.send(EmptyRequestBody.instance, instance);
-    } catch (e) {
-      if (
-        e instanceof HTTPError.ForbiddenError ||
-        e instanceof HTTPError.UnauthorizedError ||
-        e instanceof HTTPError.UnprocessableEntityError
-      ) {
-        ctx.clearAuthorizedToken();
-        return null;
-      }
-
-      // unprocessable
-      throw e;
-    }
+  logout: t.procedure.mutation(({ ctx }) => {
+    ctx.clearAuthorizedToken();
   }),
   loginUrl: t.procedure.query(async () => {
     try {

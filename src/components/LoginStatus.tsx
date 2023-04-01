@@ -1,37 +1,29 @@
 "use client";
 
+import { CredentialAccount } from "@/models/api/mastodon/account";
 import { rpcClient } from "@/rpc/client";
 import { styled } from "@linaria/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import useSWR from "swr";
 
-export default function LoginStatus() {
-  const { data: account, isLoading } = useSWR("authorizedAccount", () => rpcClient.authorizedAccount.query());
-
+export default function LoginStatus({ login }: { readonly login: CredentialAccount | null }) {
   const nav = useRouter();
   const [loginPending, setLoginPending] = useState(false);
   const doLogin = async () => {
     setLoginPending(true);
-    try {
-      nav.push(await rpcClient.loginUrl.query());
-    } finally {
-      setLoginPending(false);
-    }
+    nav.push(await rpcClient.loginUrl.query());
   };
 
-  if (isLoading) return <></>;
-
-  return !account ? (
+  return !login ? (
     <LoginButton onClick={doLogin} disabled={loginPending}>
       ログイン
     </LoginButton>
   ) : (
     <AccountLink>
-      <Link href={`/@${account.acct}`} title={`@${account.acct}`} className="no-default">
+      <Link href={`/@${login.acct}`} title={`@${login.acct}`} className="no-default">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={account.avatar} alt={account.acct} />
+        <img src={login.avatar} alt={login.acct} />
       </Link>
     </AccountLink>
   );

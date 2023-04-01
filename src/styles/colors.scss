@@ -1,5 +1,6 @@
 :root {
-  --theme-background: rgb(24, 28, 42);
+  --theme-background-elements: 24, 28, 42;
+  --theme-background: rgb(var(--theme-background-elements));
   --theme-outview-background: #080c1a;
   --theme-default-text: #ffe;
   --theme-subtext: #ccc;
