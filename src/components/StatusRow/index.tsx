@@ -30,23 +30,23 @@ export default function StatusRow({ status }: { readonly status: Status }) {
       {status instanceof RebloggedStatus ? (
         <p className={styles.rebloggedBy}>
           Boosted by{" "}
-          <Link href={`/@${status.rebloggedBy.acct}`} className="sub-colored">
-            {status.rebloggedBy.display_name}
+          <Link href={status.rebloggedBy.pagePath} className="sub-colored">
+            {status.rebloggedBy.displayName}
           </Link>
         </p>
       ) : undefined}
-      <Link className={`${styles.avatar} clickableImage`} href={`/@${status.account.acct}`}>
+      <Link className={`${styles.avatar} clickableImage`} href={status.account.pagePath}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={status.account.avatar} alt={status.account.acct} />
+        <img src={status.account.avatarUrl} alt={status.account.acct.toString()} />
       </Link>
       <h1 className={styles.displayName}>
-        <Link className="non-colored" href={`/@${status.account.acct}`}>
-          {status.account.display_name}
+        <Link className="non-colored" href={status.account.pagePath}>
+          {status.account.displayName}
         </Link>
       </h1>
       <h2 className={styles.acct}>
-        <Link className="sub-colored" href={`/@${status.account.acct}`}>
-          @{status.account.acct}
+        <Link className="sub-colored" href={status.account.pagePath}>
+          @{status.account.acct.toString()}
         </Link>
       </h2>
       <AgoLabel className={styles.ago} createdAt={status.created_at} />

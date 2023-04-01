@@ -1,6 +1,6 @@
 import { stripTags } from "@/utils";
-import { Account } from "./api/mastodon/account";
-import { Application, Status as ApiStatusData } from "./api/mastodon/status";
+import { Account } from "./account";
+import { Status as ApiStatusData, Application } from "./api/mastodon/status";
 
 export type Counters = {
   readonly replied: number;
@@ -10,7 +10,7 @@ export type Counters = {
 export abstract class Status {
   static fromApiData(data: ApiStatusData): Status {
     if (data.reblog) {
-      return new RebloggedStatus(data.reblog, data.account, data.id);
+      return new RebloggedStatus(data.reblog, new Account(data.account), data.id);
     }
 
     return new NormalStatus(data);
@@ -35,8 +35,9 @@ export class NormalStatus extends Status {
     return `/@${this.account.acct}/${this.timelineId}`;
   }
 
+  private _account: Account | null = null;
   get account() {
-    return this.values.account;
+    return (this._account ??= new Account(this.values.account));
   }
 
   get timelineId() {
@@ -77,8 +78,9 @@ export class RebloggedStatus extends Status {
     return `/@${this.account.acct}/${this.id}`;
   }
 
+  private _account: Account | null = null;
   get account() {
-    return this.values.account;
+    return (this._account ??= new Account(this.values.account));
   }
 
   get id() {

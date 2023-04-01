@@ -1,27 +1,29 @@
-import { Account } from "@/models/api/mastodon/account";
+import { Account } from "@/models/account";
 import styles from "./styles.module.scss";
 
 export default function UserHeader({ account, fullAcct }: { readonly account: Account; readonly fullAcct: string }) {
+  const { posts, followers, followings } = account.counters;
+
   return (
     <article className={styles.userHeader}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className={styles.headerImage} src={account.header} alt={fullAcct} />
+      <img className={styles.headerImage} src={account.headerUrl} alt={fullAcct} />
       <article className={styles.baseInfoGrid}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={account.avatar} alt={fullAcct} />
-        <h1>{account.display_name}</h1>
+        <img src={account.avatarUrl} alt={fullAcct} />
+        <h1>{account.displayName}</h1>
         <h2>@{fullAcct}</h2>
       </article>
       <div className={styles.note} dangerouslySetInnerHTML={{ __html: account.note }} />
       <ul className={styles.numbers}>
         <li>
-          <em>{account.statuses_count}</em> 投稿
+          <em>{posts}</em> 投稿
         </li>
         <li>
-          <em>{account.following_count}</em> フォロー
+          <em>{followings}</em> フォロー
         </li>
         <li>
-          <em>{account.followers_count}</em> フォロワー
+          <em>{followers}</em> フォロワー
         </li>
       </ul>
       <ul className={styles.fieldList}>

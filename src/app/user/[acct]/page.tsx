@@ -1,18 +1,17 @@
 import AccountTimeline from "@/components/AccountTimelnie";
 import UserHeader from "@/components/UserHeader";
+import { Account } from "@/models/account";
 import { DefaultInstance, HTTPError, SearchParamsRequestBody } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
-import Webfinger from "@/models/webfinger";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-async function getData(acct: string) {
+async function getData(acct: string): Promise<{ readonly account: Account; readonly fullAcct: string }> {
   try {
-    const account = await lookup.send(new SearchParamsRequestBody({ acct }), DefaultInstance);
-    const fullAcct = await Webfinger.Address.decompose(account.acct).resolveDomainPart(DefaultInstance);
+    const account = new Account(await lookup.send(new SearchParamsRequestBody({ acct }), DefaultInstance));
 
-    return { account, fullAcct: fullAcct.toString() };
+    return { account, fullAcct: (await account.fullAcct(DefaultInstance)).toString() };
   } catch (e) {
     if (e instanceof HTTPError.NotFoundError) {
       notFound();
@@ -25,10 +24,14 @@ async function getData(acct: string) {
 export async function generateMetadata({ params }: { readonly params: { readonly acct: string } }): Promise<Metadata> {
   const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
 
-  return { title: `${account.display_name}(@${fullAcct})` };
+  return { title: `${account.displayName}(@${fullAcct})` };
 }
 
-export default async function UserPage({ params }: { readonly params: { readonly acct: string } }) {
+export default async function UserPage({
+  params,
+}: {
+  readonly params: { readonly acct: string };
+}): Promise<JSX.Element> {
   // strip prefixing @(%40)
   const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
 
