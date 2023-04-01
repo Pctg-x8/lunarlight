@@ -25,6 +25,11 @@
   font-style: italic;
   margin-bottom: 8px;
   color: var(--theme-subtext);
+
+  & > .icon {
+    font-size: 125%;
+    margin-right: 0.4em;
+  }
 }
 
 .avatar {

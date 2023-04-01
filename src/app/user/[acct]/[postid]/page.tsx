@@ -6,6 +6,8 @@ import { getStatus } from "@/models/api/mastodon/status";
 import { RebloggedStatus, Status } from "@/models/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText } from "@/utils";
+import { faRetweet } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -48,6 +50,7 @@ export default async function SinglePostPage({
       <article className={singleCardStyle.singleCard}>
         {status instanceof RebloggedStatus ? (
           <p className={singleCardStyle.rebloggedBy}>
+            <FontAwesomeIcon icon={faRetweet} className={singleCardStyle.icon} />
             Boosted by{" "}
             <Link href={status.rebloggedBy.pagePath} className="sub-colored">
               {status.rebloggedBy.displayName}
