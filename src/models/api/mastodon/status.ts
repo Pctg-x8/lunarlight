@@ -20,6 +20,7 @@ export type Status = {
   readonly application?: Application;
   readonly spoiler_text?: string;
   readonly text?: string;
+  readonly reblog?: Status | null;
 };
 
 export type AccountStatusRequestParams = {
@@ -30,6 +31,6 @@ export type AccountStatusRequestParams = {
 export const getStatus = (id: string) =>
   new GetAPI<EmptyRequestBody, Status>(`api/v1/statuses/${encodeURIComponent(id)}`);
 export const getStatusesForAccount = (id: string) =>
-  new GetAPI<SearchParamsRequestBody<AccountStatusRequestParams>, Status>(
+  new GetAPI<SearchParamsRequestBody<AccountStatusRequestParams>, Status[]>(
     `api/v1/accounts/${encodeURIComponent(id)}/statuses`
   );

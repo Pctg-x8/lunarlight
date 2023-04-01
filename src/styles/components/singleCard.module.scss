@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-areas:
+    "space reblogged_by"
     "avatar display_name"
     "avatar account_fullname"
     "content content"
@@ -26,11 +27,20 @@
   }
 }
 
+.rebloggedBy {
+  grid-area: reblogged_by;
+  margin-bottom: 8px;
+  font-size: 75%;
+  font-weight: bolder;
+  font-style: italic;
+  color: var(--theme-subtext);
+}
+
 .avatarImage {
   grid-area: avatar;
   margin-right: 4px;
 
-  &>img {
+  & > img {
     width: auto;
     height: 48px;
     object-fit: cover;

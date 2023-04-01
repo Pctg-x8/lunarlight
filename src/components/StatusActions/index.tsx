@@ -1,27 +1,29 @@
-import { Status } from "@/models/api/mastodon/status";
+import { Status } from "@/models/status";
 import { faBookmark, faEllipsis, faReply, faRetweet, faShareNodes, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
 
 export default function StatusActions({ status }: { readonly status: Status }) {
+  const { replied, favorited, reblogged } = status.counters;
+
   return (
     <ul className={styles.statusActions}>
       <li>
         <button title="返信">
           <FontAwesomeIcon icon={faReply} />
-          <span>{status.replies_count}</span>
+          <span>{replied}</span>
         </button>
       </li>
       <li>
         <button title="ふぁぼ">
           <FontAwesomeIcon icon={faStar} />
-          <span>{status.favourites_count}</span>
+          <span>{favorited}</span>
         </button>
       </li>
       <li>
         <button title="ブースト">
           <FontAwesomeIcon icon={faRetweet} />
-          <span>{status.reblogs_count}</span>
+          <span>{reblogged}</span>
         </button>
       </li>
       <li className={styles.nonCounter}>

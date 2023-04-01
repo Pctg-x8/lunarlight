@@ -1,4 +1,4 @@
-import { Status } from "@/models/api/mastodon/status";
+import { Status } from "@/models/status";
 import StatusRow from "../StatusRow";
 import styles from "./styles.module.scss";
 

@@ -1,6 +1,7 @@
 .statusRow {
   display: grid;
   grid-template-areas:
+    "space2 rebloggedBy rebloggedBy rebloggedBy ago"
     "image displayName acct space ago"
     "image text text text text"
     "a a a a a";
@@ -17,11 +18,20 @@
   }
 }
 
+.rebloggedBy {
+  grid-area: rebloggedBy;
+  font-size: 75%;
+  font-weight: bolder;
+  font-style: italic;
+  margin-bottom: 8px;
+  color: var(--theme-subtext);
+}
+
 .avatar {
   grid-area: image;
   margin-right: 8px;
 
-  &>img {
+  & > img {
     height: 36px;
     width: 36px;
     border-radius: 4px;

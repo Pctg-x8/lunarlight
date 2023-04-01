@@ -1,4 +1,4 @@
-import { Status } from "@/models/api/mastodon/status";
+import { RebloggedStatus, Status } from "@/models/status";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
@@ -26,11 +26,15 @@ export default function StatusRow({ status }: { readonly status: Status }) {
   const nav = useRouter();
 
   return (
-    <article
-      ref={contentRef}
-      className={styles.statusRow}
-      onClick={() => nav.push(`/@${status.account.acct}/${status.id}`)}
-    >
+    <article ref={contentRef} className={styles.statusRow} onClick={() => nav.push(status.previewPath)}>
+      {status instanceof RebloggedStatus ? (
+        <p className={styles.rebloggedBy}>
+          Boosted by{" "}
+          <Link href={`/@${status.rebloggedBy.acct}`} className="sub-colored">
+            {status.rebloggedBy.display_name}
+          </Link>
+        </p>
+      ) : undefined}
       <Link className={`${styles.avatar} clickableImage`} href={`/@${status.account.acct}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={status.account.avatar} alt={status.account.acct} />
