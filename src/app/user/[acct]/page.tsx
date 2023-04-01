@@ -2,14 +2,14 @@ import AccountTimeline from "@/components/AccountTimelnie";
 import UserHeader from "@/components/UserHeader";
 import { DefaultInstance, HTTPError, SearchParamsRequestBody } from "@/models/api";
 import { lookup } from "@/models/api/mastodon/account";
-import { WebFingerAccount } from "@/models/webfinger";
+import Webfinger from "@/models/webfinger";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 async function getData(acct: string) {
   try {
     const account = await lookup.send(new SearchParamsRequestBody({ acct: decodeURIComponent(acct) }), DefaultInstance);
-    const fullAcct = await WebFingerAccount.decompose(account.acct).resolveDomainPart(DefaultInstance);
+    const fullAcct = await Webfinger.Address.decompose(account.acct).resolveDomainPart(DefaultInstance);
 
     return { account, fullAcct: fullAcct.toString() };
   } catch (e) {

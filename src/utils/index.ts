@@ -24,3 +24,7 @@ export function baseUrl() {
 
   return `http://localhost:${process.env.PORT ?? 3000}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
 }
+
+export function stripPrefix(input: string, prefix: string): string {
+  return input.startsWith(prefix) ? input.slice(prefix.length) : input;
+}

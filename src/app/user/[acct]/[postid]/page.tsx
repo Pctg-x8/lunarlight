@@ -3,7 +3,7 @@ import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
 import ProdInstance, { EmptyRequestBody, HTTPError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
-import { WebFingerAccount } from "@/models/webfinger";
+import Webfinger from "@/models/webfinger";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText, stripTags } from "@/utils";
 import { Metadata } from "next";
@@ -14,7 +14,7 @@ async function getPost(_acct: string, postid: string) {
   const instance = new ProdInstance();
   try {
     const status = await getStatus(postid).send(EmptyRequestBody.instance, instance);
-    const fullAcct = await WebFingerAccount.decompose(status.account.acct).resolveDomainPart(instance);
+    const fullAcct = await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance);
 
     return { status, fullAccountPath: fullAcct.toString() };
   } catch (e) {
