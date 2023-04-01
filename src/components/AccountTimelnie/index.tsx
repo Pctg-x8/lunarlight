@@ -13,7 +13,8 @@ export default function AccountTimeline({ accountId }: { readonly accountId: str
       if (prevPageData.length === 0) return null;
       return { limit: 20, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    (req) => rpcClient.account.statuses.query({ accountId, ...req }).then((xs) => xs.map(Status.fromApiData))
+    (req) => rpcClient.account.statuses.query({ accountId, ...req }).then((xs) => xs.map(Status.fromApiData)),
+    { revalidateFirstPage: false, revalidateAll: false }
   );
   const statuses: Status[] = useMemo(() => data?.flat() ?? [], [data]);
   const sentinelRef = useRef<HTMLDivElement>(null);
