@@ -1,9 +1,5 @@
-import styles from "@/styles/Home.module.css";
+import HomeStreamingTimeline from "@/components/HomeStreamingTimeline";
 
 export default function Home() {
-  return (
-    <>
-      <main className={styles.main}></main>
-    </>
-  );
+  return <HomeStreamingTimeline />;
 }

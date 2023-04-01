@@ -8,9 +8,10 @@ import {
 import { verifyCredentials } from "@/models/api/mastodon/account";
 import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
+import { homeTimeline, HomeTimelineRequestParamsZ } from "@/models/api/mastodon/timeline";
 import { AppData } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
-import { inferAsyncReturnType, initTRPC } from "@trpc/server";
+import { inferAsyncReturnType, initTRPC, TRPCError } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import z from "zod";
 
@@ -23,6 +24,12 @@ export async function createContext(opts: CreateNextContextOptions) {
 }
 
 const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create();
+const requireAuthorized = t.middleware(async ({ ctx, next }) => {
+  const token = ctx.getAuthorizedToken();
+  if (!token) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  return await next({ ctx: { token } });
+});
 export const appRpcRouter = t.router({
   authorizedAccount: t.procedure.query(async ({ ctx }) => {
     const token = ctx.getAuthorizedToken();
@@ -83,5 +90,11 @@ export const appRpcRouter = t.router({
         );
       }),
   }),
+  homeTimeline: t.procedure
+    .use(requireAuthorized)
+    .input(HomeTimelineRequestParamsZ)
+    .query(({ input, ctx: { token } }) =>
+      homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
+    ),
 });
 export type AppRpcRouter = typeof appRpcRouter;

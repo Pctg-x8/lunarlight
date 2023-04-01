@@ -1,30 +1,30 @@
 "use client";
 
-import { Status } from "@/models/api/mastodon/status";
+import { HomeTimelineRequestParams } from "@/models/api/mastodon/timeline";
 import { rpcClient } from "@/rpc/client";
 import { useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
-import Timeline from "../Timeline";
+import Timeline from "./Timeline";
 
-export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
+export default function HomeStreamingTimeline() {
   const { data, isLoading, setSize } = useSWRInfinite(
-    (_, prevPageData): { readonly max_id?: string; readonly limit?: number } | null => {
-      if (!prevPageData) return { limit: 20 };
+    (_, prevPageData): HomeTimelineRequestParams | null => {
+      if (!prevPageData) return { limit: 50 };
       if (prevPageData.length === 0) return null;
-      return { limit: 20, max_id: prevPageData[prevPageData.length - 1].id };
+      return { limit: 50, max_id: prevPageData[prevPageData.length - 1].id };
     },
-    (req) => rpcClient.account.statuses.query({ accountId, ...req })
+    (req) => rpcClient.homeTimeline.query(req)
   );
-  const statuses: Status[] = useMemo(() => data?.flat() ?? [], [data]);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const statuses = useMemo(() => data?.flat() ?? [], [data]);
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!sentinelRef.current) return;
 
     const io = new IntersectionObserver(
       (e) => {
         if (e.length < 1 || !e[0].isIntersecting) return;
-        
+
         setSize((x) => x + 1);
       },
       { threshold: 1.0 }
@@ -33,9 +33,8 @@ export default function AccountTimeline({ accountId }: { readonly accountId: str
     return () => io.disconnect();
   }, [isLoading, setSize]);
 
-  return isLoading ? (
-    <p>Loading...</p>
-  ) : (
+  if (isLoading) return <p>Loading...</p>;
+  return (
     <>
       <Timeline statuses={statuses} />
       <div ref={sentinelRef} />
