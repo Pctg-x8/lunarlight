@@ -107,6 +107,12 @@ let buildJob =
                         "${GHA.mkRefStepOutputExpression
                              "login-ecr"
                              "registry"}/t1p5j4i4/ct2-crescent-lunarlight/managetools:latest"
+                  , cache-from =
+                      GHA.WithParameterType.Text
+                        "type=local,src=/tmp/.buildx-cache"
+                  , cache-to =
+                      GHA.WithParameterType.Text
+                        "type=local,dest=/tmp/.buildx-cache-new"
                   }
               )
           }

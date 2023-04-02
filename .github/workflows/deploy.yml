@@ -44,6 +44,8 @@ jobs:
     - name: "build and push(managetools)"
       uses: "docker/build-push-action@v4"
       with:
+        "cache-from": "type=local,src=/tmp/.buildx-cache"
+        "cache-to": "type=local,dest=/tmp/.buildx-cache-new"
         context: '.'
         file: ./Dockerfile
         platforms: "linux/amd64,linux/arm64"
