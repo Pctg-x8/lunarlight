@@ -87,7 +87,7 @@ let buildJob =
                         "type=local,src=/tmp/.buildx-cache"
                   , cache-to =
                       GHA.WithParameterType.Text
-                        "type=local,src=/tmp/.buildx-cache-new"
+                        "type=local,dest=/tmp/.buildx-cache-new"
                   }
               )
           }
