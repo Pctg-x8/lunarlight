@@ -15,6 +15,32 @@ let setupContainerImagePushRole =
             "arn:aws:iam::208140986057:role/crescent/lunarlight/ecr-push-role"
         }
 
+let cacheDockerLayers =
+      GHA.Step::{
+      , name = "setup cache for docker layers"
+      , uses = Some "actions/cache@v2"
+      , with = Some
+          ( toMap
+              { path = GHA.WithParameterType.Text "/tmp/.buildx-cache"
+              , key =
+                  GHA.WithParameterType.Text
+                    "dockercache:${GHA.mkExpression
+                                     "runner.os"}:${GHA.mkExpression
+                                                      "github.sha"}"
+              , restore-keys =
+                  GHA.WithParameterType.Text
+                    "dockercache:${GHA.mkExpression "runner.os"}:"
+              }
+          )
+      }
+
+let replaceAllDockerLayerCaches =
+      GHA.Step::{
+      , name = "replace all docker layer caches"
+      , run = Some
+          "rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache"
+      }
+
 let buildJob =
       GHA.Job::{
       , environment = Some "container-registry"
@@ -31,18 +57,19 @@ let buildJob =
           , name = "setup docker buildx"
           , uses = Some "docker/setup-buildx-action@v2"
           }
+        , cacheDockerLayers
         , setupContainerImagePushRole
         , GHA.Step::{
           , name = "login to ecr public repository"
           , id = Some "login-ecr"
           , uses = Some "aws-actions/amazon-ecr-login@v1"
-          , `with` = Some
+          , with = Some
               (toMap { registry-type = GHA.WithParameterType.Text "public" })
           }
         , GHA.Step::{
           , name = "build and push(runner)"
           , uses = Some "docker/build-push-action@v4"
-          , `with` = Some
+          , with = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
@@ -55,13 +82,19 @@ let buildJob =
                         "${GHA.mkRefStepOutputExpression
                              "login-ecr"
                              "registry"}/t1p5j4i4/ct2-crescent-lunarlight:latest"
+                  , cache-from =
+                      GHA.WithParameterType.Text
+                        "type=local,src=/tmp/.buildx-cache"
+                  , cache-to =
+                      GHA.WithParameterType.Text
+                        "type=local,src=/tmp/.buildx-cache-new"
                   }
               )
           }
         , GHA.Step::{
           , name = "build and push(managetools)"
           , uses = Some "docker/build-push-action@v4"
-          , `with` = Some
+          , with = Some
               ( toMap
                   { context = GHA.WithParameterType.Text "."
                   , file = GHA.WithParameterType.Text "./Dockerfile"
@@ -77,6 +110,7 @@ let buildJob =
                   }
               )
           }
+        , replaceAllDockerLayerCaches
         ]
       }
 
