@@ -6,7 +6,10 @@ import { AppData } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import pino from "pino";
 import z from "zod";
+
+const apiAccessLogger = pino({ name: "trpc" });
 
 export async function createContext(opts: CreateNextContextOptions) {
   return {
@@ -23,12 +26,20 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
 
   return await next({ ctx: { token } });
 });
+const accessLogger = t.middleware(async ({ path, input, next }) => {
+  apiAccessLogger.info({ path, input });
+  const r = await next();
+  apiAccessLogger.info({ path, input, response: r });
+  return r;
+});
+
+const stdProcedure = t.procedure.use(accessLogger);
 
 export const appRpcRouter = t.router({
-  logout: t.procedure.mutation(({ ctx }) => {
+  logout: stdProcedure.mutation(({ ctx }) => {
     ctx.clearAuthorizedToken();
   }),
-  loginUrl: t.procedure.query(async () => {
+  loginUrl: stdProcedure.query(async () => {
     try {
       const app = await DefaultInstance.queryAppInfo((instance) =>
         createApp.send(new FormDataRequestBody(AppData), instance)
@@ -51,7 +62,7 @@ export const appRpcRouter = t.router({
     }
   }),
   account: t.router({
-    statuses: t.procedure
+    statuses: stdProcedure
       .input(z.object({ accountId: z.string(), max_id: z.string().optional(), limit: z.number().optional() }))
       .query(({ input, ctx }) => {
         const tok = ctx.getAuthorizedToken();
@@ -66,7 +77,7 @@ export const appRpcRouter = t.router({
         );
       }),
   }),
-  homeTimeline: t.procedure
+  homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
     .query(({ input, ctx: { token } }) =>
