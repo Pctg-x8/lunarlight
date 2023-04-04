@@ -29,7 +29,7 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
 const accessLogger = t.middleware(async ({ path, input, next }) => {
   apiAccessLogger.info({ path, input });
   const r = await next();
-  apiAccessLogger.info({ path, input, response: r });
+  apiAccessLogger.info({ path, input, success: r.ok });
   return r;
 });
 
@@ -80,8 +80,16 @@ export const appRpcRouter = t.router({
   homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) =>
-      homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
-    ),
+    .query(async ({ input, ctx: { token } }) => {
+      try {
+        return await homeTimeline.send(
+          new SearchParamsRequestBody(input),
+          DefaultInstance.withAuthorizationToken(token)
+        );
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    }),
 });
 export type AppRpcRouter = typeof appRpcRouter;
