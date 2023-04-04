@@ -61,8 +61,8 @@ const LoginButton = styled.button`
 const AccountLink = styled.section`
   & > a {
     display: block;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
 
     border-radius: 4px;
     box-shadow: 0 0 8px var(--theme-default-text);

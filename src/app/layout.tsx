@@ -25,13 +25,29 @@ export default async function App({ children }: { readonly children: React.React
         <ContentWrapper>
           <SideMenu />
           <main>{children}</main>
+          <section className="right" />
         </ContentWrapper>
       </body>
     </html>
   );
 }
 
-const ContentWrapper = styled.section`
+const ContentWrapper = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+
+  & > nav {
+    position: sticky;
+    top: calc(16px + 16px + 20px + 1px + 1px); // なぞの1px(これがないとずれる)
+    height: fit-content;
+    width: 320px;
+    flex: 0 0 320px;
+  }
+
+  & > .right {
+    width: 320px;
+    flex: 0 0 320px;
+  }
 `;
