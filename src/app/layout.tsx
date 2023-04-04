@@ -1,8 +1,10 @@
 import Header from "@/components/Header";
+import SideMenu from "@/components/SideMenu";
 import { getAuthorizedAccountSSR } from "@/models/auth";
 import "@/styles/globals.scss";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { styled } from "@linaria/react";
 import { Metadata } from "next";
 import React from "react";
 
@@ -20,8 +22,16 @@ export default async function App({ children }: { readonly children: React.React
       </head>
       <body>
         <Header login={login} />
-        <main>{children}</main>
+        <ContentWrapper>
+          <SideMenu />
+          <main>{children}</main>
+        </ContentWrapper>
       </body>
     </html>
   );
 }
+
+const ContentWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+`;
