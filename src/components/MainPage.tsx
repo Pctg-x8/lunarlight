@@ -11,7 +11,7 @@ export default function MainPage({ hasLoggedIn }: { readonly hasLoggedIn: boolea
 
   return (
     <Frame limited={timelineMode === "normal"}>
-      <HomeStreamingTimeline />
+      <HomeStreamingTimeline mode={timelineMode} />
     </Frame>
   );
 }
