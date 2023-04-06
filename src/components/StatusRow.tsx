@@ -64,17 +64,57 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
       );
     case "expert":
       return (
-        <article ref={contentRef} onClick={() => nav.push(status.previewPath)}>
+        <ExpertStatusRow ref={contentRef} onClick={() => nav.push(status.previewPath)}>
           <h1 className="displayName">
-            <Link className="non-colored" href={status.account.pagePath}>
+            <Link
+              className="non-colored"
+              href={status.account.pagePath}
+              title={`${status.account.displayName} (@${status.account.acct.toString()})`}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={status.account.avatarUrl} alt={status.account.acct.toString()} />
               {status.account.displayName}
             </Link>
           </h1>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
-        </article>
+          <AgoLabel className="ago" createdAt={status.created_at} />
+        </ExpertStatusRow>
       );
   }
 }
+
+const ExpertStatusRow = styled.article`
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  align-items: baseline;
+
+  font-size: 12px;
+  padding: 4px;
+  background: var(--theme-single-card-bg);
+  cursor: pointer;
+  transition: background 0.1s ease;
+
+  &:hover {
+    background: var(--theme-single-card-bg-accent);
+  }
+
+  & .displayName {
+    flex: 1;
+    font-size: unset;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+
+    & img {
+      height: 1em;
+      margin-right: 4px;
+    }
+  }
+
+  & .ago {
+    font-size: 80%;
+  }
+`;
 
 const NormalStatusRow = styled.article`
   display: grid;
