@@ -89,7 +89,7 @@ const ExpertStatusRow = styled.article`
   align-items: baseline;
 
   font-size: 12px;
-  padding: 4px;
+  padding: 3px;
   background: var(--theme-single-card-bg);
   cursor: pointer;
   transition: background 0.1s ease;
@@ -113,6 +113,16 @@ const ExpertStatusRow = styled.article`
 
   & .ago {
     font-size: 80%;
+  }
+
+  & .text {
+    white-space: pre;
+    overflow: hidden;
+
+    & > * {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 `;
 
