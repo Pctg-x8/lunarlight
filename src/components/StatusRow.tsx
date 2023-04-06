@@ -85,7 +85,7 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
 
 const ExpertStatusRow = styled.article`
   display: grid;
-  grid-template-columns: 160px 1fr auto;
+  grid-template-columns: auto 1fr auto;
   align-items: baseline;
 
   font-size: 12px;
@@ -99,7 +99,7 @@ const ExpertStatusRow = styled.article`
   }
 
   & .displayName {
-    flex: 1;
+    width: 160px;
     font-size: unset;
     overflow: hidden;
     text-overflow: ellipsis;
