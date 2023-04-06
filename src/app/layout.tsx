@@ -1,3 +1,4 @@
+import BottomMenu from "@/components/BottomMenu";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
 import { getAuthorizedAccountSSR } from "@/models/auth";
@@ -20,17 +21,25 @@ export default async function App({ children }: { readonly children: React.React
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body>
+      <Body>
         <Header login={login} />
         <ContentWrapper>
           <SideMenu />
           <main>{children}</main>
           <section className="right" />
         </ContentWrapper>
-      </body>
+        <BottomMenu />
+      </Body>
     </html>
   );
 }
+
+const Body = styled.body`
+  & > footer {
+    position: fixed;
+    bottom: 0;
+  }
+`;
 
 const ContentWrapper = styled.div`
   width: 100%;
@@ -41,13 +50,31 @@ const ContentWrapper = styled.div`
   & > nav {
     position: sticky;
     top: calc(16px + 16px + 20px + 1px + 1px); // なぞの1px(これがないとずれる)
-    height: fit-content;
     width: 320px;
     flex: 0 0 320px;
+
+    @media (max-width: calc(800px + 320px)) {
+      width: 60px;
+      flex: 0 0 60px;
+    }
+
+    @media (max-width: 400px) {
+      display: none;
+    }
+  }
+
+  & > main {
+    max-width: 800px;
+    width: 100%;
+    background: var(--theme-background);
   }
 
   & > .right {
     width: 320px;
     flex: 0 0 320px;
+
+    @media (max-width: calc(800px + 320px + 320px)) {
+      display: none;
+    }
   }
 `;

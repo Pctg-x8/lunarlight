@@ -184,9 +184,3 @@ a:not(.no-default) {
     color-scheme: dark;
   }
 }
-
-main {
-  max-width: var(--single-max-width);
-  width: 100%;
-  background: var(--theme-background);
-}
