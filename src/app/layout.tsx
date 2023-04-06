@@ -20,7 +20,7 @@ export default async function App({ children }: { readonly children: React.React
       </head>
       <body>
         <Header login={login} />
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );

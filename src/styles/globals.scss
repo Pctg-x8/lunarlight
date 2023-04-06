@@ -186,8 +186,5 @@ a:not(.no-default) {
 }
 
 main {
-  max-width: var(--single-max-width);
-  margin-left: auto;
-  margin-right: auto;
   background: var(--theme-background);
 }
