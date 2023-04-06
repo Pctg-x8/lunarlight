@@ -76,6 +76,17 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
               {status.account.displayName}
             </Link>
           </h1>
+          <div className="rebloggedIcon">
+            {status instanceof RebloggedStatus ? (
+              <Link
+                href={status.rebloggedBy.pagePath}
+                className="sub-colored"
+                title={`Boosted by ${status.rebloggedBy.displayName}`}
+              >
+                <FontAwesomeIcon icon={faRetweet} className="icon" />
+              </Link>
+            ) : undefined}
+          </div>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
           <AgoLabel className="ago" createdAt={status.created_at} />
         </ExpertStatusRow>
@@ -85,7 +96,7 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
 
 const ExpertStatusRow = styled.article`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto;
   align-items: baseline;
 
   font-size: 12px;
@@ -109,6 +120,11 @@ const ExpertStatusRow = styled.article`
       height: 1em;
       margin-right: 4px;
     }
+  }
+
+  & .rebloggedIcon {
+    width: 1em;
+    margin: 0 4px;
   }
 
   & .ago {
