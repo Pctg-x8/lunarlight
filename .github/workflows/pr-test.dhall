@@ -10,10 +10,7 @@ let job =
       , steps =
         [ ProvidedSteps/actions/checkout.stepv3
             ProvidedSteps/actions/checkout.Params::{=}
-        , GHA.Step::{
-          , name = "setup nodejs"
-          , uses = Some "volta-cli/actions@v3"
-          }
+        , GHA.Step::{ name = "setup nodejs", uses = Some "volta-cli/action@v3" }
         , GHA.Step::{ name = "run fmtcheck", run = Some "pnpm fmtcheck" }
         , GHA.Step::{ name = "run typecheck", run = Some "pnpm typecheck" }
         , GHA.Step::{ name = "run lint", run = Some "pnpm lint" }

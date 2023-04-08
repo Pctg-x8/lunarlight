@@ -8,7 +8,7 @@ jobs:
     - name: Checking out
       uses: "actions/checkout@v3"
     - name: setup nodejs
-      uses: "volta-cli/actions@v3"
+      uses: "volta-cli/action@v3"
     - name: run fmtcheck
       run: pnpm fmtcheck
     - name: run typecheck
