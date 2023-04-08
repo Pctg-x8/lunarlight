@@ -226,7 +226,7 @@ export class AuthorizedGetAPI<Req extends RequestBody, Resp> extends GetAPI<Req,
   }
 }
 
-export class PostAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
+export class PostAPI<Req extends RequestBody, Resp = void> extends API<Req, Resp> {
   constructor(protected readonly path: string, private readonly options: CacheOptions = {}) {
     super();
   }
