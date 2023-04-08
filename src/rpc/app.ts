@@ -1,5 +1,5 @@
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
-import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
+import { buildAuthorizeUrl, createApp, revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
 import { AppData } from "@/models/app";
@@ -35,7 +35,21 @@ const accessLogger = t.middleware(async ({ path, input, next }) => {
 const stdProcedure = t.procedure.use(accessLogger);
 
 export const appRpcRouter = t.router({
-  logout: stdProcedure.mutation(({ ctx }) => {
+  logout: stdProcedure.mutation(async ({ ctx }) => {
+    const token = ctx.getAuthorizedToken();
+    if (!token) return;
+
+    const app = await DefaultInstance.queryAppInfo(instance =>
+      createApp.send(new FormDataRequestBody(AppData), instance)
+    );
+    await revokeToken.send(
+      new FormDataRequestBody({
+        client_id: app.client_id,
+        client_secret: app.client_secret,
+        token,
+      }),
+      DefaultInstance
+    );
     ctx.clearAuthorizedToken();
   }),
   loginUrl: stdProcedure.query(async () => {

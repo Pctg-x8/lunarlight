@@ -37,8 +37,15 @@ type ObtainTokenRequestParams = {
   readonly scope: string;
 };
 
+export type RevokeTokenRequestParams = {
+  readonly client_id: string;
+  readonly client_secret: string;
+  readonly token: string;
+};
+
 export const createApp = new PostAPI<FormDataRequestBody<CreateAppRequestParams>, Application>("api/v1/apps");
 export const obtainToken = new PostAPI<FormDataRequestBody<ObtainTokenRequestParams>, Token>("oauth/token");
+export const revokeToken = new PostAPI<FormDataRequestBody<RevokeTokenRequestParams>>("oauth/revoke");
 
 export function buildAuthorizeUrl(instance: RemoteInstance, params: AuthorizeQueryParams): URL {
   const qs = new URLSearchParams(
