@@ -1,0 +1,25 @@
+concurrency:
+  "cancel-in-progress": true
+  group: "prtest-${{ github.ref }}"
+jobs:
+  test:
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v3"
+    - name: setup nodejs
+      uses: "volta-cli/actions@v3"
+    - name: run fmtcheck
+      run: pnpm fmtcheck
+    - name: run typecheck
+      run: pnpm typecheck
+    - name: run lint
+      run: pnpm lint
+    - name: run tests
+      run: pnpm test
+name: Test
+'on':
+  pull_request:
+    types:
+    - opened
+    - synchronize
