@@ -1,4 +1,4 @@
-import { DefaultInstance, FormDataRequestBody, HTTPError, SearchParamsRequestBody } from "@/models/api";
+import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
 import { buildAuthorizeUrl, createApp } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
@@ -39,26 +39,16 @@ export const appRpcRouter = t.router({
     ctx.clearAuthorizedToken();
   }),
   loginUrl: stdProcedure.query(async () => {
-    try {
-      const app = await DefaultInstance.queryAppInfo((instance) =>
-        createApp.send(new FormDataRequestBody(AppData), instance)
-      );
+    const app = await DefaultInstance.queryAppInfo((instance) =>
+      createApp.send(new FormDataRequestBody(AppData), instance)
+    );
 
-      return buildAuthorizeUrl(DefaultInstance, {
-        response_type: "code",
-        client_id: app.client_id,
-        redirect_uri: AppData.redirect_uris,
-        scope: AppData.scopes,
-      });
-    } catch (e) {
-      if (e instanceof HTTPError.HTTPErrorBase) {
-        console.error(e, await e.readResponseJson());
-      } else {
-        console.error(e);
-      }
-
-      throw e;
-    }
+    return buildAuthorizeUrl(DefaultInstance, {
+      response_type: "code",
+      client_id: app.client_id,
+      redirect_uri: AppData.redirect_uris,
+      scope: AppData.scopes,
+    });
   }),
   account: t.router({
     statuses: stdProcedure
@@ -79,16 +69,8 @@ export const appRpcRouter = t.router({
   homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
-    .query(async ({ input, ctx: { token } }) => {
-      try {
-        return await homeTimeline.send(
-          new SearchParamsRequestBody(input),
-          DefaultInstance.withAuthorizationToken(token)
-        );
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    }),
+    .query(({ input, ctx: { token } }) =>
+      homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
+    ),
 });
 export type AppRpcRouter = typeof appRpcRouter;
