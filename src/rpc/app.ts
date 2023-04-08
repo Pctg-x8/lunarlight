@@ -27,7 +27,6 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
   return await next({ ctx: { token } });
 });
 const accessLogger = t.middleware(async ({ path, input, next }) => {
-  apiAccessLogger.info({ path, input });
   const r = await next();
   apiAccessLogger.info({ path, input, success: r.ok });
   return r;
