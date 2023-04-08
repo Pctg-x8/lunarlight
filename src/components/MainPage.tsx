@@ -17,7 +17,7 @@ export default function MainPage({ hasLoggedIn }: { readonly hasLoggedIn: boolea
 }
 
 const Frame = styled.main<{ readonly limited?: boolean }>`
-  max-width: ${(props) => (props.limited ? "var(--single-max-width)" : "unset")};
+  max-width: ${props => (props.limited ? "var(--single-max-width)" : "unset")};
   margin-left: auto;
   margin-right: auto;
 `;
