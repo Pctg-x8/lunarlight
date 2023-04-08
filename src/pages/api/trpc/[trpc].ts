@@ -7,7 +7,8 @@ const AppLogger = pino({ name: "trpc-error" });
 export default trpcNext.createNextApiHandler({
   router: appRpcRouter,
   createContext,
-  onError: ({ error, path, input }) => {
-    AppLogger.error({ error, path, input });
+  onError: ({ error, path }) => {
+    console.error(error);
+    AppLogger.error(error, "RPC Error while requesting", path);
   }
 });
