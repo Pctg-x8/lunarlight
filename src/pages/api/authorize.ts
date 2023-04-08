@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
   }
 
   try {
-    const app = await DefaultInstance.queryAppInfo((instance) =>
+    const app = await DefaultInstance.queryAppInfo(instance =>
       createApp.send(new FormDataRequestBody(AppData), instance)
     );
     const token = await obtainToken.send(

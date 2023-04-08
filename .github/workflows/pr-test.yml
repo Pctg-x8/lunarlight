@@ -1,0 +1,29 @@
+concurrency:
+  "cancel-in-progress": true
+  group: "prtest-${{ github.ref }}"
+jobs:
+  test:
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v3"
+    - name: setup nodejs
+      uses: "volta-cli/action@v3"
+      with:
+        "node-version": 19.x
+    - name: setup pnpm
+      run: "volta install pnpm && pnpm i --frozen-lockfile"
+    - name: run fmtcheck
+      run: pnpm fmtcheck
+    - name: run typecheck
+      run: pnpm typecheck
+    - name: run lint
+      run: pnpm lint
+    - name: run tests
+      run: pnpm test
+name: Test
+'on':
+  pull_request:
+    types:
+    - opened
+    - synchronize
