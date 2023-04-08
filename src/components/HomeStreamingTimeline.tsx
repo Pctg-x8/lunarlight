@@ -15,7 +15,7 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
       if (prevPageData.length === 0) return null;
       return { limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    (req) => rpcClient.homeTimeline.query(req).then((xs) => xs.map(Status.fromApiData)),
+    req => rpcClient.homeTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
     { revalidateFirstPage: false, revalidateAll: false }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
@@ -25,10 +25,10 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
     if (!sentinelRef.current) return;
 
     const io = new IntersectionObserver(
-      (e) => {
+      e => {
         if (e.length < 1 || !e[0].isIntersecting) return;
 
-        setSize((x) => x + 1);
+        setSize(x => x + 1);
       },
       { threshold: 1.0 }
     );
