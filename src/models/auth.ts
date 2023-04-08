@@ -14,7 +14,7 @@ export function getAuthorizationToken(req: NextApiRequest): string | undefined {
   return req.cookies[AUTHORIZATION_TOKEN_COOKIE_NAME];
 }
 export function setAuthorizationToken(token: string): ResponseModifier {
-  return (res) =>
+  return res =>
     res.setHeader(
       "Set-Cookie",
       cookie.serialize(AUTHORIZATION_TOKEN_COOKIE_NAME, token, {

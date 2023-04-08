@@ -41,7 +41,7 @@ export const appRpcRouter = t.router({
   }),
   loginUrl: stdProcedure.query(async () => {
     try {
-      const app = await DefaultInstance.queryAppInfo((instance) =>
+      const app = await DefaultInstance.queryAppInfo(instance =>
         createApp.send(new FormDataRequestBody(AppData), instance)
       );
 
