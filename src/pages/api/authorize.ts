@@ -1,8 +1,11 @@
-import { DefaultInstance, FormDataRequestBody, HTTPError } from "@/models/api";
+import { DefaultInstance, FormDataRequestBody } from "@/models/api";
 import { createApp, obtainToken } from "@/models/api/mastodon/apps";
 import { AppData } from "@/models/app";
 import { setAuthorizationToken } from "@/models/auth";
 import { NextApiRequest, NextApiResponse } from "next";
+import { pino } from "pino";
+
+const ErrorLogger = pino({ name: "authorize error" });
 
 export default async function handler(req: NextApiRequest, resp: NextApiResponse) {
   const code = req.query["code"];
@@ -30,12 +33,6 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
     setAuthorizationToken(token.access_token)(resp);
     resp.redirect(302, process.env.NEXT_PUBLIC_BASE_PATH ?? "/");
   } catch (e) {
-    if (e instanceof HTTPError.HTTPErrorBase) {
-      console.error("api error", e, await e.readResponseJson());
-    } else {
-      console.error("api error", e);
-    }
-
-    throw e;
+    ErrorLogger.error(e);
   }
 }
