@@ -85,56 +85,50 @@ export class AuthorizedRemote implements RemoteInstance, IAuthorizationProvider 
 export type CacheOptions = { readonly cacheOptions?: RequestCache };
 
 export namespace HTTPError {
-  export abstract class HTTPErrorBase extends Error {
-    abstract resp: Response;
-
-    readResponseJson(): Promise<unknown> {
-      return this.resp.json();
-    }
-  }
+  export abstract class HTTPErrorBase extends Error {}
 
   export class ClientError extends HTTPErrorBase {
-    constructor(readonly resp: Response) {
-      super("Client Error");
+    constructor(respText: string) {
+      super(`Client Error ${respText}`);
     }
   }
 
   export class UnauthorizedError extends HTTPErrorBase {
-    constructor(readonly resp: Response) {
-      super("Unauthorized");
+    constructor(respText: string) {
+      super(`Unauthorized ${respText}`);
     }
   }
 
   export class ForbiddenError extends HTTPErrorBase {
-    constructor(readonly resp: Response) {
-      super("Forbidden");
+    constructor(respText: string) {
+      super(`Forbidden ${respText}`);
     }
   }
 
   export class NotFoundError extends HTTPErrorBase {
-    constructor(readonly resp: Response) {
-      super("Not Found");
+    constructor(respText: string) {
+      super(`Not Found ${respText}`);
     }
   }
 
   export class UnprocessableEntityError extends HTTPErrorBase {
-    constructor(readonly resp: Response) {
-      super("Unprocessable Entity");
+    constructor(respText: string) {
+      super(`Unprocessable Entity ${respText}`);
     }
   }
 
-  export function sanitizeStatusCode(resp: Response) {
+  export async function sanitizeStatusCode(resp: Response) {
     switch (resp.status) {
       case 400:
-        throw new HTTPError.ClientError(resp);
+        throw new HTTPError.ClientError(await resp.text());
       case 401:
-        throw new HTTPError.UnauthorizedError(resp);
+        throw new HTTPError.UnauthorizedError(await resp.text());
       case 403:
-        throw new HTTPError.ForbiddenError(resp);
+        throw new HTTPError.ForbiddenError(await resp.text());
       case 404:
-        throw new HTTPError.NotFoundError(resp);
+        throw new HTTPError.NotFoundError(await resp.text());
       case 422:
-        throw new HTTPError.UnprocessableEntityError(resp);
+        throw new HTTPError.UnprocessableEntityError(await resp.text());
     }
 
     return resp;
@@ -222,7 +216,7 @@ export class GetAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
     });
     const resp = await fetch(client.tweakRequest(params.tweakRequest(req)));
 
-    return await HTTPError.sanitizeStatusCode(resp).json();
+    return await (await HTTPError.sanitizeStatusCode(resp)).json();
   }
 }
 
@@ -232,7 +226,7 @@ export class AuthorizedGetAPI<Req extends RequestBody, Resp> extends GetAPI<Req,
   }
 }
 
-export class PostAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
+export class PostAPI<Req extends RequestBody, Resp = void> extends API<Req, Resp> {
   constructor(protected readonly path: string, private readonly options: CacheOptions = {}) {
     super();
   }
@@ -252,7 +246,7 @@ export class PostAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
       duplex: "half",
     });
 
-    return await HTTPError.sanitizeStatusCode(resp).json();
+    return await (await HTTPError.sanitizeStatusCode(resp)).json();
   }
 }
 
