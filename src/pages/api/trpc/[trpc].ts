@@ -9,6 +9,6 @@ export default trpcNext.createNextApiHandler({
   createContext,
   onError: ({ error, path }) => {
     console.error(error);
-    AppLogger.error(error, "RPC Error while requesting", path);
+    AppLogger.error(error, `RPC Error while requesting "${path}"`);
   }
 });
