@@ -39,7 +39,7 @@ export const appRpcRouter = t.router({
     ctx.clearAuthorizedToken();
   }),
   loginUrl: stdProcedure.query(async () => {
-    const app = await DefaultInstance.queryAppInfo((instance) =>
+    const app = await DefaultInstance.queryAppInfo(instance =>
       createApp.send(new FormDataRequestBody(AppData), instance)
     );
 

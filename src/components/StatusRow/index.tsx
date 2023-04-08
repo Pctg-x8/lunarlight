@@ -16,7 +16,7 @@ export default function StatusRow({ status }: { readonly status: Status }) {
     const cancellation = new AbortController();
     function recursiveProcessLink(e: ChildNode) {
       if (e instanceof HTMLAnchorElement || e instanceof HTMLButtonElement) {
-        e.addEventListener("click", (e) => e.stopPropagation(), { signal: cancellation.signal });
+        e.addEventListener("click", e => e.stopPropagation(), { signal: cancellation.signal });
       }
 
       for (const child of e.childNodes) recursiveProcessLink(child);
