@@ -1,16 +1,21 @@
+"use client";
+
 import { faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "@linaria/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function SideMenu(): JSX.Element {
+  const path = usePathname();
+
   return (
     <Frame>
       <ul>
         <li>
-          <Link href="/" className="no-default">
-            <FontAwesomeIcon icon={faHouseChimney} />
-            Home
+          <Link href="/" className={`no-default ${path === "/" ? "active" : ""}`}>
+            <FontAwesomeIcon icon={faHouseChimney} className="icon" />
+            <span>Home</span>
           </Link>
         </li>
       </ul>
@@ -38,6 +43,24 @@ const Frame = styled.nav`
 
     & > svg {
       margin-right: 16px;
+    }
+
+    &.active {
+      color: var(--theme-menu-active-link);
+    }
+
+    @media (max-width: calc(800px + 320px)) {
+      text-align: center;
+
+      & > .icon {
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      & > span {
+        font-size: 1rem;
+      }
     }
   }
 `;
