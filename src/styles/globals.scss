@@ -65,11 +65,14 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
 body {
   color: var(--theme-default-text);
   background: var(--theme-outview-background);
-  font-family: sans-serif;
-  font-size: 14px;
 }
 
 a:not(.no-default) {
