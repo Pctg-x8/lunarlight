@@ -187,3 +187,7 @@ a:not(.no-default) {
     color-scheme: dark;
   }
 }
+
+main {
+  background: var(--theme-background);
+}

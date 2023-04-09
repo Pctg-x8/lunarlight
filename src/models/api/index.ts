@@ -12,7 +12,19 @@ export interface RemoteInstance {
 }
 export interface IAuthorizationProvider {}
 
-const db = typeof window === "undefined" ? new PrismaClient() : null;
+declare global {
+  var db: PrismaClient | undefined;
+}
+
+const db =
+  typeof window === "undefined"
+    ? global.db ??
+      new PrismaClient({ log: process.env.NODE_ENV === "production" ? ["error"] : ["query", "error", "info"] })
+    : undefined;
+if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
+  // cache db connection instance for production hot reloading
+  global.db = db;
+}
 
 export default class ProdInstance implements RemoteInstance {
   readonly baseUrl = new URL("https://crescent.ct2.io");
