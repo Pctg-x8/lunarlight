@@ -1,6 +1,6 @@
 import { TimelineMode } from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
-import { faRetweet } from "@fortawesome/free-solid-svg-icons";
+import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "@linaria/react";
 import Link from "next/link";
@@ -88,6 +88,15 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
             ) : undefined}
           </div>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
+          <button title={`返信(${status.counters.replied})`} className="reply ab">
+            <FontAwesomeIcon icon={faReply} />
+          </button>
+          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab">
+            <FontAwesomeIcon icon={faStar} />
+          </button>
+          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab">
+            <FontAwesomeIcon icon={faRetweet} />
+          </button>
           <AgoLabel className="ago" createdAt={status.created_at} />
         </ExpertStatusRow>
       );
@@ -96,7 +105,8 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
 
 const ExpertStatusRow = styled.article`
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto auto auto auto;
+  grid-template-areas: "name reblogged text reply fav reb ago";
   align-items: baseline;
 
   font-size: 12px;
@@ -110,6 +120,7 @@ const ExpertStatusRow = styled.article`
   }
 
   & .displayName {
+    grid-area: name;
     width: 160px;
     font-size: unset;
     overflow: hidden;
@@ -123,21 +134,59 @@ const ExpertStatusRow = styled.article`
   }
 
   & .rebloggedIcon {
+    grid-area: reblogged;
     width: 1em;
     margin: 0 4px;
   }
 
   & .ago {
-    font-size: 80%;
+    grid-area: ago;
+    font-size: 0.8rem;
+    width: 50px;
+    text-align: right;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   & .text {
+    grid-area: text;
     white-space: pre;
     overflow: hidden;
 
     & > * {
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+  }
+
+  & .reply {
+    grid-area: reply;
+  }
+
+  & .fav {
+    grid-area: fav;
+  }
+
+  & .reb {
+    grid-area: reb;
+  }
+
+  & .ab {
+    margin: 0;
+    padding: 0px 2px;
+    border: none;
+    color: var(--theme-status-actions);
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &:hover {
+      color: var(--theme-status-actions-lit);
     }
   }
 `;
