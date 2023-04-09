@@ -38,6 +38,10 @@ const Body = styled.body`
   & > footer {
     position: fixed;
     bottom: 0;
+
+    @media (min-width: 400px) {
+      display: none;
+    }
   }
 `;
 
@@ -67,6 +71,10 @@ const ContentWrapper = styled.div`
     max-width: 800px;
     width: 100%;
     background: var(--theme-background);
+
+    @media (max-width: 400px) {
+      margin-bottom: calc(16px + 14px + 1rem + 16px);
+    }
   }
 
   & > .right {
