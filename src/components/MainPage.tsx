@@ -1,5 +1,6 @@
 "use client";
 
+import { BREAKPOINT_BOTTOM_MENU } from "@/breakpoints";
 import LocalPreferences from "@/models/localPreferences";
 import { styled } from "@linaria/react";
 import HomeStreamingTimeline from "./HomeStreamingTimeline";
@@ -28,7 +29,7 @@ const LimitedFrame = styled.main`
   max-width: var(--single-max-width);
   width: 100%;
 
-  @media (max-width: 400px) {
+  @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
     margin-bottom: calc(16px + 14px + 1rem + 16px);
   }
 `;
@@ -36,7 +37,7 @@ const LimitedFrame = styled.main`
 const Frame = styled.main`
   width: 100%;
 
-  @media (max-width: 400px) {
+  @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
     margin-bottom: calc(16px + 14px + 1rem + 16px);
   }
 `;

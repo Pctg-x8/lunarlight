@@ -1,3 +1,4 @@
+import { BREAKPOINT_BOTTOM_MENU } from "@/breakpoints";
 import BottomMenu from "@/components/BottomMenu";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
@@ -39,7 +40,7 @@ const Body = styled.body`
     position: fixed;
     bottom: 0;
 
-    @media (min-width: 400px) {
+    @media (min-width: ${BREAKPOINT_BOTTOM_MENU}) {
       display: none;
     }
   }
@@ -62,7 +63,7 @@ const ContentWrapper = styled.div`
       flex: 0 0 60px;
     }
 
-    @media (max-width: 400px) {
+    @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
       display: none;
     }
   }
