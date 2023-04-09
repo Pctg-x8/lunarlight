@@ -1,6 +1,6 @@
 "use client";
 
-import { faHouseChimney } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "@linaria/react";
 import Link from "next/link";
@@ -16,6 +16,12 @@ export default function BottomMenu(): JSX.Element {
           <Link href="/" className={`no-default ${pathname === "/" ? "active" : ""}`}>
             <FontAwesomeIcon icon={faHouseChimney} />
             <span>Home</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/preferences" className={`no-default ${pathname === "/preferences" ? "active" : ""}`}>
+            <FontAwesomeIcon icon={faGear} className="icon" />
+            <span>Preferences</span>
           </Link>
         </li>
       </ul>
