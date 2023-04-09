@@ -9,15 +9,34 @@ export default function MainPage({ hasLoggedIn }: { readonly hasLoggedIn: boolea
 
   if (!hasLoggedIn) return <p></p>;
 
+  if (timelineMode === "normal") {
+    return (
+      <LimitedFrame>
+        <HomeStreamingTimeline mode={timelineMode} />
+      </LimitedFrame>
+    );
+  }
+
   return (
-    <Frame limited={timelineMode === "normal"}>
+    <Frame>
       <HomeStreamingTimeline mode={timelineMode} />
     </Frame>
   );
 }
 
-const Frame = styled.main<{ readonly limited?: boolean }>`
-  max-width: ${props => (props.limited ? "var(--single-max-width)" : "unset")};
-  margin-left: auto;
-  margin-right: auto;
+const LimitedFrame = styled.main`
+  max-width: var(--single-max-width);
+  width: 100%;
+
+  @media (max-width: 400px) {
+    margin-bottom: calc(16px + 14px + 1rem + 16px);
+  }
+`;
+
+const Frame = styled.main`
+  width: 100%;
+
+  @media (max-width: 400px) {
+    margin-bottom: calc(16px + 14px + 1rem + 16px);
+  }
 `;

@@ -25,7 +25,7 @@ export default async function App({ children }: { readonly children: React.React
         <Header login={login} />
         <ContentWrapper>
           <SideMenu />
-          <main>{children}</main>
+          {children}
           <section className="right" />
         </ContentWrapper>
         <BottomMenu />
@@ -64,16 +64,6 @@ const ContentWrapper = styled.div`
 
     @media (max-width: 400px) {
       display: none;
-    }
-  }
-
-  & > main {
-    max-width: 800px;
-    width: 100%;
-    background: var(--theme-background);
-
-    @media (max-width: 400px) {
-      margin-bottom: calc(16px + 14px + 1rem + 16px);
     }
   }
 
