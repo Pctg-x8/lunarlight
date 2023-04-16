@@ -1,7 +1,6 @@
 import { BREAKPOINT_BOTTOM_MENU } from "@/breakpoints";
 import BottomMenu from "@/components/BottomMenu";
 import Header from "@/components/Header";
-import SideMenu from "@/components/SideMenu";
 import { getAuthorizedAccountSSR } from "@/models/auth";
 import "@/styles/globals.scss";
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -24,11 +23,7 @@ export default async function App({ children }: { readonly children: React.React
       </head>
       <Body>
         <Header login={login} />
-        <ContentWrapper>
-          <SideMenu />
-          {children}
-          <section className="right" />
-        </ContentWrapper>
+        {children}
         <BottomMenu />
       </Body>
     </html>
@@ -41,38 +36,6 @@ const Body = styled.body`
     bottom: 0;
 
     @media (min-width: ${BREAKPOINT_BOTTOM_MENU}) {
-      display: none;
-    }
-  }
-`;
-
-const ContentWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-
-  & > nav {
-    position: sticky;
-    top: calc(16px + 16px + 20px + 1px + 1px); // なぞの1px(これがないとずれる)
-    width: 320px;
-    flex: 0 0 320px;
-
-    @media (max-width: calc(800px + 320px)) {
-      width: 60px;
-      flex: 0 0 60px;
-    }
-
-    @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
-      display: none;
-    }
-  }
-
-  & > .right {
-    width: 320px;
-    flex: 0 0 320px;
-
-    @media (max-width: calc(800px + 320px + 320px)) {
       display: none;
     }
   }

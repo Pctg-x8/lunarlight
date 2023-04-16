@@ -34,6 +34,11 @@ const Frame = styled.nav`
   height: fit-content;
   background: var(--theme-menu-background);
 
+  width: 320px;
+  @media (max-width: calc(800px + 320px)) {
+    width: 64px;
+  }
+
   & > ul > li > a {
     display: block;
     padding: 16px;
