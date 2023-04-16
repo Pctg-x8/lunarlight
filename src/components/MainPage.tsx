@@ -41,7 +41,7 @@ const ContentWrapper = styled.div`
 
   & > nav {
     position: sticky;
-    top: calc(16px + 16px + 20px + 1px + 1px); // なぞの1px(これがないとずれる)
+    top: 64px;
     flex-grow: 0;
     flex-shrink: 0;
 

@@ -20,6 +20,8 @@ const ContentWrapper = styled.div`
   & > nav {
     flex-grow: 0;
     flex-shrink: 0;
+    position: sticky;
+    top: 64px;
 
     @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
       display: none;
