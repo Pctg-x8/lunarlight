@@ -1,22 +1,16 @@
 "use client";
 
+import { doLogin } from "@/actions/login";
 import { CredentialAccount } from "@/models/api/mastodon/account";
-import { rpcClient } from "@/rpc/client";
 import { styled } from "@linaria/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useTransition } from "react";
 
 export default function LoginStatus({ login }: { readonly login: CredentialAccount | null }) {
-  const nav = useRouter();
-  const [loginPending, setLoginPending] = useState(false);
-  const doLogin = async () => {
-    setLoginPending(true);
-    nav.push(await rpcClient.loginUrl.query());
-  };
+  const [loginPending, startLogin] = useTransition();
 
   return !login ? (
-    <LoginButton onClick={doLogin} disabled={loginPending}>
+    <LoginButton type="button" onClick={() => startLogin(() => doLogin())} disabled={loginPending}>
       ログイン
     </LoginButton>
   ) : (
