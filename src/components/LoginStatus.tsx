@@ -10,8 +10,7 @@ export default function LoginStatus({ login }: { readonly login: CredentialAccou
   const [loginPending, startLogin] = useTransition();
 
   return !login ? (
-    // @ts-ignore
-    <LoginButton onClick={() => startLogin(() => doLogin())} disabled={loginPending}>
+    <LoginButton type="button" onClick={() => startLogin(() => doLogin())} disabled={loginPending}>
       ログイン
     </LoginButton>
   ) : (
