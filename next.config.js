@@ -4,7 +4,7 @@ const withLinaria = require("next-with-linaria");
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    appDir: true,
+    serverActions: true
   },
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH ?? undefined,
   basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
