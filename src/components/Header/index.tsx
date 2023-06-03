@@ -1,8 +1,9 @@
-import { CredentialAccount } from "@/models/api/mastodon/account";
+import { getAuthorizedAccountSSR } from "@/models/auth";
+import { Suspense } from "react";
 import LoginStatus from "../LoginStatus";
 import styles from "./styles.module.scss";
 
-export default function Header({ login }: { readonly login: CredentialAccount | null }) {
+export default function Header() {
   return (
     <header className={styles.appHeader}>
       <section className={styles.appname}>
@@ -19,8 +20,16 @@ export default function Header({ login }: { readonly login: CredentialAccount | 
       </section>
       <div className={styles.spacer} />
       <section className={styles.loginStatus}>
-        <LoginStatus login={login} />
+        <Suspense>
+          <LoginAccountArea />
+        </Suspense>
       </section>
     </header>
   );
+}
+
+async function LoginAccountArea() {
+  const login = await getAuthorizedAccountSSR();
+
+  return <LoginStatus login={login} />;
 }
