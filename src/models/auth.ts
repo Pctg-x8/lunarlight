@@ -1,10 +1,10 @@
 import cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { cookies } from "next/headers";
-import { DefaultInstance, EmptyRequestBody, FormDataRequestBody, HTTPError } from "./api";
+import { DefaultInstance, EmptyRequestBody, HTTPError } from "./api";
 import { CredentialAccount, verifyCredentials } from "./api/mastodon/account";
-import { buildAuthorizeUrl, createApp } from "./api/mastodon/apps";
-import { AppData } from "./app";
+import { buildAuthorizeUrl } from "./api/mastodon/apps";
+import { AppData, CreateAppRequest } from "./app";
 
 const DAY_SECONDS = 24 * 60 * 60;
 
@@ -55,9 +55,7 @@ export async function getAuthorizedAccountSSR(): Promise<CredentialAccount | nul
 }
 
 export async function getLoginUrl() {
-  const app = await DefaultInstance.queryAppInfo(instance =>
-    createApp.send(new FormDataRequestBody(AppData), instance)
-  );
+  const app = await DefaultInstance.queryAppInfo(instance => instance.send(CreateAppRequest));
 
   return buildAuthorizeUrl(DefaultInstance, {
     response_type: "code",

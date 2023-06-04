@@ -2,19 +2,28 @@
 
 import { Status } from "@/models/status";
 import { rpcClient } from "@/rpc/client";
-import { useEffect, useMemo, useRef } from "react";
+import dynamic from "next/dynamic";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
-import Timeline from "../Timeline";
+import Timeline from "./Timeline";
 
-export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
-  const { data, isLoading, setSize } = useSWRInfinite(
+function Component({ accountId }: { readonly accountId: string }) {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <Content accountId={accountId} key={accountId} />
+    </Suspense>
+  );
+}
+
+function Content({ accountId }: { readonly accountId: string }) {
+  const { data, setSize } = useSWRInfinite(
     (_, prevPageData: Status[] | null): { readonly max_id?: string; readonly limit?: number } | null => {
       if (!prevPageData) return { limit: 20 };
       if (prevPageData.length === 0) return null;
       return { limit: 20, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.account.statuses.query({ accountId, ...req }).then(xs => xs.map(Status.fromApiData)),
-    { revalidateFirstPage: false, revalidateAll: false }
+    { revalidateFirstPage: false, revalidateAll: false, suspense: true }
   );
   const statuses: Status[] = useMemo(() => data?.flat() ?? [], [data]);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -32,14 +41,15 @@ export default function AccountTimeline({ accountId }: { readonly accountId: str
     );
     io.observe(sentinelRef.current);
     return () => io.disconnect();
-  }, [isLoading, setSize]);
+  }, [setSize]);
 
-  return isLoading ? (
-    <p>Loading...</p>
-  ) : (
+  return (
     <>
       <Timeline statuses={statuses} />
       <div ref={sentinelRef} />
     </>
   );
 }
+
+const AccountTimeline = dynamic(() => Promise.resolve(Component), { ssr: false });
+export default AccountTimeline;

@@ -1,5 +1,5 @@
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
-import { AccountField, Account as ApiAccountData, lookup } from "./api/mastodon/account";
+import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
 
@@ -60,5 +60,9 @@ export class Account {
   private _cachedFullAcct: Webfinger.RemoteAddress | null = null;
   async fullAcct(instance: RemoteInstance): Promise<Webfinger.RemoteAddress> {
     return (this._cachedFullAcct ??= await this.acct.resolveDomainPart(instance));
+  }
+
+  get isRemote(): boolean {
+    return isRemoteAccount(this.values);
   }
 }
