@@ -6,7 +6,7 @@ export default function UserPostTemplate({ children }: PropsWithChildren): JSX.E
 }
 
 const Frame = styled.main`
-  max-width: var(--single-max-width);
+  width: var(--single-max-width);
   margin-left: auto;
   margin-right: auto;
 `;
