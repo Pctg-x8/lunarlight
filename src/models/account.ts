@@ -12,7 +12,11 @@ export class Account {
   static async lookup(acct: string, options: Partial<CustomInstanceOption> = {}) {
     return lookup
       .send(new SearchParamsRequestBody({ acct }), options.instance ?? DefaultInstance)
-      .then(x => new Account(x));
+      .then(Account.fromApiData);
+  }
+
+  static fromApiData(values: ApiAccountData) {
+    return new Account(values);
   }
 
   constructor(private readonly values: ApiAccountData) {}
