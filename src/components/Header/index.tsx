@@ -1,6 +1,7 @@
 import { getAuthorizedAccountSSR } from "@/models/auth";
 import { Suspense } from "react";
-import LoginStatus from "../LoginStatus";
+import LoginAccountMenu from "./LoginAccountMenu";
+import LoginButton from "./LoginButton";
 import styles from "./styles.module.scss";
 
 export default function Header() {
@@ -31,5 +32,5 @@ export default function Header() {
 async function LoginAccountArea() {
   const login = await getAuthorizedAccountSSR();
 
-  return <LoginStatus login={login} />;
+  return login ? <LoginAccountMenu account={login} /> : <LoginButton />;
 }
