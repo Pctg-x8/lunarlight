@@ -10,19 +10,20 @@ export default function MainPage({ hasLoggedIn }: { readonly hasLoggedIn: boolea
 
   if (!hasLoggedIn) return <p></p>;
 
-  if (timelineMode === "normal") {
-    return (
-      <LimitedFrame>
-        <HomeStreamingTimeline mode={timelineMode} />
-      </LimitedFrame>
-    );
+  switch (timelineMode) {
+    case "normal":
+      return (
+        <LimitedFrame>
+          <HomeStreamingTimeline mode={timelineMode} />
+        </LimitedFrame>
+      );
+    case "expert":
+      return (
+        <Frame>
+          <HomeStreamingTimeline mode={timelineMode} />
+        </Frame>
+      );
   }
-
-  return (
-    <Frame>
-      <HomeStreamingTimeline mode={timelineMode} />
-    </Frame>
-  );
 }
 
 const LimitedFrame = styled.main`

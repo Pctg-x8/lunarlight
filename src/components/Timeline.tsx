@@ -1,7 +1,7 @@
 import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
-import StatusRow from "../StatusRow";
-import styles from "./styles.module.scss";
+import { styled } from "@linaria/react";
+import StatusRow from "./StatusRow";
 
 export default function Timeline({
   statuses,
@@ -11,12 +11,18 @@ export default function Timeline({
   readonly mode?: TimelineMode;
 }) {
   return (
-    <ul className={styles.staticTimeline}>
+    <StaticTimeline>
       {statuses.map((s, x) => (
         <li key={x}>
           <StatusRow status={s} mode={mode} />
         </li>
       ))}
-    </ul>
+    </StaticTimeline>
   );
 }
+
+const StaticTimeline = styled.ul`
+  & > li {
+    border-bottom: 1px solid var(--theme-status-border);
+  }
+`;

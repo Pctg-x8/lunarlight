@@ -1,5 +1,6 @@
 import { baseUrl } from "@/utils";
-import { buildScopes } from "./api/mastodon/apps";
+import { FormDataRequestBody } from "./api";
+import { buildScopes, createApp } from "./api/mastodon/apps";
 
 export const AppData = {
   client_name: process.env.NODE_ENV === "production" ? "Lunarlight" : `Lunarlight(${process.env.NODE_ENV})`,
@@ -7,3 +8,5 @@ export const AppData = {
   scopes: buildScopes("read", "write", "push"),
   website: "https://crescent.ct2.io/ll/",
 };
+
+export const CreateAppRequest = createApp.withArgs(new FormDataRequestBody(AppData));

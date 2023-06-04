@@ -1,15 +1,15 @@
-import AccountTimeline from "@/components/AccountTimelnie";
+import AccountTimeline from "@/components/AccountTimeline";
 import UserHeader from "@/components/UserHeader";
 import { Account } from "@/models/account";
-import { DefaultInstance, HTTPError, SearchParamsRequestBody } from "@/models/api";
-import { lookup } from "@/models/api/mastodon/account";
+import { DefaultInstance, HTTPError } from "@/models/api";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 async function getData(acct: string): Promise<{ readonly account: Account; readonly fullAcct: string }> {
   try {
-    const account = new Account(await lookup.send(new SearchParamsRequestBody({ acct }), DefaultInstance));
+    const account = await Account.lookup(acct);
 
     return { account, fullAcct: (await account.fullAcct(DefaultInstance)).toString() };
   } catch (e) {
@@ -38,7 +38,9 @@ export default async function UserPage({
   return (
     <>
       <UserHeader account={account} fullAcct={fullAcct} />
-      <AccountTimeline accountId={account.id} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <AccountTimeline accountId={account.id} />
+      </Suspense>
     </>
   );
 }

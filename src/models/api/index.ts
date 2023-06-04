@@ -7,6 +7,7 @@ import { Application } from "./mastodon/apps";
 export interface RemoteInstance {
   buildFullUrl(path: string): URL;
   tweakRequest(req: Request): Request;
+  send<Base extends API<Req, Resp>, Req extends RequestBody, Resp>(req: BodyBoundAPI<Base, Req, Resp>): Promise<Resp>;
 
   queryAppInfo(createOps: (instance: RemoteInstance) => Promise<Application>): Promise<Application>;
 }
@@ -74,6 +75,10 @@ export default class ProdInstance implements RemoteInstance {
   withAuthorizationToken(token: string) {
     return new AuthorizedRemote(this, token);
   }
+
+  send<Base extends API<Req, Resp>, Req extends RequestBody, Resp>(req: BodyBoundAPI<Base, Req, Resp>): Promise<Resp> {
+    return req.send(this);
+  }
 }
 
 export const DefaultInstance = new ProdInstance();
@@ -91,6 +96,10 @@ export class AuthorizedRemote implements RemoteInstance, IAuthorizationProvider 
 
   queryAppInfo(createOps: (instance: RemoteInstance) => Promise<Application>): Promise<Application> {
     return this.parent.queryAppInfo(createOps);
+  }
+
+  send<Base extends API<Req, Resp>, Req extends RequestBody, Resp>(req: BodyBoundAPI<Base, Req, Resp>): Promise<Resp> {
+    return req.send(this);
   }
 }
 
@@ -214,6 +223,10 @@ export abstract class API<Req extends RequestBody, Resp> {
   bindParameters(req: Req, client: RemoteInstance): ParameterBoundAPI<this, Req, Resp> {
     return new ParameterBoundAPI(this, req, client);
   }
+
+  withArgs(args: Req): BodyBoundAPI<this, Req, Resp> {
+    return new BodyBoundAPI(this, args);
+  }
 }
 
 export class GetAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
@@ -273,5 +286,17 @@ export class ParameterBoundAPI<Base extends API<Req, Resp>, Req extends RequestB
 
   async send(): Promise<Resp> {
     return this.base.send(this.req, this.instance);
+  }
+}
+
+export class BodyBoundAPI<Base extends API<Req, Resp>, Req extends RequestBody, Resp> {
+  constructor(private readonly base: Base, private readonly req: Req) {}
+
+  async send(instance: RemoteInstance): Promise<Resp> {
+    return this.base.send(this.req, instance);
+  }
+
+  bindInstance(instance: RemoteInstance): ParameterBoundAPI<Base, Req, Resp> {
+    return new ParameterBoundAPI(this.base, this.req, instance);
   }
 }

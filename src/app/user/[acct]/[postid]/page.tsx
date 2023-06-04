@@ -1,8 +1,7 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
-import { DefaultInstance, EmptyRequestBody, HTTPError } from "@/models/api";
-import { getStatus } from "@/models/api/mastodon/status";
+import { DefaultInstance, HTTPError } from "@/models/api";
 import { RebloggedStatus, Status } from "@/models/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText } from "@/utils";
@@ -12,9 +11,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-async function getPost(_acct: string, postid: string): Promise<Status> {
+async function getPost(_acct: string, postid: string) {
   try {
-    return Status.fromApiData(await getStatus(postid).send(EmptyRequestBody.instance, DefaultInstance));
+    return await Status.get(postid);
   } catch (e) {
     if (e instanceof HTTPError.NotFoundError) {
       notFound();
