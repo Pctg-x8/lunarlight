@@ -1,5 +1,6 @@
-import { RemoteInstance } from "./api";
-import { AccountField, Account as ApiAccountData } from "./api/mastodon/account";
+import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
+import { AccountField, Account as ApiAccountData, lookup } from "./api/mastodon/account";
+import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
 
 export type AccountCounters = {
@@ -8,6 +9,12 @@ export type AccountCounters = {
   readonly followings: number;
 };
 export class Account {
+  static async lookup(acct: string, options: Partial<CustomInstanceOption> = {}) {
+    return lookup
+      .send(new SearchParamsRequestBody({ acct }), options.instance ?? DefaultInstance)
+      .then(x => new Account(x));
+  }
+
   constructor(private readonly values: ApiAccountData) {}
 
   get pagePath(): string {

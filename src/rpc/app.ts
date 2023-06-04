@@ -1,8 +1,8 @@
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
-import { buildAuthorizeUrl, createApp, revokeToken } from "@/models/api/mastodon/apps";
+import { buildAuthorizeUrl, revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
-import { AppData } from "@/models/app";
+import { AppData, CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, setAuthorizationToken } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
@@ -39,9 +39,7 @@ export const appRpcRouter = t.router({
     const token = ctx.getAuthorizedToken();
     if (!token) return;
 
-    const app = await DefaultInstance.queryAppInfo(instance =>
-      createApp.send(new FormDataRequestBody(AppData), instance)
-    );
+    const app = await DefaultInstance.queryAppInfo(instance => instance.send(CreateAppRequest));
     await revokeToken.send(
       new FormDataRequestBody({
         client_id: app.client_id,
@@ -53,10 +51,7 @@ export const appRpcRouter = t.router({
     ctx.clearAuthorizedToken();
   }),
   loginUrl: stdProcedure.query(async () => {
-    const app = await DefaultInstance.queryAppInfo(instance =>
-      createApp.send(new FormDataRequestBody(AppData), instance)
-    );
-
+    const app = await DefaultInstance.queryAppInfo(instance => instance.send(CreateAppRequest));
     return buildAuthorizeUrl(DefaultInstance, {
       response_type: "code",
       client_id: app.client_id,

@@ -1,6 +1,8 @@
 import { stripTags } from "@/utils";
 import { Account } from "./account";
-import { Status as ApiStatusData, Application } from "./api/mastodon/status";
+import { DefaultInstance, EmptyRequestBody } from "./api";
+import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
+import { CustomInstanceOption } from "./requestOptions";
 
 export type Counters = {
   readonly replied: number;
@@ -14,6 +16,12 @@ export abstract class Status {
     }
 
     return new NormalStatus(data);
+  }
+
+  static async get(id: string, options: Partial<CustomInstanceOption> = {}) {
+    return getStatus(id)
+      .send(EmptyRequestBody.instance, options.instance ?? DefaultInstance)
+      .then(Status.fromApiData);
   }
 
   abstract readonly previewPath: string;
