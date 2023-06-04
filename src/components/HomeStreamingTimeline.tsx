@@ -36,6 +36,19 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
     return () => io.disconnect();
   }, [isLoading, setSize]);
 
+  useEffect(() => {
+    console.log("connect streaming");
+    const sub = rpcClient.streamingTimeline.subscribe(undefined, {
+      onData: d => {
+        console.log("streaming data", d);
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
   if (isLoading) return <p>Loading...</p>;
   return (
     <>

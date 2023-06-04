@@ -6,6 +6,7 @@ import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { observable } from "@trpc/server/observable";
 import pino from "pino";
 import z from "zod";
 
@@ -73,5 +74,32 @@ export const appRpcRouter = t.router({
     .query(({ input, ctx: { token } }) =>
       homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
     ),
+  streamingTimeline: stdProcedure.use(requireAuthorized).subscription(({ ctx: { token } }) =>
+    observable(observer => {
+      const qs = new URLSearchParams(
+        Object.fromEntries(
+          Object.entries({ access_token: token, stream: "user" }).flatMap(([k, v]) => {
+            switch (typeof v) {
+              case "undefined":
+                return [];
+              case "string":
+                return [[k, v]];
+            }
+          })
+        )
+      );
+
+      console.log("opening streaming", qs);
+      const ws = new WebSocket(DefaultInstance.buildFullUrl(`/api/v1/streaming?${qs}`));
+      ws.addEventListener("message", msg => {
+        console.log("msg", msg);
+        observer.next(msg);
+      });
+
+      return () => {
+        ws.close();
+      };
+    })
+  ),
 });
 export type AppRpcRouter = typeof appRpcRouter;
