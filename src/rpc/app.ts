@@ -8,6 +8,7 @@ import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
 import pino from "pino";
+import ws from "ws";
 import z from "zod";
 
 const apiAccessLogger = pino({ name: "trpc" });
@@ -76,28 +77,39 @@ export const appRpcRouter = t.router({
     ),
   streamingTimeline: stdProcedure.use(requireAuthorized).subscription(({ ctx: { token } }) =>
     observable(observer => {
-      const qs = new URLSearchParams(
-        Object.fromEntries(
-          Object.entries({ access_token: token, stream: "user" }).flatMap(([k, v]) => {
-            switch (typeof v) {
-              case "undefined":
-                return [];
-              case "string":
-                return [[k, v]];
-            }
-          })
-        )
-      );
+      const params = new SearchParamsRequestBody({
+        access_token: token,
+        stream: "user",
+      });
 
-      console.log("opening streaming", qs);
-      const ws = new WebSocket(DefaultInstance.buildFullUrl(`/api/v1/streaming?${qs}`));
-      ws.addEventListener("message", msg => {
-        console.log("msg", msg);
-        observer.next(msg);
+      const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
+      url.protocol = "wss:";
+      const client = new ws(url);
+      console.log("connecting stream", url);
+      client.on("message", (msg, isBinary) => {
+        if (isBinary) {
+          console.log("unknown binary msg", msg);
+          return;
+        }
+
+        let msgString: string;
+        if (msg instanceof Array) {
+          // chunked
+
+          const decoder = new TextDecoder();
+          msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
+        } else {
+          // not chunked
+
+          msgString = new TextDecoder().decode(msg);
+        }
+
+        console.log("msg", msgString);
+        observer.next(msgString);
       });
 
       return () => {
-        ws.close();
+        client.close();
       };
     })
   ),
