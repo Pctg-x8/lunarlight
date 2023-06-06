@@ -36,7 +36,7 @@ jobs:
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
           push: true
-          tags: ghcr.io/Pctg-x8/lunarlight:latest
+          tags: ghcr.io/pctg-x8/lunarlight:latest
           target: runner
       - name: "build and push(managetools)"
         uses: "docker/build-push-action@v4"
@@ -47,7 +47,7 @@ jobs:
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
           push: true
-          tags: ghcr.io/Pctg-x8/lunarlight/managetools:latest
+          tags: ghcr.io/pctg-x8/lunarlight/managetools:latest
           target: managetools
       - name: replace all docker layer caches
         run: "rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache"
