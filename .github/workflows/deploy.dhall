@@ -59,8 +59,17 @@ let DockerCacheConfig =
 let loginGitHubContainerRegistry =
       GHA.Step::{
       , name = "login ghcr.io"
-      , run = Some
-          "cat \$GITHUB_TOKEN | docker login ghcr.io -u Pctg-x8 --password-stdin"
+      , uses = Some "docker/login-action@v2"
+      , `with` = Some
+          ( toMap
+              { registry = GHA.WithParameterType.Text "ghcr.io"
+              , username =
+                  GHA.WithParameterType.Text (GHA.mkExpression "github.actor")
+              , password =
+                  GHA.WithParameterType.Text
+                    (GHA.mkExpression "secrets.GITHUB_TOKEN")
+              }
+          )
       }
 
 let buildJob =

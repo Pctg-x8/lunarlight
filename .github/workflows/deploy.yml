@@ -22,7 +22,11 @@ jobs:
           path: /tmp/.buildx-cache
           restore-keys: "dockercache:${{ runner.os }}:"
       - name: login ghcr.io
-        run: "cat $GITHUB_TOKEN | docker login ghcr.io -u Pctg-x8 --password-stdin"
+        uses: "docker/login-action@v2"
+        with:
+          password: "${{ secrets.GITHUB_TOKEN }}"
+          registry: ghcr.io
+          username: "${{ github.actor }}"
       - name: "build and push(runner)"
         uses: "docker/build-push-action@v4"
         with:
