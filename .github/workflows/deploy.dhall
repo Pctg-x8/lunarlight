@@ -8,8 +8,8 @@ let ProvidedSteps/aws-actions/configure-aws-credentials =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/aws-actions/configure-aws-credentials.dhall
 
 let imageTags =
-      { runner = "ghcr.io/Pctg-x8/lunarlight:latest"
-      , managetools = "ghcr.io/Pctg-x8/lunarlight/managetools:latest"
+      { runner = "ghcr.io/pctg-x8/lunarlight:latest"
+      , managetools = "ghcr.io/pctg-x8/lunarlight/managetools:latest"
       }
 
 let targetPlatforms = "linux/amd64,linux/arm64"
