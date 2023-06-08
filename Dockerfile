@@ -52,7 +52,7 @@ RUN pnpm i --frozen-lockfile && pnpm build:ws
 FROM runtime as streamer
 
 WORKDIR /app
-COPY --from=streamer-builder /app/dist/streamingServer.js ./dist
+COPY --from=streamer-builder /app/dist/streamingServer.js ./dist/
 COPY ./prisma ./prisma
 RUN pnpm i prisma @prisma/client
 
