@@ -53,5 +53,7 @@ FROM runtime as streamer
 
 WORKDIR /app
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
+COPY ./prisma ./prisma
+RUN pnpm i prisma @prisma/client
 
 ENTRYPOINT ["node", "streamingServer.js"]
