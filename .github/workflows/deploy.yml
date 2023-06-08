@@ -27,7 +27,7 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
           username: "${{ github.actor }}"
-      - name: "build(runner)"
+      - name: "build and push (runner)"
         uses: "docker/build-push-action@v4"
         with:
           cache-from: "type=local,src=/tmp/.buildx-cache"
@@ -35,10 +35,10 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: false
+          push: true
           tags: ghcr.io/pctg-x8/lunarlight:latest
           target: runner
-      - name: "build(managetools)"
+      - name: "build and push (managetools)"
         uses: "docker/build-push-action@v4"
         with:
           cache-from: "type=local,src=/tmp/.buildx-cache"
@@ -46,10 +46,10 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: false
+          push: true
           tags: ghcr.io/pctg-x8/lunarlight/managetools:latest
           target: managetools
-      - name: "build(streamer)"
+      - name: "build and push (streamer)"
         uses: "docker/build-push-action@v4"
         with:
           cache-from: "type=local,src=/tmp/.buildx-cache"
@@ -57,14 +57,9 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: false
+          push: true
           tags: ghcr.io/pctg-x8/lunarlight/streamer:latest
           target: streamer
-      - name: push images
-        run: |
-          docker image push ghcr.io/pctg-x8/lunarlight:latest
-          docker image push ghcr.io/pctg-x8/lunarlight/managetools:latest
-          docker image push ghcr.io/pctg-x8/lunarlight/streamer:latest
       - name: replace all docker layer caches
         run: "rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache"
   replaceContainer:
