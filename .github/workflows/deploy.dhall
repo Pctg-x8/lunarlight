@@ -92,7 +92,7 @@ let buildJob =
         , cacheDockerLayers
         , loginGitHubContainerRegistry
         , GHA.Step::{
-          , name = "build and push(runner)"
+          , name = "build(runner)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
@@ -104,7 +104,7 @@ let buildJob =
               )
           }
         , GHA.Step::{
-          , name = "build and push(managetools)"
+          , name = "build(managetools)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
@@ -116,7 +116,7 @@ let buildJob =
               )
           }
         , GHA.Step::{
-          , name = "build and push(streamer)"
+          , name = "build(streamer)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
