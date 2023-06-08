@@ -14,11 +14,13 @@ export default function Timeline({
   readonly deletedIds?: Immutable.Set<string>;
   readonly mode?: TimelineMode;
 }) {
+  const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
+
   return (
     <ul>
       {statuses.map((s, x) => (
-        <StaticTimelineRow key={x} className={cls({ deleted: isDefined(deletedIds) && deletedIds.has(s.timelineId) })}>
-          <StatusRow status={s} mode={mode} />
+        <StaticTimelineRow key={x} className={cls({ deleted: hasDeleted(s) })}>
+          <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} />
         </StaticTimelineRow>
       ))}
     </ul>

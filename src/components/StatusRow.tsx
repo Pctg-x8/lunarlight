@@ -9,7 +9,15 @@ import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
 import StatusActions from "./StatusActions";
 
-export default function StatusRow({ status, mode }: { readonly status: Status; readonly mode: TimelineMode }) {
+export default function StatusRow({
+  status,
+  mode,
+  disabled = false,
+}: {
+  readonly status: Status;
+  readonly mode: TimelineMode;
+  readonly disabled?: boolean;
+}) {
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!contentRef.current) return;
@@ -58,7 +66,7 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
           <AgoLabel className="ago" createdAt={status.created_at} />
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className="statusActions">
-            <StatusActions status={status} />
+            <StatusActions status={status} disabled={disabled} />
           </div>
         </NormalStatusRow>
       );
@@ -88,13 +96,13 @@ export default function StatusRow({ status, mode }: { readonly status: Status; r
             ) : undefined}
           </div>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
-          <button title={`返信(${status.counters.replied})`} className="reply ab">
+          <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={disabled}>
             <FontAwesomeIcon icon={faReply} />
           </button>
-          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab">
+          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab" disabled={disabled}>
             <FontAwesomeIcon icon={faStar} />
           </button>
-          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab">
+          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab" disabled={disabled}>
             <FontAwesomeIcon icon={faRetweet} />
           </button>
           <AgoLabel className="ago" createdAt={status.created_at} />

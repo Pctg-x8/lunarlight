@@ -3,41 +3,47 @@ import { faBookmark, faEllipsis, faReply, faRetweet, faShareNodes, faStar } from
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
 
-export default function StatusActions({ status }: { readonly status: Status }) {
+export default function StatusActions({
+  status,
+  disabled = false,
+}: {
+  readonly status: Status;
+  readonly disabled?: boolean;
+}) {
   const { replied, favorited, reblogged } = status.counters;
 
   return (
     <ul className={styles.statusActions}>
       <li>
-        <button title="返信">
+        <button title="返信" disabled={disabled}>
           <FontAwesomeIcon icon={faReply} />
           <span>{replied}</span>
         </button>
       </li>
       <li>
-        <button title="ふぁぼ">
+        <button title="ふぁぼ" disabled={disabled}>
           <FontAwesomeIcon icon={faStar} />
           <span>{favorited}</span>
         </button>
       </li>
       <li>
-        <button title="ブースト">
+        <button title="ブースト" disabled={disabled}>
           <FontAwesomeIcon icon={faRetweet} />
           <span>{reblogged}</span>
         </button>
       </li>
       <li className={styles.nonCounter}>
-        <button title="ブックマーク">
+        <button title="ブックマーク" disabled={disabled}>
           <FontAwesomeIcon icon={faBookmark} />
         </button>
       </li>
       <li className={styles.nonCounter}>
-        <button title="共有">
+        <button title="共有" disabled={disabled}>
           <FontAwesomeIcon icon={faShareNodes} />
         </button>
       </li>
       <li className={styles.nonCounter}>
-        <button title="その他">
+        <button title="その他" disabled={disabled}>
           <FontAwesomeIcon icon={faEllipsis} />
         </button>
       </li>
