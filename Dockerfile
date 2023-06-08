@@ -47,13 +47,12 @@ ENV WS_PORT=3001
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY . .
-RUN pnpm i --frozen-lockfile && pnpm build:ws
+RUN pnpm i --frozen-lockfile && pnpm db:generate-client && pnpm build:ws
 
 FROM runtime as streamer
 
 WORKDIR /app
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./
-RUN pnpm i prisma @prisma/client && pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
