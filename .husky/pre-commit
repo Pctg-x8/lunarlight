@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -xe
+
+# build workflow ymls
+make -C .github/workflows
+git add .github/workflows/*.yml
