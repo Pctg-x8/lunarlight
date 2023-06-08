@@ -46,7 +46,7 @@ let DockerCommonConfig =
         { context = GHA.WithParameterType.Text "."
         , file = GHA.WithParameterType.Text "./Dockerfile"
         , platforms = GHA.WithParameterType.Text targetPlatforms
-        , push = GHA.WithParameterType.Boolean False
+        , push = GHA.WithParameterType.Boolean True
         }
 
 let DockerCacheConfig =
@@ -92,7 +92,7 @@ let buildJob =
         , cacheDockerLayers
         , loginGitHubContainerRegistry
         , GHA.Step::{
-          , name = "build(runner)"
+          , name = "build and push (runner)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
@@ -104,7 +104,7 @@ let buildJob =
               )
           }
         , GHA.Step::{
-          , name = "build(managetools)"
+          , name = "build and push (managetools)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
@@ -116,7 +116,7 @@ let buildJob =
               )
           }
         , GHA.Step::{
-          , name = "build(streamer)"
+          , name = "build and push (streamer)"
           , uses = Some "docker/build-push-action@v4"
           , `with` = Some
               (   toMap
@@ -126,15 +126,6 @@ let buildJob =
                 # DockerCommonConfig
                 # DockerCacheConfig
               )
-          }
-        , GHA.Step::{
-          , name = "push images"
-          , run = Some
-              ''
-              docker image push ${imageTags.runner}
-              docker image push ${imageTags.managetools}
-              docker image push ${imageTags.streamer}
-              ''
           }
         , replaceAllDockerLayerCaches
         ]
