@@ -35,7 +35,7 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: true
+          push: false
           tags: ghcr.io/pctg-x8/lunarlight:latest
           target: runner
       - name: "build and push(managetools)"
@@ -46,7 +46,7 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: true
+          push: false
           tags: ghcr.io/pctg-x8/lunarlight/managetools:latest
           target: managetools
       - name: "build and push(streamer)"
@@ -57,9 +57,14 @@ jobs:
           context: '.'
           file: "./Dockerfile"
           platforms: "linux/amd64,linux/arm64"
-          push: true
+          push: false
           tags: ghcr.io/pctg-x8/lunarlight/streamer:latest
           target: streamer
+      - name: push images
+        run: |
+          docker push ghcr.io/pctg-x8/lunarlight:latest
+          docker push ghcr.io/pctg-x8/lunarlight/managetools:latest
+          docker push ghcr.io/pctg-x8/lunarlight/streamer:latest
       - name: replace all docker layer caches
         run: "rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache"
   replaceContainer:

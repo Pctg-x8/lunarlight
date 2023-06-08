@@ -46,7 +46,7 @@ let DockerCommonConfig =
         { context = GHA.WithParameterType.Text "."
         , file = GHA.WithParameterType.Text "./Dockerfile"
         , platforms = GHA.WithParameterType.Text targetPlatforms
-        , push = GHA.WithParameterType.Boolean True
+        , push = GHA.WithParameterType.Boolean False
         }
 
 let DockerCacheConfig =
@@ -126,6 +126,15 @@ let buildJob =
                 # DockerCommonConfig
                 # DockerCacheConfig
               )
+          }
+        , GHA.Step::{
+          , name = "push images"
+          , run = Some
+              ''
+              docker push ${imageTags.runner}
+              docker push ${imageTags.managetools}
+              docker push ${imageTags.streamer}
+              ''
           }
         , replaceAllDockerLayerCaches
         ]
