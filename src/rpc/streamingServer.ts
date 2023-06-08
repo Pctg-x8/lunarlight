@@ -2,7 +2,7 @@ import { createAppLogger } from "@/logger";
 import { AUTHORIZATION_TOKEN_COOKIE_NAME } from "@/models/auth";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import cookie from "cookie";
-import ws from "ws";
+import { WebSocketServer } from "ws";
 import { appRpcRouter } from "./app";
 
 // based: https://github.com/trpc/examples-next-prisma-websockets-starter/blob/main/src/server/wssDevServer.ts
@@ -10,7 +10,7 @@ import { appRpcRouter } from "./app";
 const Logger = createAppLogger({ name: "WebSocket Server" });
 
 const Port = Number(process.env.WS_PORT ?? 3001);
-const wss = new ws.Server({ port: Port });
+const wss = new WebSocketServer({ port: Port });
 const handler = applyWSSHandler({
   wss,
   router: appRpcRouter,
