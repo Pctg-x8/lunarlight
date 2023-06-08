@@ -1,15 +1,18 @@
+import { createAppLogger } from "@/logger";
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
 import { revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
+import { Event } from "@/models/api/mastodon/streaming";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import pino from "pino";
+import { observable } from "@trpc/server/observable";
+import ws from "ws";
 import z from "zod";
 
-const apiAccessLogger = pino({ name: "trpc" });
+const apiAccessLogger = createAppLogger({ name: "trpc" });
 
 export async function createContext(opts: CreateNextContextOptions) {
   return {
@@ -73,5 +76,41 @@ export const appRpcRouter = t.router({
     .query(({ input, ctx: { token } }) =>
       homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
     ),
+  streamingTimeline: stdProcedure.use(requireAuthorized).subscription(({ ctx: { token } }) =>
+    observable<Event, unknown>(observer => {
+      const params = new SearchParamsRequestBody({
+        access_token: token,
+        stream: "user",
+      });
+
+      const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
+      url.protocol = "wss:";
+      const client = new ws(url);
+      client.on("message", (msg, isBinary) => {
+        if (isBinary) {
+          console.log("unknown binary msg", msg);
+          return;
+        }
+
+        let msgString: string;
+        if (msg instanceof Array) {
+          // chunked
+
+          const decoder = new TextDecoder();
+          msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
+        } else {
+          // not chunked
+
+          msgString = new TextDecoder().decode(msg);
+        }
+
+        observer.next(JSON.parse(msgString));
+      });
+
+      return () => {
+        client.close();
+      };
+    })
+  ),
 });
 export type AppRpcRouter = typeof appRpcRouter;

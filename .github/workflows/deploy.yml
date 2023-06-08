@@ -49,6 +49,17 @@ jobs:
           push: true
           tags: ghcr.io/pctg-x8/lunarlight/managetools:latest
           target: managetools
+      - name: "build and push(streamer)"
+        uses: "docker/build-push-action@v4"
+        with:
+          cache-from: "type=local,src=/tmp/.buildx-cache"
+          cache-to: "type=local,dest=/tmp/.buildx-cache-new"
+          context: '.'
+          file: "./Dockerfile"
+          platforms: "linux/amd64,linux/arm64"
+          push: true
+          tags: ghcr.io/pctg-x8/lunarlight/streamer:latest
+          target: streamer
       - name: replace all docker layer caches
         run: "rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache"
   replaceContainer:

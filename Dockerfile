@@ -40,3 +40,18 @@ COPY ./prisma ./prisma
 RUN pnpm i prisma @prisma/client
 
 ENTRYPOINT ["pnpm"]
+
+FROM --platform=$BUILDPLATFORM base as streamer-builder
+
+ENV WS_PORT=3001
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+COPY . .
+RUN pnpm i --frozen-lockfile && pnpm build:ws
+
+FROM runtime as streamer
+
+WORKDIR /app
+COPY --from=builder /app/dist/streamingServer.js ./
+
+ENTRYPOINT ["node", "streamingServer.js"]

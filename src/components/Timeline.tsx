@@ -1,28 +1,37 @@
 import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
+import { isDefined } from "@/utils";
 import { styled } from "@linaria/react";
+import cls from "classnames";
 import StatusRow from "./StatusRow";
 
 export default function Timeline({
   statuses,
+  deletedIds,
   mode = "normal",
 }: {
   readonly statuses: Status[];
+  readonly deletedIds?: Immutable.Set<string>;
   readonly mode?: TimelineMode;
 }) {
+  const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
+
   return (
-    <StaticTimeline>
+    <ul>
       {statuses.map((s, x) => (
-        <li key={x}>
-          <StatusRow status={s} mode={mode} />
-        </li>
+        <StaticTimelineRow key={x} className={cls({ deleted: hasDeleted(s) })}>
+          <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} />
+        </StaticTimelineRow>
       ))}
-    </StaticTimeline>
+    </ul>
   );
 }
 
-const StaticTimeline = styled.ul`
-  & > li {
-    border-bottom: 1px solid var(--theme-status-border);
+const StaticTimelineRow = styled.li`
+  border-bottom: 1px solid var(--theme-status-border);
+
+  .deleted {
+    opacity: 0.5;
+    text-decoration: line-through;
   }
 `;

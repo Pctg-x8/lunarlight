@@ -1,11 +1,11 @@
+import { createAppLogger } from "@/logger";
 import { DefaultInstance, FormDataRequestBody } from "@/models/api";
 import { createApp, obtainToken } from "@/models/api/mastodon/apps";
 import { AppData } from "@/models/app";
 import { setAuthorizationToken } from "@/models/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { pino } from "pino";
 
-const ErrorLogger = pino({ name: "authorize error" });
+const ErrorLogger = createAppLogger({ name: "authorize error" });
 
 export default async function handler(req: NextApiRequest, resp: NextApiResponse) {
   const code = req.query["code"];

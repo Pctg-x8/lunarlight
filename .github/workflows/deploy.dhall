@@ -10,6 +10,7 @@ let ProvidedSteps/aws-actions/configure-aws-credentials =
 let imageTags =
       { runner = "ghcr.io/pctg-x8/lunarlight:latest"
       , managetools = "ghcr.io/pctg-x8/lunarlight/managetools:latest"
+      , streamer = "ghcr.io/pctg-x8/lunarlight/streamer:latest"
       }
 
 let targetPlatforms = "linux/amd64,linux/arm64"
@@ -109,6 +110,18 @@ let buildJob =
               (   toMap
                     { target = GHA.WithParameterType.Text "managetools"
                     , tags = GHA.WithParameterType.Text imageTags.managetools
+                    }
+                # DockerCommonConfig
+                # DockerCacheConfig
+              )
+          }
+        , GHA.Step::{
+          , name = "build and push(streamer)"
+          , uses = Some "docker/build-push-action@v4"
+          , `with` = Some
+              (   toMap
+                    { target = GHA.WithParameterType.Text "streamer"
+                    , tags = GHA.WithParameterType.Text imageTags.streamer
                     }
                 # DockerCommonConfig
                 # DockerCacheConfig

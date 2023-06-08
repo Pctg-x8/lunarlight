@@ -3,13 +3,15 @@
 import { HomeTimelineRequestParams } from "@/models/api/mastodon/timeline";
 import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
+import { DeleteEvent, Event, UpdateEvent, streamEvents } from "@/models/streaming";
 import { rpcClient } from "@/rpc/client";
-import { useEffect, useMemo, useRef } from "react";
+import Immutable from "immutable";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import Timeline from "./Timeline";
 
 export default function HomeStreamingTimeline({ mode }: { readonly mode: TimelineMode }) {
-  const { data, isLoading, setSize } = useSWRInfinite(
+  const { data, isLoading, setSize, mutate } = useSWRInfinite(
     (_, prevPageData: Status[] | null): HomeTimelineRequestParams | null => {
       if (!prevPageData) return { limit: 50 };
       if (prevPageData.length === 0) return null;
@@ -19,6 +21,7 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
     { revalidateFirstPage: false, revalidateAll: false }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
+  const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -36,10 +39,28 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
     return () => io.disconnect();
   }, [isLoading, setSize]);
 
+  const handleEvents = useCallback(
+    (e: Event) => {
+      if (e instanceof UpdateEvent) {
+        mutate(xs => (!xs ? [[e.status]] : [[e.status], ...xs]));
+      } else if (e instanceof DeleteEvent) {
+        setDeletedIds(xs => xs.add(e.targetId));
+      }
+    },
+    [mutate, setDeletedIds]
+  );
+  useEffect(() => {
+    const sub = streamEvents(handleEvents);
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [handleEvents]);
+
   if (isLoading) return <p>Loading...</p>;
   return (
     <>
-      <Timeline statuses={statuses} mode={mode} />
+      <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
       <div ref={sentinelRef} />
     </>
   );
