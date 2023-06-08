@@ -54,6 +54,6 @@ FROM runtime as streamer
 WORKDIR /app
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./
-RUN pnpm i prisma @prisma/client
+RUN pnpm i prisma @prisma/client && pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
