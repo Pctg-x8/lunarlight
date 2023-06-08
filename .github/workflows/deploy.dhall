@@ -131,9 +131,9 @@ let buildJob =
           , name = "push images"
           , run = Some
               ''
-                docker push ${imageTags.runner}
-                docker push ${imageTags.managetools}
-                docker push ${imageTags.streamer}
+              docker push ${imageTags.runner}
+              docker push ${imageTags.managetools}
+              docker push ${imageTags.streamer}
               ''
           }
         , replaceAllDockerLayerCaches
