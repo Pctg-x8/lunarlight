@@ -3,9 +3,9 @@ import { createTRPCProxyClient, createWSClient, httpBatchLink, splitLink, wsLink
 import { AppRpcRouter } from "./app";
 
 const wsPort = process.env.WS_PORT ?? "3001";
+const hostName = process.env.WS_HOST ?? window.location.hostname;
 const wsClient = createWSClient({
-  // TODO: あとで正しいのをなんとかして取る
-  url: `ws://localhost:${wsPort}/`,
+  url: `ws://${hostName}:${wsPort}/`,
 });
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
