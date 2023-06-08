@@ -5,3 +5,9 @@ export type SubscribeParams = {
   readonly list?: string;
   readonly tag?: string;
 };
+
+export type Event = {
+  readonly stream: string[];
+  readonly event: string;
+  readonly payload: string;
+};

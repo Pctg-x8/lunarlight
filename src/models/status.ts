@@ -9,6 +9,7 @@ export type Counters = {
   readonly favorited: number;
   readonly reblogged: number;
 };
+
 export abstract class Status {
   static fromApiData(data: ApiStatusData): Status {
     if (data.reblog) {

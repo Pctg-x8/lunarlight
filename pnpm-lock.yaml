@@ -52,6 +52,9 @@ dependencies:
   '@types/ws':
     specifier: ^8.5.4
     version: 8.5.4
+  classnames:
+    specifier: ^2.3.2
+    version: 2.3.2
   cookie:
     specifier: ^0.5.0
     version: 0.5.0
@@ -64,6 +67,9 @@ dependencies:
   eslint-config-next:
     specifier: 13.4.4
     version: 13.4.4(eslint@8.34.0)(typescript@5.1.3)
+  immutable:
+    specifier: ^4.3.0
+    version: 4.3.0
   next:
     specifier: 13.4.4
     version: 13.4.4(@babel/core@7.21.4)(react-dom@18.2.0)(react@18.2.0)(sass@1.60.0)
@@ -2862,6 +2868,10 @@ packages:
   /cjs-module-lexer@1.2.2:
     resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
     dev: true
+
+  /classnames@2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: false
 
   /client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}

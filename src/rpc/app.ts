@@ -1,6 +1,7 @@
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
 import { revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
+import { Event } from "@/models/api/mastodon/streaming";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/models/auth";
@@ -76,7 +77,7 @@ export const appRpcRouter = t.router({
       homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
     ),
   streamingTimeline: stdProcedure.use(requireAuthorized).subscription(({ ctx: { token } }) =>
-    observable(observer => {
+    observable<Event, unknown>(observer => {
       const params = new SearchParamsRequestBody({
         access_token: token,
         stream: "user",
@@ -85,7 +86,6 @@ export const appRpcRouter = t.router({
       const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
       url.protocol = "wss:";
       const client = new ws(url);
-      console.log("connecting stream", url);
       client.on("message", (msg, isBinary) => {
         if (isBinary) {
           console.log("unknown binary msg", msg);
@@ -104,8 +104,7 @@ export const appRpcRouter = t.router({
           msgString = new TextDecoder().decode(msg);
         }
 
-        console.log("msg", msgString);
-        observer.next(msgString);
+        observer.next(JSON.parse(msgString));
       });
 
       return () => {
