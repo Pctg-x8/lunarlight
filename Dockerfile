@@ -56,4 +56,4 @@ COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./
 RUN pnpm i prisma @prisma/client
 
-ENTRYPOINT ["node", "./dist/streamingServer.js"]
+ENTRYPOINT ["node", "./streamingServer.js"]
