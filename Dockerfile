@@ -52,6 +52,6 @@ RUN pnpm i --frozen-lockfile && pnpm build:ws
 FROM runtime as streamer
 
 WORKDIR /app
-COPY --from=builder /app/dist/streamingServer.js ./
+COPY --from=streamer-builder /app/dist/streamingServer.js ./
 
 ENTRYPOINT ["node", "streamingServer.js"]
