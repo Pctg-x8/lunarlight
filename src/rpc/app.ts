@@ -1,3 +1,4 @@
+import { createAppLogger } from "@/logger";
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
 import { revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
@@ -8,11 +9,10 @@ import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/mod
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
-import pino from "pino";
 import ws from "ws";
 import z from "zod";
 
-const apiAccessLogger = pino({ name: "trpc" });
+const apiAccessLogger = createAppLogger({ name: "trpc" });
 
 export async function createContext(opts: CreateNextContextOptions) {
   return {

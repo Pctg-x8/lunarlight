@@ -43,6 +43,7 @@
     "next": "13.4.4",
     "next-with-linaria": "^0.5.0",
     "pino": "^8.11.0",
+    "pino-pretty": "^10.0.0",
     "prettier": "^2.8.7",
     "prettier-plugin-organize-imports": "^3.2.2",
     "prisma": "^4.11.0",
