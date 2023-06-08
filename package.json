@@ -16,7 +16,7 @@
     "test": "jest",
     "typecheck": "tsc --pretty --noEmit",
     "fmtcheck": "prettier --check .",
-    "prepare": "node scripts/dev-only.js && husky install"
+    "prepare": "node scripts/dev-only.js && husky install || exit 0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
