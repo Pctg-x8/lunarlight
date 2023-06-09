@@ -55,6 +55,6 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./
-RUN pnpm i prisma @prisma/client --frozen-lockfile && pnpm db:generate-client
+RUN pnpm i --frozen-lockfile prisma @prisma/client && pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
