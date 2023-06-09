@@ -51,7 +51,7 @@ RUN pnpm i --frozen-lockfile && pnpm db:generate-client && pnpm build:ws
 FROM runtime as streamer
 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml .env ./
+COPY package.json pnpm-lock.yaml ./
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./prisma/
 RUN pnpm i prisma @prisma/client && pnpm db:generate-client
