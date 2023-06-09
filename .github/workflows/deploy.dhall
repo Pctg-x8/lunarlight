@@ -149,7 +149,7 @@ let replaceContainerJob =
               ''
               set -e
 
-              commandId=$(aws ssm send-command --document-name "Crescent-Lunarlight-DeploymentContainers" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1 --output text --query 'Command.CommandId')
+              commandId=$(aws ssm send-command --document-name "Crescent-Lunarlight-DeploymentContainers" --document-version "$LATEST" --targets '[{"Key":"InstanceIds","Values":["i-0195ecc0d1e95f81e"]}]' --parameters '{}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --cloud-watch-output-config '{"CloudWatchOutputEnabled":false}' --region ap-northeast-1 --output text --query 'Command.CommandId')
               aws ssm wait command-executed --command-id $commandId --instance-id i-0195ecc0d1e95f81e
               ''
           }
