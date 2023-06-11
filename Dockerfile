@@ -2,6 +2,7 @@ FROM --platform=$BUILDPLATFORM node:18-alpine as base
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
+ENV NEXT_PUBLIC_WS_SERVER_URL=wss://crescent.ct2.io/ll/streaming
 RUN yarn global add pnpm
 
 FROM --platform=$BUILDPLATFORM base as builder
@@ -14,8 +15,6 @@ RUN pnpm i --frozen-lockfile && pnpm build
 FROM node:18-alpine as runtime
 
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_BASE_PATH=/ll
-ENV NEXT_PUBLIC_WS_SERVER_URL=wss://crescent.ct2.io/ll/streaming
 RUN yarn global add pnpm
 
 FROM runtime as runner
