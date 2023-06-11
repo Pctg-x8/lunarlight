@@ -1,22 +1,25 @@
-FROM --platform=$BUILDPLATFORM node:18-bullseye-slim as base
+FROM node:18-bullseye-slim as builder-base
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
 ENV NEXT_PUBLIC_WS_SERVER_URL=wss://crescent.ct2.io/ll/streaming
-RUN yarn global add pnpm
-
-FROM --platform=$BUILDPLATFORM base as builder
-
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-COPY . .
-RUN pnpm i --frozen-lockfile && pnpm build
+RUN yarn global add pnpm && pnpm i --frozen-lockfile
 
 FROM node:18-bullseye-slim as runtime
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
 RUN yarn global add pnpm
+
+## app
+
+FROM --platform=$BUILDPLATFORM builder-base as builder
+
+WORKDIR /app
+COPY . .
+RUN pnpm db:generate-client && pnpm build
 
 FROM runtime as runner
 
@@ -26,35 +29,41 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/prisma ./prisma
-RUN pnpx prisma generate
+RUN pnpm db:generate-client
 
 EXPOSE 3000
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLE=1
 CMD ["pnpm", "start"]
 
+## managetools
+
 FROM runtime as managetools
 
 WORKDIR /app
-COPY ./package.json ./pnpm-lock.yaml ./
-COPY ./prisma ./prisma
-RUN pnpm i prisma @prisma/client
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
+RUN pnpm db:generate-client
 
 ENTRYPOINT ["pnpm"]
 
-FROM --platform=$BUILDPLATFORM base as streamer-builder
+## streamer
+
+FROM --platform=$BUILDPLATFORM builder-base as streamer-builder
 
 ENV WS_PORT=3001
 WORKDIR /app
 COPY . .
-RUN pnpm i --frozen-lockfile && pnpm db:generate-client && pnpm build:ws
+RUN pnpm db:generate-client && pnpm build:ws
 
 FROM runtime as streamer
 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./prisma/
-RUN pnpm i prisma @prisma/client && pnpm db:generate-client
+COPY --from=streamer-builder /app/node_modules ./node_modules
+RUN pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
