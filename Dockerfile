@@ -15,6 +15,7 @@ RUN pnpm i --frozen-lockfile && pnpm build
 FROM node:18-alpine as runtime
 
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_BASE_PATH=/ll
 RUN yarn global add pnpm
 
 FROM runtime as runner
