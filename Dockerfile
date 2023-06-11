@@ -5,6 +5,7 @@ ENV NEXT_PUBLIC_BASE_PATH=/ll
 ENV NEXT_PUBLIC_WS_SERVER_URL=wss://crescent.ct2.io/ll/streaming
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
+COPY scripts ./scripts
 RUN yarn global add pnpm && pnpm i --frozen-lockfile
 
 FROM node:18-bullseye-slim as runtime
