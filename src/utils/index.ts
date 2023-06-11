@@ -34,7 +34,9 @@ export function isDefined<T>(value: T | undefined | null): value is NonNullable<
 }
 
 export function requireEnv(name: string): string {
-  const e = process.env[name];
-  if (!isDefined(e)) throw new Error(`Environment Variable ${name} is not set`);
-  return e;
+  return process.env[name] ?? throwException(() => new Error(`Environment Variable ${name} is not set`));
+}
+
+export function throwException(except: () => void): never {
+  throw except();
 }
