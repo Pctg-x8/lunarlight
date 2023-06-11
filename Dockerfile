@@ -12,11 +12,11 @@ COPY package.json pnpm-lock.yaml ./
 COPY . .
 RUN pnpm i --frozen-lockfile && pnpm build
 
-FROM gcr.io/distroless/nodejs18-debian11 as runtime
+FROM node:18-bullseye-slim as runtime
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
-RUN npm install -g pnpm
+RUN yarn global add pnpm
 
 FROM runtime as runner
 
