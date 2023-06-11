@@ -16,7 +16,7 @@ FROM gcr.io/distroless/nodejs18-debian11 as runtime
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
-RUN yarn global add pnpm
+RUN npm install -g pnpm
 
 FROM runtime as runner
 
