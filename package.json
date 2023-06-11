@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:next": "next dev",
-    "dev:ws": "dotenv tsx watch src/rpc/streamingServer.ts --tsconfig tsconfig.json",
+    "dev:ws": "dotenv -- tsx watch src/rpc/streamingServer.ts --tsconfig tsconfig.json",
     "dev": "run-p dev:*",
     "build": "next build",
     "build:ws": "esbuild src/rpc/streamingServer.ts --bundle --outdir=dist --minify --platform=node",

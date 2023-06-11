@@ -32,3 +32,11 @@ export function stripPrefix(input: string, prefix: string): string {
 export function isDefined<T>(value: T | undefined | null): value is NonNullable<T> {
   return value !== undefined && value !== null;
 }
+
+export function requireEnv(name: string): string {
+  return process.env[name] ?? throwException(() => new Error(`Environment Variable ${name} is not set`));
+}
+
+export function throwException(except: () => void): never {
+  throw except();
+}

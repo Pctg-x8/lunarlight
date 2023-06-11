@@ -1,11 +1,9 @@
-import { baseUrl } from "@/utils";
+import { baseUrl, throwException } from "@/utils";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
 import { AppRpcRouter } from "./app";
 
-const wsPort = process.env.WS_PORT ?? "3001";
-const hostName = process.env.WS_HOST ?? window.location.hostname;
 const wsClient = createWSClient({
-  url: `ws://${hostName}:${wsPort}/`,
+  url: process.env.NEXT_PUBLIC_WS_SERVER_URL ?? throwException(() => new Error("WebSocket Server is unknown")),
 });
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
