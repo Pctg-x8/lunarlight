@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim as builder-base
+FROM --platform=$BUILDPLATFORM node:18-bullseye-slim as builder-base
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
