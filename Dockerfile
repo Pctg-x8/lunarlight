@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:18-alpine as base
+FROM --platform=$BUILDPLATFORM node:18-slim as base
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY . .
 RUN pnpm i --frozen-lockfile && pnpm build
 
-FROM node:18-alpine as runtime
+FROM node:18-distroless as runtime
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_BASE_PATH=/ll
