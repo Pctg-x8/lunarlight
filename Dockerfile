@@ -63,7 +63,7 @@ WORKDIR /app
 COPY package.json ./
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./prisma/
-COPY --from=streamer-builder /app/node_modules ./
+COPY --from=streamer-builder /app/node_modules ./node_modules
 RUN pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
