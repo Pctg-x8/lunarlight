@@ -60,9 +60,10 @@ RUN pnpm db:generate-client && pnpm build:ws
 FROM runtime as streamer
 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 COPY --from=streamer-builder /app/dist/streamingServer.js ./
 COPY ./prisma/schema.prisma ./prisma/
-RUN pnpm add prisma @prisma/client && pnpm db:generate-client
+COPY --from=streamer-builder /app/node_modules ./node_modules
+RUN pnpm db:generate-client
 
 ENTRYPOINT ["node", "./streamingServer.js"]
