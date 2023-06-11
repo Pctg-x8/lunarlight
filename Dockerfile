@@ -19,7 +19,7 @@ FROM --platform=$BUILDPLATFORM builder-base as builder
 
 WORKDIR /app
 COPY . .
-RUN pnpm build
+RUN pnpm db:generate-client && pnpm build
 
 FROM runtime as runner
 
