@@ -1,11 +1,9 @@
-import { baseUrl } from "@/utils";
+import { baseUrl, requireEnv } from "@/utils";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
 import { AppRpcRouter } from "./app";
 
-const wsPort = process.env.WS_PORT ?? "3001";
-const hostName = process.env.WS_HOST ?? window.location.hostname;
 const wsClient = createWSClient({
-  url: `wss://${hostName}:${wsPort}/streaming`,
+  url: requireEnv("WS_SERVER_URL"),
 });
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
