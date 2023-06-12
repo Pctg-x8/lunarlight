@@ -88,5 +88,11 @@
   },
   "volta": {
     "node": "19.8.1"
+  },
+  "babel": {
+    "presets": [
+      "next/babel",
+      "@linaria"
+    ]
   }
 }
