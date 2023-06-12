@@ -12,10 +12,13 @@ type Story = StoryObj<typeof Button>;
 export const Default: Story = {
   args: {
     children: "Button",
+    primary: false,
+    disabled: false,
   },
 };
 export const Primary: Story = {
   args: {
+    disabled: false,
     primary: true,
     children: "Button",
   },
