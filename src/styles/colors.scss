@@ -22,11 +22,14 @@
   --theme-user-fields-text: #aab;
 
   --theme-primary-button-bg: #29d;
+  --theme-button-bg: rgba(255 255 240 / 0%);
   --theme-primary-button-bg-hover: #3af;
+  --theme-button-bg-hover: rgba(255 255 240 / 10%);
   --theme-primary-button-bg-active: #058;
-  --theme-primary-button-bg-disable: #999;
+  --thmee-button-bg-active: rgba(255 255 240 / 20%);
+  --theme-button-bg-disable: #999;
   --theme-primary-button-text: var(--theme-default-text);
-  --theme-primary-button-text-disable: #ccc;
+  --theme-button-text-disable: #ccc;
 
   --theme-menu-background: var(--theme-background);
   --theme-menu-active-link: #c5f;
