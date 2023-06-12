@@ -9,5 +9,24 @@ const config: StorybookConfig = {
   docs: {
     autodocs: "tag",
   },
+  core: {
+    builder: "@storybook/builder-webpack5",
+  },
+  webpackFinal: cfg => {
+    cfg.module?.rules?.push({
+      test: /\.(tsx?|jsx?)$/,
+      exclude: /node_modules/,
+      use: [
+        {
+          loader: "@linaria/webpack5-loader",
+          options: {
+            sourceMap: process.env.NODE_ENV !== "production",
+          },
+        },
+      ],
+    });
+
+    return cfg;
+  },
 };
 export default config;

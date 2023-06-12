@@ -129,6 +129,9 @@ devDependencies:
   '@jest/globals':
     specifier: ^29.5.0
     version: 29.5.0
+  '@linaria/webpack5-loader':
+    specifier: ^4.1.17
+    version: 4.1.17(webpack@5.86.0)
   '@storybook/addon-essentials':
     specifier: 7.0.20
     version: 7.0.20(react-dom@18.2.0)(react@18.2.0)
@@ -2298,7 +2301,6 @@ packages:
       stylis: 3.5.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@linaria/core@4.2.10:
     resolution: {integrity: sha512-S1W01W7L4SQnGpWzp8awyCpPIYUOEJ+OLjjXqKpIXOU+ozPwBt86Mjjdas9aZccVhNBWDja74cMCUAVp8yUpDQ==}
@@ -2309,7 +2311,6 @@ packages:
       '@linaria/utils': 4.3.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@linaria/logger@4.0.0:
     resolution: {integrity: sha512-YnBq0JlDWMEkTOK+tMo5yEVR0f5V//6qMLToGcLhTyM9g9i+IDFn51Z+5q2hLk7RdG4NBPgbcCXYi2w4RKsPeg==}
@@ -2319,7 +2320,6 @@ packages:
       picocolors: 1.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@linaria/react@4.3.8(react@18.2.0):
     resolution: {integrity: sha512-+Io4PXXyopxiSemk+5QdyqF4+uJJwVUx9yIhUrVJhKluwyJ0KsNA00gY+d5wpT5FhTsnVpv4Ef3YEcPHcVUuow==}
@@ -2354,7 +2354,6 @@ packages:
       ts-invariant: 0.10.3
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@linaria/tags@4.3.5:
     resolution: {integrity: sha512-PgaIi8Vv89YOjc6rpKL/uPg2w4k0rAwAYxcqeXqzKqsEAste5rgB8xp1/KUOG0oAOkPd3MRL6Duj+m0ZwJ3g+g==}
@@ -2365,7 +2364,6 @@ packages:
       '@linaria/utils': 4.3.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@linaria/utils@4.3.4:
     resolution: {integrity: sha512-vt6WJG54n+KANaqxOfzIIU7aSfFHEWFbnGLsgxL7nASHqO0zezrNA2y2Rrp80zSeTW+wSpbmDM4uJyC9UW1qoA==}
@@ -2381,7 +2379,21 @@ packages:
       babel-merge: 3.0.0(@babel/core@7.21.4)
     transitivePeerDependencies:
       - supports-color
-    dev: false
+
+  /@linaria/webpack5-loader@4.1.17(webpack@5.86.0):
+    resolution: {integrity: sha512-KJHCyPYoUzvqz+X8jTcf23dpPDmZXPiJcTpy2/oRsEnYpSoKN6MVvoPNxNiMi/csNkMaSHoYJ4no8n8mq/mo9g==}
+    engines: {node: ^12.16.0 || >=13.7.0}
+    peerDependencies:
+      webpack: ^5.0.0
+    dependencies:
+      '@linaria/babel-preset': 4.4.5
+      '@linaria/logger': 4.0.0
+      enhanced-resolve: 5.14.1
+      mkdirp: 0.5.6
+      webpack: 5.86.0(esbuild@0.17.19)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@mdx-js/react@2.3.0(react@18.2.0):
     resolution: {integrity: sha512-zQH//gdOmuu7nt2oJR29vFhDv88oGPmVw6BggmrHeMI+xgEkp1B2dX9/bMBSYtK0dyLX/aOmesKS09g222K1/g==}
@@ -4728,7 +4740,6 @@ packages:
       '@babel/core': 7.21.4
       deepmerge: 2.2.1
       object.omit: 3.0.0
-    dev: false
 
   /babel-plugin-add-react-displayname@0.0.5:
     resolution: {integrity: sha512-LY3+Y0XVDYcShHHorshrDbt4KFWL4bSeniCtl4SYZbask+Syngk1uMPCeN9+nSiZo6zX5s0RTq/J9Pnaaf/KHw==}
@@ -4806,7 +4817,6 @@ packages:
 
   /babel-plugin-transform-react-remove-prop-types@0.4.24:
     resolution: {integrity: sha512-eqj0hVcJUR57/Ug2zE1Yswsw4LhuqqHhD+8v120T1cl3kjg76QwtyBrdIk4WVwK+lAhBJVYCd/v+4nc4y+8JsA==}
-    dev: false
 
   /babel-preset-current-node-syntax@1.0.1(@babel/core@7.21.4):
     resolution: {integrity: sha512-M7LQ0bxarkxQoN+vz5aJPsLBn77n8QgTFmo8WK0/44auK2xlCXrYcUxHFxgU7qW5Yzw/CjmLRK2uJzaCd7LvqQ==}
@@ -5444,7 +5454,6 @@ packages:
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
-    dev: false
 
   /cosmiconfig@8.2.0:
     resolution: {integrity: sha512-3rTMnFJA1tCOPwRxtgF4wd7Ab2qvDbL8jX+3smjIbS4HlZBagTlpERbdN7iAbWlrfxE3M8c27kTwTawQ7st+OQ==}
@@ -5653,7 +5662,6 @@ packages:
   /deepmerge@2.2.1:
     resolution: {integrity: sha512-R9hc1Xa/NOBi9WRVUWg19rl1UB7Tt4kuPd+thNJgFZoxXsTz7ncaPaeIm+40oSGuP33DfMb4sZt1QIGiJzC4EA==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
@@ -7404,7 +7412,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       is-plain-object: 2.0.4
-    dev: false
 
   /is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
@@ -8819,7 +8826,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       is-extendable: 1.0.1
-    dev: false
 
   /object.values@1.1.6:
     resolution: {integrity: sha512-FVVTkD1vENCsAcwNs9k6jea2uHC/X0+JcjG8YA60FN5CMaJmG95wT9jek/xX9nornqGRrBkKtzuAu2wuHpKqvw==}
@@ -10464,7 +10470,6 @@ packages:
 
   /stylis@3.5.4:
     resolution: {integrity: sha512-8/3pSmthWM7lsPBKv7NXkzn2Uc9W7NotcwGNpJaa3k7WMM1XDCA4MgT5k/8BIexd5ydZdboXtU90XH9Ec4Bv/Q==}
-    dev: false
 
   /supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -10690,7 +10695,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       tslib: 2.5.0
-    dev: false
 
   /ts-jest@29.0.5(@babel/core@7.21.4)(esbuild@0.17.19)(jest@29.5.0)(typescript@5.1.3):
     resolution: {integrity: sha512-PL3UciSgIpQ7f6XjVOmbi96vmDHUqAyqDr8YxzopDqX3kfgYtX1cuNeBjP+L9sFXi6nzsGGA6R3fP3DDDJyrxA==}
