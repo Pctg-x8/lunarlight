@@ -25,7 +25,7 @@
     flex-direction: row;
     align-items: center;
 
-    &:hover {
+    &:not(:disabled):hover {
       color: var(--theme-status-actions-lit);
     }
 
@@ -33,6 +33,10 @@
       display: block;
       margin-left: 6px;
       font-size: 70%;
+    }
+
+    &:disabled {
+      cursor: default;
     }
   }
 }
