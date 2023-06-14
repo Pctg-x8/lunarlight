@@ -3,6 +3,7 @@ import { Status } from "@/models/status";
 import { isDefined } from "@/utils";
 import { styled } from "@linaria/react";
 import cls from "classnames";
+import { useRouter } from "next/router";
 import StatusRow from "./StatusRow";
 
 export default function Timeline({
@@ -15,12 +16,13 @@ export default function Timeline({
   readonly mode?: TimelineMode;
 }) {
   const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
+  const nav = useRouter();
 
   return (
     <ul>
       {statuses.map((s, x) => (
         <StaticTimelineRow key={x} className={cls({ deleted: hasDeleted(s) })}>
-          <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} />
+          <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} onPreview={s => nav.push(s.previewPath)} />
         </StaticTimelineRow>
       ))}
     </ul>

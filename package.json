@@ -67,6 +67,7 @@
   "devDependencies": {
     "@jest/globals": "^29.5.0",
     "@linaria/webpack5-loader": "^4.1.17",
+    "@storybook/addon-actions": "^7.0.20",
     "@storybook/addon-essentials": "7.0.20",
     "@storybook/addon-interactions": "7.0.20",
     "@storybook/addon-links": "7.0.20",

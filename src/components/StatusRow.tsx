@@ -4,7 +4,6 @@ import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "@linaria/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
 import StatusActions from "./StatusActions";
@@ -13,10 +12,12 @@ export default function StatusRow({
   status,
   mode,
   disabled = false,
+  onPreview,
 }: {
   readonly status: Status;
   readonly mode: TimelineMode;
   readonly disabled?: boolean;
+  readonly onPreview: (status: Status) => void;
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -34,12 +35,10 @@ export default function StatusRow({
     return () => cancellation.abort();
   }, [contentRef]);
 
-  const nav = useRouter();
-
   switch (mode) {
     case "normal":
       return (
-        <NormalStatusRow ref={contentRef} onClick={() => nav.push(status.previewPath)}>
+        <NormalStatusRow ref={contentRef} onClick={() => onPreview(status)}>
           {status instanceof RebloggedStatus ? (
             <p className="rebloggedBy">
               <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -72,7 +71,7 @@ export default function StatusRow({
       );
     case "expert":
       return (
-        <ExpertStatusRow ref={contentRef} onClick={() => nav.push(status.previewPath)}>
+        <ExpertStatusRow ref={contentRef} onClick={() => onPreview(status)}>
           <h1 className="displayName">
             <Link
               className="non-colored"
