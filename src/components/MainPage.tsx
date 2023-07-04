@@ -26,7 +26,7 @@ export default function MainPage({ hasLoggedIn }: { readonly hasLoggedIn: boolea
   }
 }
 
-const LimitedFrame = styled.main`
+export const LimitedFrame = styled.main`
   max-width: var(--single-max-width);
   width: 100%;
 
@@ -35,7 +35,7 @@ const LimitedFrame = styled.main`
   }
 `;
 
-const Frame = styled.main`
+export const Frame = styled.main`
   width: 100%;
 
   @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {

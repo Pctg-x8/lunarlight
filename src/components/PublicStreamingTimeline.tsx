@@ -1,23 +1,26 @@
 "use client";
 
-import { HomeTimelineRequestParams } from "@/models/api/mastodon/timeline";
-import { TimelineMode } from "@/models/localPreferences";
+import { PublicTimelineRequestParams } from "@/models/api/mastodon/timeline";
 import { Status } from "@/models/status";
 import { DeleteEvent, Event, UpdateEvent, useStreamEvents } from "@/models/streaming";
 import { rpcClient } from "@/rpc/client";
 import Immutable from "immutable";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
+import { ClientPreferencesContext } from "./ClientPreferencesProvider";
+import StreamingTimelineOuterStyle from "./StreamingTimelineOuterStyle";
 import Timeline from "./Timeline";
 
-export default function HomeStreamingTimeline({ mode }: { readonly mode: TimelineMode }) {
+export default function PublicStreamingTimeline() {
+  const { timelineMode: mode } = useContext(ClientPreferencesContext);
+
   const { data, isLoading, setSize, mutate } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): HomeTimelineRequestParams | null => {
+    (_, prevPageData: Status[] | null): PublicTimelineRequestParams | null => {
       if (!prevPageData) return { limit: 50 };
       if (prevPageData.length === 0) return null;
       return { limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    req => rpcClient.homeTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
+    req => rpcClient.publicTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
     {}
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
@@ -49,13 +52,13 @@ export default function HomeStreamingTimeline({ mode }: { readonly mode: Timelin
     },
     [mutate, setDeletedIds]
   );
-  useStreamEvents("user", handleEvents);
+  useStreamEvents("public", handleEvents);
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <>
+    <StreamingTimelineOuterStyle>
       <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
       <div ref={sentinelRef} />
-    </>
+    </StreamingTimelineOuterStyle>
   );
 }
