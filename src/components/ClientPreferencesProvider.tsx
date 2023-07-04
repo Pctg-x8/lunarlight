@@ -11,12 +11,9 @@ export const ClientPreferencesContext = createContext<ClientPreferences>({
 });
 
 export default function ClientPreferencesProvider({ children }: { readonly children: ReactNode }) {
-  const value: ClientPreferences = useMemo(
-    () => ({
-      timelineMode: LocalPreferences.TIMELINE_MODE.load(),
-    }),
-    []
-  );
+  const timelineMode = LocalPreferences.TIMELINE_MODE.useReactiveValue("normal");
+
+  const value: ClientPreferences = useMemo(() => ({ timelineMode }), [timelineMode]);
 
   return <ClientPreferencesContext.Provider value={value}>{children}</ClientPreferencesContext.Provider>;
 }
