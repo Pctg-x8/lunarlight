@@ -1,16 +1,18 @@
 "use client";
 
 import { HomeTimelineRequestParams } from "@/models/api/mastodon/timeline";
-import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
 import { DeleteEvent, Event, UpdateEvent, useStreamEvents } from "@/models/streaming";
 import { rpcClient } from "@/rpc/client";
 import Immutable from "immutable";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
+import { ClientPreferencesContext } from "./ClientPreferencesProvider";
 import Timeline from "./Timeline";
 
-export default function HomeStreamingTimeline({ mode }: { readonly mode: TimelineMode }) {
+export default function HomeStreamingTimeline() {
+  const { timelineMode: mode } = useContext(ClientPreferencesContext);
+
   const { data, isLoading, setSize, mutate } = useSWRInfinite(
     (_, prevPageData: Status[] | null): HomeTimelineRequestParams | null => {
       if (!prevPageData) return { limit: 50 };

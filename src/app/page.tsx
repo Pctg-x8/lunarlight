@@ -1,8 +1,15 @@
-import MainPage from "@/components/MainPage";
+import HomeStreamingTimeline from "@/components/HomeStreamingTimeline";
+import StreamingTimelineOuterStyle from "@/components/StreamingTimelineOuterStyle";
 import { getAuthorizedAccountSSR } from "@/models/auth";
 
 export default async function Home() {
   const hasLoggedIn = (await getAuthorizedAccountSSR()) !== null;
 
-  return <MainPage hasLoggedIn={hasLoggedIn} />;
+  if (!hasLoggedIn) return <p></p>;
+
+  return (
+    <StreamingTimelineOuterStyle>
+      <HomeStreamingTimeline />
+    </StreamingTimelineOuterStyle>
+  );
 }

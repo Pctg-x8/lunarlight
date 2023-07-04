@@ -8,7 +8,6 @@ import Immutable from "immutable";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
-import StreamingTimelineOuterStyle from "./StreamingTimelineOuterStyle";
 import Timeline from "./Timeline";
 
 export default function PublicStreamingTimeline() {
@@ -56,9 +55,9 @@ export default function PublicStreamingTimeline() {
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <StreamingTimelineOuterStyle>
+    <>
       <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
       <div ref={sentinelRef} />
-    </StreamingTimelineOuterStyle>
+    </>
   );
 }
