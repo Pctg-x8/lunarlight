@@ -14,10 +14,10 @@ export default function PublicStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
 
   const { data, isLoading, setSize, mutate } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): PublicTimelineRequestParams | null => {
-      if (!prevPageData) return { limit: 50 };
+    (_, prevPageData: Status[] | null): (PublicTimelineRequestParams & { readonly timeline: "public" }) | null => {
+      if (!prevPageData) return { timeline: "public", limit: 50 };
       if (prevPageData.length === 0) return null;
-      return { limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
+      return { timeline: "public", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.publicTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
     {}

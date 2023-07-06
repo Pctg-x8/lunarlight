@@ -14,10 +14,10 @@ export default function HomeStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
 
   const { data, isLoading, setSize, mutate } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): HomeTimelineRequestParams | null => {
-      if (!prevPageData) return { limit: 50 };
+    (_, prevPageData: Status[] | null): (HomeTimelineRequestParams & { readonly timeline: "home" }) | null => {
+      if (!prevPageData) return { timeline: "home", limit: 50 };
       if (prevPageData.length === 0) return null;
-      return { limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
+      return { timeline: "home", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.homeTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
     {}
