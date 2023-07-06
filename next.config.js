@@ -20,6 +20,13 @@ const nextConfig = {
       },
     ];
   },
+  webpack: cfg => {
+    cfg.resolve.alias.os = false;
+    cfg.resolve.alias["child_process"] = false;
+    cfg.resolve.alias["fs"] = false;
+    cfg.resolve.alias["path"] = false;
+    return cfg;
+  }
 };
 
 module.exports = withLinaria(nextConfig);
