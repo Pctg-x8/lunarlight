@@ -21,6 +21,7 @@ namespace LocalPreferences {
     }
 
     useReactiveValue(serverValue: T): T {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       return useSyncExternalStore(
         cb => {
           window.addEventListener("ll.LocalPreferencesChanged", cb);
