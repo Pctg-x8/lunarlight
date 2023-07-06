@@ -13,14 +13,14 @@ import Timeline from "./Timeline";
 export default function PublicStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
 
-  const { data, isLoading, setSize, mutate } = useSWRInfinite(
+  const { data, setSize, mutate } = useSWRInfinite(
     (_, prevPageData: Status[] | null): (PublicTimelineRequestParams & { readonly timeline: "public" }) | null => {
       if (!prevPageData) return { timeline: "public", limit: 50 };
       if (prevPageData.length === 0) return null;
       return { timeline: "public", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.publicTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
-    {}
+    { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
   const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
@@ -39,7 +39,7 @@ export default function PublicStreamingTimeline() {
     );
     io.observe(sentinelRef.current);
     return () => io.disconnect();
-  }, [isLoading, setSize]);
+  }, [setSize]);
 
   const handleEvents = useCallback(
     (e: Event) => {
@@ -53,7 +53,6 @@ export default function PublicStreamingTimeline() {
   );
   useStreamEvents("public", handleEvents);
 
-  if (isLoading) return <p>Loading...</p>;
   return (
     <>
       <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />

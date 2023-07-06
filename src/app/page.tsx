@@ -1,7 +1,11 @@
-import HomeStreamingTimeline from "@/components/HomeStreamingTimeline";
 import StreamingTimelineOuterStyle from "@/components/StreamingTimelineOuterStyle";
 import { getAuthorizedAccountSSR } from "@/models/auth";
+import dynamic from "next/dynamic";
 
+const StreamingTimeline = dynamic(() => import("@/components/HomeStreamingTimeline"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 export default async function Home() {
   const hasLoggedIn = (await getAuthorizedAccountSSR()) !== null;
 
@@ -9,7 +13,7 @@ export default async function Home() {
 
   return (
     <StreamingTimelineOuterStyle>
-      <HomeStreamingTimeline />
+      <StreamingTimeline />
     </StreamingTimelineOuterStyle>
   );
 }
