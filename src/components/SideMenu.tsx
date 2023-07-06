@@ -1,6 +1,6 @@
 "use client";
 
-import { faGear, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { styled } from "@linaria/react";
 import Link from "next/link";
@@ -16,6 +16,12 @@ export default function SideMenu(): JSX.Element {
           <Link href="/" className={`no-default ${path === "/" ? "active" : ""}`}>
             <FontAwesomeIcon icon={faHouseChimney} className="icon" />
             <span>Home</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/public" className={`no-default ${path === "/public" ? "active" : ""}`}>
+            <FontAwesomeIcon icon={faGlobe} className="icon" />
+            <span>Public</span>
           </Link>
         </li>
         <li>

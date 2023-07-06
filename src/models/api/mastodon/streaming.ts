@@ -1,4 +1,7 @@
-export type Streams = "user";
+import z from "zod";
+
+export const StreamsType = z.union([z.literal("user"), z.literal("public")]);
+export type Streams = typeof StreamsType._type;
 
 export type SubscribeParams = {
   readonly type?: Streams;

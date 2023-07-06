@@ -1,5 +1,6 @@
 import { BREAKPOINT_BOTTOM_MENU } from "@/breakpoints";
 import BottomMenu from "@/components/BottomMenu";
+import ClientPreferencesProvider from "@/components/ClientPreferencesProvider";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
 import "@/styles/globals.scss";
@@ -23,7 +24,7 @@ export default function App({ children }: { readonly children: React.ReactNode }
         <Header />
         <ContentWrapper>
           <SideMenu />
-          {children}
+          <ClientPreferencesProvider>{children}</ClientPreferencesProvider>
           <section className="right" />
         </ContentWrapper>
         <BottomMenu />
