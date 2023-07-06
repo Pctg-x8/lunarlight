@@ -26,7 +26,7 @@ const nextConfig = {
     cfg.resolve.alias["fs"] = false;
     cfg.resolve.alias["path"] = false;
     return cfg;
-  }
+  },
 };
 
 module.exports = withLinaria(nextConfig);
