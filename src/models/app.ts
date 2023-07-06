@@ -1,4 +1,4 @@
-import { baseUrl } from "@/utils";
+import { baseUrl } from "@/utils/paths";
 import { FormDataRequestBody } from "./api";
 import { buildScopes, createApp } from "./api/mastodon/apps";
 

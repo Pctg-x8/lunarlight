@@ -3,7 +3,7 @@ import { DefaultInstance, FormDataRequestBody } from "@/models/api";
 import { obtainToken } from "@/models/api/mastodon/apps";
 import { AppData, CreateAppRequest } from "@/models/app";
 import { setAuthorizationToken } from "@/models/auth";
-import { baseUrl } from "@/utils";
+import { baseUrl } from "@/utils/paths";
 import { stateModifierPipe } from "@/utils/stateModifier";
 import { NextResponse } from "next/server";
 
