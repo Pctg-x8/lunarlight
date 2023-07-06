@@ -5,7 +5,7 @@ import { getStatusesForAccount } from "@/models/api/mastodon/status";
 import { Event } from "@/models/api/mastodon/streaming";
 import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
-import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/models/auth";
+import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
@@ -17,8 +17,8 @@ const apiAccessLogger = createAppLogger({ name: "trpc" });
 export async function createContext(opts: CreateNextContextOptions) {
   return {
     getAuthorizedToken: () => getAuthorizationToken(opts.req),
-    setAuthorizedToken: (newToken: string) => setAuthorizationToken(newToken)(opts.res),
-    clearAuthorizedToken: () => setAuthorizationToken("")(opts.res),
+    setAuthorizedToken: (newToken: string) => setAuthorizationToken_APIResModifier(newToken)(opts.res),
+    clearAuthorizedToken: () => setAuthorizationToken_APIResModifier("")(opts.res),
   };
 }
 
