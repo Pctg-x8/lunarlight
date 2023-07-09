@@ -1,4 +1,4 @@
 {
   "extends": "next/core-web-vitals",
-  "ignorePatterns": ["styled-system/**/*"]
+  "ignorePatterns": ["styled-system/**/*", "postcss.config.cjs"]
 }
