@@ -1,18 +1,18 @@
 import TimelineModePreferences from "@/components/Preferences/TimelineMode";
-import { styled } from "@linaria/react";
+import { css } from "@styled-system/css";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Preferences" };
 
 export default function PreferencesPage(): JSX.Element {
   return (
-    <Frame>
+    <main className={Framed}>
       <TimelineModePreferences />
-    </Frame>
+    </main>
   );
 }
 
-const Frame = styled.main`
-  max-width: var(--single-max-width);
-  width: 100%;
-`;
+const Framed = css({
+  maxWidth: "content.maxWidth",
+  width: "100%",
+});

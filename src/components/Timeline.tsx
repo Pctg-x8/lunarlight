@@ -1,8 +1,7 @@
 import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
 import { isDefined } from "@/utils";
-import { styled } from "@linaria/react";
-import cls from "classnames";
+import { css } from "@styled-system/css";
 import StatusRow from "./StatusRow";
 
 export default function Timeline({
@@ -19,19 +18,19 @@ export default function Timeline({
   return (
     <ul>
       {statuses.map((s, x) => (
-        <StaticTimelineRow key={x} className={cls({ deleted: hasDeleted(s) })}>
+        <li key={x} className={StaticTimeline} data-deleted={hasDeleted(s)}>
           <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} />
-        </StaticTimelineRow>
+        </li>
       ))}
     </ul>
   );
 }
 
-const StaticTimelineRow = styled.li`
-  border-bottom: 1px solid var(--theme-status-border);
-
-  .deleted {
-    opacity: 0.5;
-    text-decoration: line-through;
-  }
-`;
+const StaticTimeline = css({
+  borderBottom: "1px solid",
+  borderBottomColor: "status.border",
+  _deleted: {
+    opacity: "0.5",
+    textDecoration: "line-through",
+  },
+});

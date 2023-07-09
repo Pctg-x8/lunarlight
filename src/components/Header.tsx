@@ -45,7 +45,7 @@ const AppHeader = css({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  boxShadow: "0px 0px 8px",
+  boxShadow: "0px 0px 8px var(--shadow-color)",
   boxShadowColor: "appheader.bottom",
   borderBottom: "solid 1px",
   borderBottomColor: "appheader.bottom",
