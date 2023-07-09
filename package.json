@@ -16,7 +16,7 @@
     "test": "jest",
     "typecheck": "tsc --pretty --noEmit",
     "fmtcheck": "prettier --check .",
-    "prepare": "node scripts/dev-only.js && husky install || exit 0"
+    "prepare": "node scripts/dev-only.js && (husky install && panda codegen) || exit 0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
@@ -63,6 +63,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@pandacss/dev": "^0.6.0",
     "@types/jest": "^29.5.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^7.2.1",
