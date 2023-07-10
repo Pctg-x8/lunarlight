@@ -1,5 +1,6 @@
 import { rpcClient } from "@/rpc/client";
 import { Unsubscribable } from "@trpc/server/observable";
+import { useEffect } from "react";
 import * as streamingApi from "./api/mastodon/streaming";
 import { Status } from "./status";
 
@@ -28,10 +29,23 @@ export class DeleteEvent extends Event {
   }
 }
 
-export function streamEvents(onNext: (event: Event) => void): Unsubscribable {
-  return rpcClient.streamingTimeline.subscribe(undefined, {
-    onData: e => {
-      onNext(Event.fromApiData(e));
-    },
-  });
+export function streamEvents(stream: streamingApi.Streams, onNext: (event: Event) => void): Unsubscribable {
+  return rpcClient.streamingTimeline.subscribe(
+    { stream },
+    {
+      onData: e => {
+        onNext(Event.fromApiData(e));
+      },
+    }
+  );
+}
+
+export function useStreamEvents(stream: streamingApi.Streams, onNext: (event: Event) => void) {
+  useEffect(() => {
+    const sub = streamEvents(stream, onNext);
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [stream, onNext]);
 }

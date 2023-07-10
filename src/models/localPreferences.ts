@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 export type TimelineMode = "normal" | "expert";
 
 namespace LocalPreferences {
@@ -15,6 +17,22 @@ namespace LocalPreferences {
 
     store(value: T): void {
       window.localStorage.setItem(this.storageKey, JSON.stringify(value));
+      window.dispatchEvent(new Event("ll.LocalPreferencesChanged"));
+    }
+
+    useReactiveValue(serverValue: T): T {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      return useSyncExternalStore(
+        cb => {
+          window.addEventListener("ll.LocalPreferencesChanged", cb);
+
+          return () => {
+            window.removeEventListener("ll.LocalPreferencesChanged", cb);
+          };
+        },
+        () => this.load(),
+        () => serverValue
+      );
     }
   }
 

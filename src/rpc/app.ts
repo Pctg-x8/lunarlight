@@ -2,10 +2,15 @@ import { createAppLogger } from "@/logger";
 import { DefaultInstance, FormDataRequestBody, SearchParamsRequestBody } from "@/models/api";
 import { revokeToken } from "@/models/api/mastodon/apps";
 import { getStatusesForAccount } from "@/models/api/mastodon/status";
-import { Event } from "@/models/api/mastodon/streaming";
-import { HomeTimelineRequestParamsZ, homeTimeline } from "@/models/api/mastodon/timeline";
+import { Event, StreamsType } from "@/models/api/mastodon/streaming";
+import {
+  HomeTimelineRequestParamsZ,
+  PublicTimelineRequestParamsZ,
+  homeTimeline,
+  publicTimeline,
+} from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
-import { getAuthorizationToken, getLoginUrl, setAuthorizationToken } from "@/models/auth";
+import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
@@ -17,8 +22,8 @@ const apiAccessLogger = createAppLogger({ name: "trpc" });
 export async function createContext(opts: CreateNextContextOptions) {
   return {
     getAuthorizedToken: () => getAuthorizationToken(opts.req),
-    setAuthorizedToken: (newToken: string) => setAuthorizationToken(newToken)(opts.res),
-    clearAuthorizedToken: () => setAuthorizationToken("")(opts.res),
+    setAuthorizedToken: (newToken: string) => setAuthorizationToken_APIResModifier(newToken)(opts.res),
+    clearAuthorizedToken: () => setAuthorizationToken_APIResModifier("")(opts.res),
   };
 }
 
@@ -28,6 +33,9 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED" });
 
   return await next({ ctx: { token } });
+});
+const maybeAuthorized = t.middleware(async ({ ctx, next }) => {
+  return await next({ ctx: { token: ctx.getAuthorizedToken() } });
 });
 const accessLogger = t.middleware(async ({ path, input, next }) => {
   const r = await next();
@@ -76,41 +84,53 @@ export const appRpcRouter = t.router({
     .query(({ input, ctx: { token } }) =>
       homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
     ),
-  streamingTimeline: stdProcedure.use(requireAuthorized).subscription(({ ctx: { token } }) =>
-    observable<Event, unknown>(observer => {
-      const params = new SearchParamsRequestBody({
-        access_token: token,
-        stream: "user",
-      });
+  publicTimeline: stdProcedure
+    .use(maybeAuthorized)
+    .input(PublicTimelineRequestParamsZ)
+    .query(({ input, ctx: { token } }) =>
+      publicTimeline.send(
+        new SearchParamsRequestBody(input),
+        token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance
+      )
+    ),
+  streamingTimeline: stdProcedure
+    .use(requireAuthorized)
+    .input(z.object({ stream: StreamsType }))
+    .subscription(({ input, ctx: { token } }) =>
+      observable<Event, unknown>(observer => {
+        const params = new SearchParamsRequestBody({
+          access_token: token,
+          stream: input.stream,
+        });
 
-      const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
-      url.protocol = "wss:";
-      const client = new ws(url);
-      client.on("message", (msg, isBinary) => {
-        if (isBinary) {
-          console.log("unknown binary msg", msg);
-          return;
-        }
+        const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
+        url.protocol = "wss:";
+        const client = new ws(url);
+        client.on("message", (msg, isBinary) => {
+          if (isBinary) {
+            console.log("unknown binary msg", msg);
+            return;
+          }
 
-        let msgString: string;
-        if (msg instanceof Array) {
-          // chunked
+          let msgString: string;
+          if (msg instanceof Array) {
+            // chunked
 
-          const decoder = new TextDecoder();
-          msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
-        } else {
-          // not chunked
+            const decoder = new TextDecoder();
+            msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
+          } else {
+            // not chunked
 
-          msgString = new TextDecoder().decode(msg);
-        }
+            msgString = new TextDecoder().decode(msg);
+          }
 
-        observer.next(JSON.parse(msgString));
-      });
+          observer.next(JSON.parse(msgString));
+        });
 
-      return () => {
-        client.close();
-      };
-    })
-  ),
+        return () => {
+          client.close();
+        };
+      })
+    ),
 });
 export type AppRpcRouter = typeof appRpcRouter;

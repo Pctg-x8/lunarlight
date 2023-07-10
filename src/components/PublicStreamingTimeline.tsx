@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeTimelineRequestParams } from "@/models/api/mastodon/timeline";
+import { PublicTimelineRequestParams } from "@/models/api/mastodon/timeline";
 import { Status } from "@/models/status";
 import { DeleteEvent, Event, UpdateEvent, useStreamEvents } from "@/models/streaming";
 import { rpcClient } from "@/rpc/client";
@@ -10,16 +10,16 @@ import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
 import Timeline from "./Timeline";
 
-export default function HomeStreamingTimeline() {
+export default function PublicStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
 
   const { data, setSize, mutate } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): (HomeTimelineRequestParams & { readonly timeline: "home" }) | null => {
-      if (!prevPageData) return { timeline: "home", limit: 50 };
+    (_, prevPageData: Status[] | null): (PublicTimelineRequestParams & { readonly timeline: "public" }) | null => {
+      if (!prevPageData) return { timeline: "public", limit: 50 };
       if (prevPageData.length === 0) return null;
-      return { timeline: "home", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
+      return { timeline: "public", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    req => rpcClient.homeTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
+    req => rpcClient.publicTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
     { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
@@ -51,7 +51,7 @@ export default function HomeStreamingTimeline() {
     },
     [mutate, setDeletedIds]
   );
-  useStreamEvents("user", handleEvents);
+  useStreamEvents("public", handleEvents);
 
   return (
     <>

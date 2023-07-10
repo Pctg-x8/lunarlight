@@ -2,7 +2,7 @@ import { TimelineMode } from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
 import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { styled } from "@linaria/react";
+import { css } from "@styled-system/css";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
@@ -38,7 +38,7 @@ export default function StatusRow({
   switch (mode) {
     case "normal":
       return (
-        <NormalStatusRow ref={contentRef} onClick={() => onPreview(status)}>
+        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)}>
           {status instanceof RebloggedStatus ? (
             <p className="rebloggedBy">
               <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -67,11 +67,11 @@ export default function StatusRow({
           <div className="statusActions">
             <StatusActions status={status} disabled={disabled} />
           </div>
-        </NormalStatusRow>
+        </article>
       );
     case "expert":
       return (
-        <ExpertStatusRow ref={contentRef} onClick={() => onPreview(status)}>
+        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)}>
           <h1 className="displayName">
             <Link
               className="non-colored"
@@ -105,173 +105,141 @@ export default function StatusRow({
             <FontAwesomeIcon icon={faRetweet} />
           </button>
           <AgoLabel className="ago" createdAt={status.created_at} />
-        </ExpertStatusRow>
+        </article>
       );
   }
 }
 
-const ExpertStatusRow = styled.article`
-  display: grid;
-  grid-template-columns: auto auto 1fr auto auto auto auto;
-  grid-template-areas: "name reblogged text reply fav reb ago";
-  align-items: baseline;
+const ExpertStatusRow = css({
+  display: "grid",
+  // TODO: nameの160pxはそのうち調整可能にしたい
+  gridTemplateColumns: "160px auto 1fr auto auto auto auto",
+  gridTemplateAreas: '"name reblogged text reply fav reb ago"',
+  alignItems: "baseline",
+  fontSize: "12px",
+  padding: "3px",
+  background: "status.background.default",
+  cursor: "pointer",
+  transition: "background 0.1s ease",
+  _hover: {
+    background: "status.background.accent",
+  },
+  "& .displayName": {
+    gridArea: "name",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "pre",
+    "& img": {
+      display: "inline",
+      height: "1em",
+      marginRight: "4px",
+    },
+  },
+  "& .rebloggedIcon": {
+    gridArea: "reblogged",
+    width: "1em",
+    margin: "0 4px",
+  },
+  "& .ago": {
+    gridArea: "ago",
+    fontSize: "0.8rem",
+    width: "50px",
+    textAlign: "right",
+    whiteSpace: "pre",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  "& .text": {
+    gridArea: "text",
+    whiteSpace: "pre",
+    overflow: "hidden",
+    "& > *": {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
+  },
+  "& .reply": {
+    gridArea: "reply",
+  },
+  "& .fav": {
+    gridArea: "fav",
+  },
+  "& ,reb": {
+    gridArea: "reb",
+  },
+  "& .ab": {
+    padding: "0px 2px",
+    color: "status.actions.default",
+    fontSize: "1rem",
+    cursor: "pointer",
+    transition: "color 0.15s ease",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    _hover: {
+      color: "status.actions.lit",
+    },
+  },
+});
 
-  font-size: 12px;
-  padding: 3px;
-  background: var(--theme-single-card-bg);
-  cursor: pointer;
-  transition: background 0.1s ease;
-
-  &:hover {
-    background: var(--theme-single-card-bg-accent);
-  }
-
-  & .displayName {
-    grid-area: name;
-    width: 160px;
-    font-size: unset;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: pre;
-
-    & img {
-      height: 1em;
-      margin-right: 4px;
-    }
-  }
-
-  & .rebloggedIcon {
-    grid-area: reblogged;
-    width: 1em;
-    margin: 0 4px;
-  }
-
-  & .ago {
-    grid-area: ago;
-    font-size: 0.8rem;
-    width: 50px;
-    text-align: right;
-    white-space: pre;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  & .text {
-    grid-area: text;
-    white-space: pre;
-    overflow: hidden;
-
-    & > * {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  & .reply {
-    grid-area: reply;
-  }
-
-  & .fav {
-    grid-area: fav;
-  }
-
-  & .reb {
-    grid-area: reb;
-  }
-
-  & .ab {
-    margin: 0;
-    padding: 0px 2px;
-    border: none;
-    color: var(--theme-status-actions);
-    background: none;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: color 0.15s ease;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    &:hover {
-      color: var(--theme-status-actions-lit);
-    }
-  }
-`;
-
-const NormalStatusRow = styled.article`
-  display: grid;
-  grid-template-areas:
-    "space2 rebloggedBy rebloggedBy rebloggedBy ago"
-    "image displayName acct space ago"
-    "image text text text text"
-    "a a a a a";
-  grid-template-columns: auto auto auto 1fr auto;
-
-  padding: 12px;
-  padding-bottom: 8px;
-  background: var(--theme-single-card-bg);
-  cursor: pointer;
-  transition: background 0.1s ease;
-
-  &:hover {
-    background: var(--theme-single-card-bg-accent);
-  }
-
-  & .rebloggedBy {
-    grid-area: rebloggedBy;
-    font-size: 75%;
-    font-weight: bolder;
-    font-style: italic;
-    margin-bottom: 8px;
-    color: var(--theme-subtext);
-
-    & > .icon {
-      font-size: 125%;
-      margin-right: 0.4em;
-    }
-  }
-
-  & .avatar {
-    grid-area: image;
-    margin-right: 8px;
-
-    & > img {
-      height: 36px;
-      width: 36px;
-      border-radius: 4px;
-    }
-  }
-
-  & .displayName {
-    grid-area: displayName;
-    font-size: 14px;
-    align-self: baseline;
-  }
-
-  & .acct {
-    grid-area: acct;
-    font-weight: normal;
-    color: var(--theme-subtext);
-    font-style: italic;
-    font-size: 12px;
-    align-self: baseline;
-    margin-left: 4px;
-  }
-
-  & .ago {
-    grid-area: ago;
-    color: var(--theme-subtext);
-    font-size: 12px;
-  }
-
-  & .text {
-    grid-area: text;
-    margin: 6px 2px;
-    margin-bottom: 8px;
-  }
-
-  & .statusActions {
-    grid-area: a;
-    margin-top: 4px;
-  }
-`;
+const NormalStatusRow = css({
+  display: "grid",
+  gridTemplateAreas:
+    '"space2 rebloggedBy rebloggedBy rebloggedBy ago" "image displayName acct space ago" "image text text text text" "a a a a a"',
+  gridTemplateColumns: "auto auto auto 1fr auto",
+  padding: "12px",
+  paddingBottom: "8px",
+  background: "status.background.default",
+  cursor: "pointer",
+  transition: "background 0.1s ease",
+  _hover: {
+    background: "status.background.accent",
+  },
+  "& .rebloggedBy": {
+    gridArea: "rebloggedBy",
+    fontSize: "75%",
+    fontWeight: "bolder",
+    fontStyle: "italic",
+    marginBottom: "8px",
+    color: "app.subtext",
+    "& > .icon": {
+      fontSize: "125%",
+      marginRight: "0.4em",
+    },
+  },
+  "& .avatar": {
+    gridArea: "image",
+    marginRight: "8px",
+    "& > img": {
+      height: "36px",
+      width: "36px",
+      borderRadius: "4px",
+    },
+  },
+  "& .displayName": {
+    gridArea: "displayName",
+    fontSize: "14px",
+    alignSelf: "baseline",
+  },
+  "& .acct": {
+    gridArea: "acct",
+    fontWeight: "normal",
+    color: "app.subtext",
+    fontStyle: "italic",
+    alignSelf: "baesline",
+    marginLeft: "4px",
+  },
+  "& .ago": {
+    gridArea: "ago",
+    color: "app.subtext",
+  },
+  "& .text": {
+    gridArea: "text",
+    margin: "6px 2px",
+    marginBottom: "8px",
+  },
+  "& .statusActions": {
+    gridArea: "a",
+    marginTop: "4px",
+  },
+});
