@@ -1,26 +1,26 @@
 import { getAuthorizedAccountSSR } from "@/models/auth";
-import { styled } from "@linaria/react";
+import { css } from "@styled-system/css";
 import { Suspense } from "react";
 import LoginAccountMenu from "./Header/LoginAccountMenu";
 import LoginButton from "./Header/LoginButton";
 
 export default function Header() {
   return (
-    <AppHeader>
+    <header className={AppHeader}>
       <AppName />
-      <Spacer />
-      <LoginStatusArea>
+      <div className={Spacer} />
+      <section className={LoginStatusArea}>
         <Suspense>
           <LoginStatus />
         </Suspense>
-      </LoginStatusArea>
-    </AppHeader>
+      </section>
+    </header>
   );
 }
 
 function AppName() {
   return (
-    <StyledAppName>
+    <section className={StyledAppName}>
       <h1>
         Lunarlight{" "}
         <small>
@@ -31,7 +31,7 @@ function AppName() {
         </small>
       </h1>
       <h2>BETA</h2>
-    </StyledAppName>
+    </section>
   );
 }
 
@@ -41,58 +41,54 @@ async function LoginStatus() {
   return login ? <LoginAccountMenu account={login} /> : <LoginButton />;
 }
 
-const AppHeader = styled.header`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-shadow: 0px 0px 8px var(--theme-appheader-bottom);
-  border-bottom: solid 1px var(--theme-appheader-bottom);
-  position: sticky;
-  top: 0px;
-  background: rgb(var(--theme-background-elements), 80%);
-  z-index: 1;
-  backdrop-filter: blur(8px);
-`;
+const AppHeader = css({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  boxShadow: "0px 0px 8px var(--shadow-color)",
+  boxShadowColor: "appheader.bottom",
+  borderBottom: "solid 1px",
+  borderBottomColor: "appheader.bottom",
+  position: "sticky",
+  top: "0px",
+  background: "appheader.background",
+  zIndex: 1,
+  backdropFilter: "blur(8px)",
+});
 
-const StyledAppName = styled.section`
-  margin: 16px;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
+const StyledAppName = css({
+  margin: "16px",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "baseline",
+  "& > h1": {
+    marginRight: "8px",
+    fontSize: "20px",
+    fontWeight: "bolder",
+    letterSpacing: "0.5px",
+    "& > small": {
+      fontSize: "14px",
+      fontWeight: "normal",
+      opacity: "0.75",
+      letterSpacing: "0",
+      "& > a": {
+        color: "inherit",
+        _after: {
+          background: "app.text",
+        },
+      },
+    },
+  },
+  "& > h2": {
+    padding: "2px 8px",
+    borderRadius: "10px",
+    fontSize: "8px",
+    fontWeight: "normal",
+    background: "label.normal.background",
+    color: "label.normal.text",
+  },
+});
 
-  & > h1 {
-    margin-right: 8px;
-    font-size: 20px;
+const Spacer = css({ flex: "1" });
 
-    & > small {
-      font-size: 14px;
-      font-weight: normal;
-      opacity: 0.75;
-
-      & > a {
-        color: inherit;
-
-        &::after {
-          background: var(--theme-default-text);
-        }
-      }
-    }
-  }
-
-  & > h2 {
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 8px;
-    font-weight: normal;
-    background: var(--theme-normal-label-background);
-    color: var(--theme-normal-label-text);
-  }
-`;
-
-const Spacer = styled.div`
-  flex: 1;
-`;
-
-const LoginStatusArea = styled.section`
-  margin: 8px;
-`;
+const LoginStatusArea = css({ margin: "8px" });

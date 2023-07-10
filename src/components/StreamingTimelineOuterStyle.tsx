@@ -1,34 +1,25 @@
 "use client";
 
-import { BREAKPOINT_BOTTOM_MENU } from "@/breakpoints";
-import { styled } from "@linaria/react";
+import { css, cx } from "@styled-system/css";
 import { ReactNode, useContext } from "react";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
 
 export default function StreamingTimelineOuterStyle({ children }: { readonly children: ReactNode }): JSX.Element {
   const { timelineMode } = useContext(ClientPreferencesContext);
 
-  switch (timelineMode) {
-    case "normal":
-      return <LimitedFrame>{children}</LimitedFrame>;
-    case "expert":
-      return <Frame>{children}</Frame>;
-  }
+  return <main className={cx(timelineMode == "expert" ? LimitedFrame : Frame, BottomMenuSpacer)}>{children}</main>;
 }
 
-const LimitedFrame = styled.main`
-  max-width: var(--single-max-width);
-  width: 100%;
-
-  @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
-    margin-bottom: calc(16px + 14px + 1rem + 16px);
-  }
-`;
-
-const Frame = styled.main`
-  width: 100%;
-
-  @media (max-width: ${BREAKPOINT_BOTTOM_MENU}) {
-    margin-bottom: calc(16px + 14px + 1rem + 16px);
-  }
-`;
+const BottomMenuSpacer = css({
+  marginBottom: "calc(16px + 14px + 1rem + 16px)",
+  sm: {
+    marginBottom: "0",
+  },
+});
+const LimitedFrame = css({
+  maxWidth: "content.maxWidth",
+  width: "100%",
+});
+const Frame = css({
+  width: "100%",
+});

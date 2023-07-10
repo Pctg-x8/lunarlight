@@ -1,7 +1,7 @@
 "use client";
 
 import LocalPreferences, { TimelineMode } from "@/models/localPreferences";
-import { styled } from "@linaria/react";
+import { css } from "@styled-system/css";
 import { ChangeEvent, useCallback, useState } from "react";
 
 export default function TimelineModePreferences(): JSX.Element {
@@ -15,7 +15,7 @@ export default function TimelineModePreferences(): JSX.Element {
     <article>
       <h1>タイムライン表示</h1>
       <form>
-        <FormSelections>
+        <ul className={FormSelections}>
           <li>
             <label htmlFor="NormalTimeline">
               <input
@@ -42,15 +42,15 @@ export default function TimelineModePreferences(): JSX.Element {
               エキスパートモード
             </label>
           </li>
-        </FormSelections>
+        </ul>
       </form>
     </article>
   );
 }
 
-const FormSelections = styled.ul`
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  margin: 16px;
-`;
+const FormSelections = css({
+  display: "flex",
+  flexDirection: "row",
+  gap: "8px",
+  margin: "16px",
+});
