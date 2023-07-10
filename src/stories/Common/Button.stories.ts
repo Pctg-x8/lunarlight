@@ -1,4 +1,4 @@
-import { Button } from "@/components/Common/Button";
+import Button from "@/components/common/Button";
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof Button> = {
@@ -12,14 +12,14 @@ type Story = StoryObj<typeof Button>;
 export const Default: Story = {
   args: {
     children: "Button",
-    primary: false,
+    variant: "primary",
     disabled: false,
   },
 };
 export const Primary: Story = {
   args: {
     disabled: false,
-    primary: true,
+    variant: "primary",
     children: "Button",
   },
 };
