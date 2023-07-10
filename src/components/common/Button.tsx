@@ -2,6 +2,7 @@ import { styled } from "@styled-system/jsx";
 
 const Button = styled("button", {
   base: {
+    padding: "0.4rem 0.8rem",
     cursor: "pointer",
     borderRadius: "8px",
     boxShadow: "inset 0 0 0 #000",
@@ -13,6 +14,9 @@ const Button = styled("button", {
       cursor: "default",
       bg: "button.primary.background.disabled !important",
       color: "button.primary.text.disabled !important",
+      _active: {
+        boxShadow: "inset 0 0 0 #000 !important",
+      },
     },
   },
   variants: {
