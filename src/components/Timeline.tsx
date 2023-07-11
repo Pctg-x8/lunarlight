@@ -21,7 +21,7 @@ export default function Timeline({
     <ul>
       {statuses.map((s, x) => (
         <li key={x} className={Row}>
-          <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} onPreview={s => nav.push(s.previewPath)} />
+          <StatusRow status={s} mode={mode} deleted={hasDeleted(s)} onPreview={s => nav.push(s.previewPath)} />
         </li>
       ))}
     </ul>

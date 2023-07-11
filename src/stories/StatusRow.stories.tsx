@@ -19,14 +19,14 @@ export default meta;
 
 type StoryArgs = {
   readonly mode: TimelineMode;
-  readonly disabled: boolean;
+  readonly deleted: boolean;
   readonly onPreview: (status: Status) => void;
   readonly displayName: string;
   readonly content: string;
   readonly acct: string;
 };
 type Story = StoryObj<StoryArgs>;
-function render({ mode, disabled, onPreview, displayName, content, acct }: StoryArgs) {
+function render({ mode, deleted, onPreview, displayName, content, acct }: StoryArgs) {
   const status = Status.fromApiData({
     id: "12345",
     created_at: Date.now().toString(),
@@ -52,23 +52,23 @@ function render({ mode, disabled, onPreview, displayName, content, acct }: Story
     },
   });
 
-  return <StatusRow status={status} disabled={disabled} mode={mode} onPreview={onPreview} />;
+  return <StatusRow status={status} deleted={deleted} mode={mode} onPreview={onPreview} />;
 }
 
 export const Default: Story = {
   args: {
     mode: "normal",
-    disabled: false,
+    deleted: false,
     content: "<p>test content</p>",
     displayName: "test account",
     acct: "test_account@example.com",
   },
   render,
 };
-export const Disabled: Story = {
+export const Deleted: Story = {
   args: {
     mode: "normal",
-    disabled: true,
+    deleted: true,
     content: "<p>test content</p>",
     displayName: "test account",
     acct: "test_account@example.com",
@@ -78,17 +78,17 @@ export const Disabled: Story = {
 export const Expert: Story = {
   args: {
     mode: "expert",
-    disabled: false,
+    deleted: false,
     content: "<p>test content</p>",
     displayName: "test account",
     acct: "test_account@example.com",
   },
   render,
 };
-export const ExpertDisabled: Story = {
+export const ExpertDeleted: Story = {
   args: {
     mode: "expert",
-    disabled: true,
+    deleted: true,
     content: "<p>test content</p>",
     displayName: "test account",
     acct: "test_account@example.com",

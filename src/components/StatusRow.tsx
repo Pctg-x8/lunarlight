@@ -11,12 +11,12 @@ import StatusActions from "./StatusActions";
 export default function StatusRow({
   status,
   mode,
-  disabled = false,
+  deleted = false,
   onPreview,
 }: {
   readonly status: Status;
   readonly mode: TimelineMode;
-  readonly disabled?: boolean;
+  readonly deleted?: boolean;
   readonly onPreview: (status: Status) => void;
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -38,7 +38,7 @@ export default function StatusRow({
   switch (mode) {
     case "normal":
       return (
-        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={disabled}>
+        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={deleted}>
           {status instanceof RebloggedStatus ? (
             <p className="rebloggedBy">
               <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -65,13 +65,13 @@ export default function StatusRow({
           <AgoLabel className="ago" createdAt={status.created_at} />
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className="statusActions">
-            <StatusActions status={status} disabled={disabled} />
+            <StatusActions status={status} disabled={deleted} />
           </div>
         </article>
       );
     case "expert":
       return (
-        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={disabled}>
+        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={deleted}>
           <h1 className="displayName">
             <Link
               className="non-colored"
@@ -95,13 +95,13 @@ export default function StatusRow({
             ) : undefined}
           </div>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
-          <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={disabled}>
+          <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={deleted}>
             <FontAwesomeIcon icon={faReply} />
           </button>
-          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab" disabled={disabled}>
+          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab" disabled={deleted}>
             <FontAwesomeIcon icon={faStar} />
           </button>
-          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab" disabled={disabled}>
+          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab" disabled={deleted}>
             <FontAwesomeIcon icon={faRetweet} />
           </button>
           <AgoLabel className="ago" createdAt={status.created_at} />
