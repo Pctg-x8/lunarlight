@@ -2,7 +2,7 @@ import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
 import { isDefined } from "@/utils";
 import { css } from "@styled-system/css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import StatusRow from "./StatusRow";
 
 export default function Timeline({
