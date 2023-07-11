@@ -38,7 +38,7 @@ export default function StatusRow({
   switch (mode) {
     case "normal":
       return (
-        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)}>
+        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={disabled}>
           {status instanceof RebloggedStatus ? (
             <p className="rebloggedBy">
               <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -71,7 +71,7 @@ export default function StatusRow({
       );
     case "expert":
       return (
-        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)}>
+        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={disabled}>
           <h1 className="displayName">
             <Link
               className="non-colored"
@@ -180,6 +180,10 @@ const ExpertStatusRow = css({
       color: "status.actions.lit",
     },
   },
+  _deleted: {
+    textDecoration: "line-through",
+    opacity: 0.5,
+  },
 });
 
 const NormalStatusRow = css({
@@ -241,5 +245,9 @@ const NormalStatusRow = css({
   "& .statusActions": {
     gridArea: "a",
     marginTop: "4px",
+  },
+  _deleted: {
+    textDecoration: "line-through",
+    opacity: 0.5,
   },
 });

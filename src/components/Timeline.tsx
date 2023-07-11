@@ -20,7 +20,7 @@ export default function Timeline({
   return (
     <ul>
       {statuses.map((s, x) => (
-        <li key={x} className={StaticTimeline} data-deleted={hasDeleted(s)}>
+        <li key={x} className={Row}>
           <StatusRow status={s} mode={mode} disabled={hasDeleted(s)} onPreview={s => nav.push(s.previewPath)} />
         </li>
       ))}
@@ -28,11 +28,7 @@ export default function Timeline({
   );
 }
 
-const StaticTimeline = css({
+const Row = css({
   borderBottom: "1px solid",
   borderBottomColor: "status.border",
-  _deleted: {
-    opacity: "0.5",
-    textDecoration: "line-through",
-  },
 });
