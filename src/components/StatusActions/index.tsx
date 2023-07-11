@@ -10,7 +10,6 @@ export default function StatusActions({
   readonly status: Status;
   readonly disabled?: boolean;
 }) {
-  console.log(status);
   const { replied, favorited, reblogged } = status.counters;
 
   return (
