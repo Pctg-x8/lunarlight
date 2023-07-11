@@ -3,7 +3,7 @@
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
 import { usePathname } from "next/navigation";
-import BottomMenuItem from "./menu/BottomMenuItem";
+import SideMenuItem from "./menu/MenuItem";
 
 export default function BottomMenu(): JSX.Element {
   const pathname = usePathname();
@@ -12,19 +12,19 @@ export default function BottomMenu(): JSX.Element {
     <footer className={Frame}>
       <ul>
         <li>
-          <BottomMenuItem href="/" active={pathname === "/"} icon={faHouseChimney}>
+          <SideMenuItem href="/" active={pathname === "/"} icon={faHouseChimney}>
             Home
-          </BottomMenuItem>
+          </SideMenuItem>
         </li>
         <li>
-          <BottomMenuItem href="/public" active={pathname === "/public"} icon={faGlobe}>
+          <SideMenuItem href="/public" active={pathname === "/public"} icon={faGlobe}>
             Public
-          </BottomMenuItem>
+          </SideMenuItem>
         </li>
         <li>
-          <BottomMenuItem href="/preferences" active={pathname === "/preferences"} icon={faGear}>
+          <SideMenuItem href="/preferences" active={pathname === "/preferences"} icon={faGear}>
             Prefs
-          </BottomMenuItem>
+          </SideMenuItem>
         </li>
       </ul>
     </footer>

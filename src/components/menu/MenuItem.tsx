@@ -25,34 +25,21 @@ export default function SideMenuItem({
 
 const LinkStyle = css({
   display: "block",
-  p: "8px 0",
+  p: { base: "12px 0", lg: "16px" },
   transition: "background 0.1s ease, color 0.1s ease",
-  bg: "rgb(255 255 255 / 0%)",
-  color: "app.subtext",
-  textAlign: "center",
+  bg: { base: "rgb(255 255 255 / 0%)", _hover: "rgb(255 255 255 / 5%)" },
+  color: { base: "app.subtext", _hover: "app.text", _customActive: "menu.activeLink !important" },
+  textAlign: { base: "center", lg: "start" },
   ml: 0,
   mr: 0,
-  _hover: {
-    bg: "rgb(255 255 255 / 5%)",
-    color: "app.text",
-  },
-  '&[data-active="true"]': {
-    color: "menu.activeLink !important",
-  },
-  lg: {
-    textAlign: "start",
-    p: "16px",
-    "& > span": {
-      fontSize: "1rem",
-    },
-  },
+  fontSize: "1rem",
 });
 
 const Icon = css({
   "--fa-display": { base: "block", lg: "inline" },
   mr: { base: "auto", lg: "8px" },
   ml: { base: "auto", lg: 0 },
-  mb: { base: "8px", lg: 0 },
+  mb: { base: "4px", lg: 0 },
 });
 
 const ShortLabel = styled("span", {

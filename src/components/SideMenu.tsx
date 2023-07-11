@@ -3,7 +3,7 @@
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
 import { usePathname } from "next/navigation";
-import SideMenuItem from "./menu/SideMenuItem";
+import SideMenuItem from "./menu/MenuItem";
 
 // Note: FontAwesomeのスタイリングがPanda CSSより優先されるのでdivで囲わないといけない（つらい）
 
