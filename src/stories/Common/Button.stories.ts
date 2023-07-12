@@ -1,11 +1,10 @@
 import Button from "@/components/common/Button";
 import { Meta, StoryObj } from "@storybook/react";
 
-const meta: Meta<typeof Button> = {
+export default {
   title: "Lunarlight/Common/Button",
   component: Button,
-};
-export default meta;
+} satisfies Meta<typeof Button>;
 
 type Story = StoryObj<typeof Button>;
 
