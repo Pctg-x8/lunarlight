@@ -3,7 +3,7 @@
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
 import { usePathname } from "next/navigation";
-import SideMenuItem from "./menu/MenuItem";
+import MenuItem from "./menu/MenuItem";
 
 // Note: FontAwesomeのスタイリングがPanda CSSより優先されるのでdivで囲わないといけない（つらい）
 
@@ -14,20 +14,20 @@ export default function SideMenu(): JSX.Element {
     <nav className={Frame}>
       <ul>
         <li>
-          <SideMenuItem href="/" icon={faHouseChimney} active={path === "/"}>
+          <MenuItem href="/" icon={faHouseChimney} active={path === "/"}>
             Home
-          </SideMenuItem>
+          </MenuItem>
         </li>
         <li>
-          <SideMenuItem href="/public" icon={faGlobe} active={path === "/public"}>
+          <MenuItem href="/public" icon={faGlobe} active={path === "/public"}>
             Public
-          </SideMenuItem>
+          </MenuItem>
         </li>
         <li>
-          <SideMenuItem href="/preferences" icon={faGear} active={path === "/preferences"}>
-            <SideMenuItem.FullLabel>Preferences</SideMenuItem.FullLabel>
-            <SideMenuItem.ShortLabel>Prefs</SideMenuItem.ShortLabel>
-          </SideMenuItem>
+          <MenuItem href="/preferences" icon={faGear} active={path === "/preferences"}>
+            <MenuItem.FullLabel>Preferences</MenuItem.FullLabel>
+            <MenuItem.ShortLabel>Prefs</MenuItem.ShortLabel>
+          </MenuItem>
         </li>
       </ul>
     </nav>
@@ -37,4 +37,5 @@ export default function SideMenu(): JSX.Element {
 const Frame = css({
   height: "fit-content",
   background: "menu.background",
+  display: { base: "none", sm: "initial" },
 });

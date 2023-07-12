@@ -5,7 +5,7 @@ import { styled } from "@styled-system/jsx";
 import Link from "next/link";
 import React from "react";
 
-export default function SideMenuItem({
+export default function MenuItem({
   icon,
   active,
   href,
@@ -52,5 +52,5 @@ const FullLabel = styled("span", {
     display: { base: "none", lg: "initial" },
   },
 });
-SideMenuItem.ShortLabel = ShortLabel;
-SideMenuItem.FullLabel = FullLabel;
+MenuItem.ShortLabel = ShortLabel;
+MenuItem.FullLabel = FullLabel;
