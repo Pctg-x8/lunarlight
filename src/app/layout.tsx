@@ -44,7 +44,6 @@ const ContentWrapper = css({
     top: "calc(16px + 16px + 20px + 1px + 1px + 8px)",
     width: "60px",
     flex: "0 0 60px",
-    display: "none",
     lg: {
       width: "320px",
       flex: "0 0 320px",
