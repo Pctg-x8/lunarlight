@@ -18,7 +18,8 @@
     "fmtcheck": "prettier --check .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "prepare": "node scripts/dev-only.js && (husky install && panda codegen) || exit 0"
+    "prepare": "node scripts/dev-only.js && (husky install && panda codegen) || exit 0",
+    "prepare-build": "panda codegen"
   },
   "dependencies": {
     "@babel/plugin-transform-typescript": "^7.22.5",
