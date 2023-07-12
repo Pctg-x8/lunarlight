@@ -1,5 +1,6 @@
 import type { StorybookConfig } from "@storybook/nextjs";
 import path from "path";
+import { merge } from "webpack-merge";
 
 export default {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -19,10 +20,12 @@ export default {
   core: {
     builder: "@storybook/builder-webpack5",
   },
-  webpackFinal: cfg => {
-    // @ts-ignore
-    cfg.resolve.alias["@styled-system"] = path.resolve(__dirname, "../styled-system/");
-
-    return cfg;
-  },
+  webpackFinal: cfg =>
+    merge(cfg, {
+      resolve: {
+        alias: {
+          "@styled-system": path.resolve(__dirname, "../styled-system/"),
+        },
+      },
+    }),
 } satisfies StorybookConfig;
