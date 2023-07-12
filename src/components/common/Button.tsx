@@ -3,15 +3,11 @@ import { styled } from "@styled-system/jsx";
 const Button = styled("button", {
   base: {
     padding: "0.4rem 0.8rem",
-    cursor: "pointer",
+    cursor: { base: "pointer", _disabled: "default" },
     borderRadius: "8px",
-    boxShadow: "inset 0 0 0 #000",
+    boxShadow: { base: "inset 0 0 0 #000", _activeNotDisabled: "inset 0 0 4px #000" },
     transition: "background 0.1s ease, box-shadow 0.1s ease",
-    _active: {
-      boxShadow: "inset 0 0 4px #000",
-    },
     _disabled: {
-      cursor: "default",
       bg: "button.primary.background.disabled !important",
       color: "button.primary.text.disabled !important",
     },
@@ -20,12 +16,10 @@ const Button = styled("button", {
     variant: {
       primary: {
         color: "button.primary.text.default",
-        bg: "button.primary.background.default",
-        _hover: {
-          bg: "button.primary.background.hover",
-        },
-        _active: {
-          bg: "button.primary.background.active",
+        bg: {
+          base: "button.primary.background.default",
+          _hover: "button.primary.background.hover",
+          _active: "utton.primary.background.active",
         },
       },
     },
