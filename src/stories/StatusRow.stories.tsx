@@ -3,7 +3,7 @@ import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
 
-const meta: Meta<typeof StatusRow> = {
+export default {
   component: StatusRow,
   title: "Lunarlight/StatusRow",
   argTypes: {
@@ -14,8 +14,7 @@ const meta: Meta<typeof StatusRow> = {
       action: "onPreview",
     },
   },
-};
-export default meta;
+} satisfies Meta<typeof StatusRow>;
 
 type StoryArgs = {
   readonly mode: TimelineMode;

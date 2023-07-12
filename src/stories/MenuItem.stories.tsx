@@ -8,7 +8,8 @@ type StoryArgs = Omit<ComponentProps<typeof Component>, "children"> & {
   readonly title: string;
   readonly shortTitle?: string;
 };
-const meta: Meta<StoryArgs> = {
+
+export default {
   component: Component,
   title: "Lunarlight/MenuItem",
   args: {
@@ -27,8 +28,7 @@ const meta: Meta<StoryArgs> = {
 
     return <Component {...args}>{args.title}</Component>;
   },
-};
-export default meta;
+} satisfies Meta<StoryArgs>;
 
 type Story = StoryObj<StoryArgs>;
 

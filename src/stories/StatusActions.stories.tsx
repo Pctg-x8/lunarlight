@@ -2,11 +2,10 @@ import Component from "@/components/StatusActions";
 import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
 
-const meta: Meta<typeof Component> = {
+export default {
   component: Component,
   title: "Lunarlight/StatusActions",
-};
-export default meta;
+} satisfies Meta<typeof Component>;
 
 type StoryArgs = {
   readonly reply_count: number;
