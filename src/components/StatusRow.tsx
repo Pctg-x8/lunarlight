@@ -4,7 +4,6 @@ import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css } from "@styled-system/css";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
 import StatusActions from "./StatusActions";
@@ -12,11 +11,13 @@ import StatusActions from "./StatusActions";
 export default function StatusRow({
   status,
   mode,
-  disabled = false,
+  deleted = false,
+  onPreview,
 }: {
   readonly status: Status;
   readonly mode: TimelineMode;
-  readonly disabled?: boolean;
+  readonly deleted?: boolean;
+  readonly onPreview: (status: Status) => void;
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -34,12 +35,10 @@ export default function StatusRow({
     return () => cancellation.abort();
   }, [contentRef]);
 
-  const nav = useRouter();
-
   switch (mode) {
     case "normal":
       return (
-        <article className={NormalStatusRow} ref={contentRef} onClick={() => nav.push(status.previewPath)}>
+        <article className={NormalStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={deleted}>
           {status instanceof RebloggedStatus ? (
             <p className="rebloggedBy">
               <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -66,13 +65,13 @@ export default function StatusRow({
           <AgoLabel className="ago" createdAt={status.created_at} />
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className="statusActions">
-            <StatusActions status={status} disabled={disabled} />
+            <StatusActions status={status} disabled={deleted} />
           </div>
         </article>
       );
     case "expert":
       return (
-        <article className={ExpertStatusRow} ref={contentRef} onClick={() => nav.push(status.previewPath)}>
+        <article className={ExpertStatusRow} ref={contentRef} onClick={() => onPreview(status)} data-deleted={deleted}>
           <h1 className="displayName">
             <Link
               className="non-colored"
@@ -96,13 +95,13 @@ export default function StatusRow({
             ) : undefined}
           </div>
           <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
-          <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={disabled}>
+          <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={deleted}>
             <FontAwesomeIcon icon={faReply} />
           </button>
-          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab" disabled={disabled}>
+          <button title={`ふぁぼ(${status.counters.favorited})`} className="fav ab" disabled={deleted}>
             <FontAwesomeIcon icon={faStar} />
           </button>
-          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab" disabled={disabled}>
+          <button title={`ブースト(${status.counters.reblogged})`} className="reb ab" disabled={deleted}>
             <FontAwesomeIcon icon={faRetweet} />
           </button>
           <AgoLabel className="ago" createdAt={status.created_at} />
@@ -181,6 +180,10 @@ const ExpertStatusRow = css({
       color: "status.actions.lit",
     },
   },
+  _deleted: {
+    textDecoration: "line-through",
+    opacity: 0.5,
+  },
 });
 
 const NormalStatusRow = css({
@@ -242,5 +245,9 @@ const NormalStatusRow = css({
   "& .statusActions": {
     gridArea: "a",
     marginTop: "4px",
+  },
+  _deleted: {
+    textDecoration: "line-through",
+    opacity: 0.5,
   },
 });

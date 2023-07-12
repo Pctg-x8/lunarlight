@@ -87,6 +87,8 @@ export default defineConfig({
   conditions: {
     extend: {
       deleted: '&[data-deleted="true"]',
+      customActive: '&[data-active="true"]',
+      activeNotDisabled: "&:active:not(:disabled)",
     },
   },
 

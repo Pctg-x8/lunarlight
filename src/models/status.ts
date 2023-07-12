@@ -25,14 +25,14 @@ export abstract class Status {
       .then(Status.fromApiData);
   }
 
-  abstract readonly previewPath: string;
-  abstract readonly account: Account;
-  abstract readonly timelineId: string;
-  abstract readonly content: string;
-  abstract readonly spoiler: string;
-  abstract readonly application: Application | undefined;
-  abstract readonly created_at: string;
-  abstract readonly counters: Counters;
+  declare abstract readonly previewPath: string;
+  declare abstract readonly account: Account;
+  declare abstract readonly timelineId: string;
+  declare abstract readonly content: string;
+  declare abstract readonly spoiler: string;
+  declare abstract readonly application: Application | undefined;
+  declare abstract readonly created_at: string;
+  declare abstract readonly counters: Counters;
 }
 
 export class NormalStatus extends Status {

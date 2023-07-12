@@ -1,7 +1,5 @@
-const withLinaria = require("next-with-linaria");
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
   reactStrictMode: true,
   experimental: {
     serverActions: true,
@@ -28,5 +26,3 @@ const nextConfig = {
     return cfg;
   },
 };
-
-module.exports = withLinaria(nextConfig);

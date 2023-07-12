@@ -50,9 +50,6 @@ const ContentWrapper = css({
       flex: "0 0 320px",
       top: "calc(16px + 16px + 20px + 1px + 1px)",
     },
-    sm: {
-      display: "initial",
-    },
   },
 });
 
