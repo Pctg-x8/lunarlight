@@ -3,19 +3,6 @@ import { TimelineMode } from "@/models/localPreferences";
 import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
 
-export default {
-  component: StatusRow,
-  title: "Lunarlight/StatusRow",
-  argTypes: {
-    status: {
-      control: false,
-    },
-    onPreview: {
-      action: "onPreview",
-    },
-  },
-} satisfies Meta<typeof StatusRow>;
-
 type StoryArgs = {
   readonly mode: TimelineMode;
   readonly deleted: boolean;
@@ -24,6 +11,26 @@ type StoryArgs = {
   readonly content: string;
   readonly acct: string;
 };
+export default {
+  component: StatusRow,
+  title: "Lunarlight/StatusRow",
+  argTypes: {
+    onPreview: {
+      action: "onPreview",
+    },
+    // @ts-ignore
+    status: {
+      control: false,
+    },
+  },
+  args: {
+    content: "<p>test content <a hreF='#'>link here</a></p>",
+    displayName: "test account",
+    acct: "test_account@example.com",
+  },
+  render,
+} satisfies Meta<StoryArgs>;
+
 type Story = StoryObj<StoryArgs>;
 function render({ mode, deleted, onPreview, displayName, content, acct }: StoryArgs) {
   const status = Status.fromApiData({
@@ -58,9 +65,6 @@ export const Default: Story = {
   args: {
     mode: "normal",
     deleted: false,
-    content: "<p>test content</p>",
-    displayName: "test account",
-    acct: "test_account@example.com",
   },
   render,
 };
@@ -68,29 +72,17 @@ export const Deleted: Story = {
   args: {
     mode: "normal",
     deleted: true,
-    content: "<p>test content</p>",
-    displayName: "test account",
-    acct: "test_account@example.com",
   },
-  render,
 };
 export const Expert: Story = {
   args: {
     mode: "expert",
     deleted: false,
-    content: "<p>test content</p>",
-    displayName: "test account",
-    acct: "test_account@example.com",
   },
-  render,
 };
 export const ExpertDeleted: Story = {
   args: {
     mode: "expert",
     deleted: true,
-    content: "<p>test content</p>",
-    displayName: "test account",
-    acct: "test_account@example.com",
   },
-  render,
 };
