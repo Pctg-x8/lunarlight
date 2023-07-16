@@ -18,7 +18,8 @@ describe("realPath", () => {
 
   beforeEach(() => {
     jest.resetModules();
-    process.env = structuredClone(OriginalEnv);
+    // Note: よくわからないがstructuredCloneは使えないらしい
+    process.env = { ...OriginalEnv };
   });
 
   afterAll(() => {
