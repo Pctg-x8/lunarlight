@@ -1,11 +1,10 @@
 "use client";
 
+import { realPath } from "@/utils/paths";
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
 import { usePathname } from "next/navigation";
 import MenuItem from "./menu/MenuItem";
-
-// Note: FontAwesomeのスタイリングがPanda CSSより優先されるのでdivで囲わないといけない（つらい）
 
 export default function SideMenu(): JSX.Element {
   const path = usePathname();
@@ -14,17 +13,17 @@ export default function SideMenu(): JSX.Element {
     <nav className={Frame}>
       <ul>
         <li>
-          <MenuItem href="/" icon={faHouseChimney} active={path === "/"}>
+          <MenuItem href="/" icon={faHouseChimney} active={path === realPath("/")}>
             Home
           </MenuItem>
         </li>
         <li>
-          <MenuItem href="/public" icon={faGlobe} active={path === "/public"}>
+          <MenuItem href="/public" icon={faGlobe} active={path === realPath("/public")}>
             Public
           </MenuItem>
         </li>
         <li>
-          <MenuItem href="/preferences" icon={faGear} active={path === "/preferences"}>
+          <MenuItem href="/preferences" icon={faGear} active={path === realPath("/preferences")}>
             <MenuItem.FullLabel>Preferences</MenuItem.FullLabel>
             <MenuItem.ShortLabel>Prefs</MenuItem.ShortLabel>
           </MenuItem>
