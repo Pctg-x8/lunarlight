@@ -67,6 +67,16 @@ export default defineConfig({
             },
           },
         },
+        link: {
+          default: {
+            opaque: { value: "rgb(51 153 255 / 100%)" },
+            transparent: { value: "rgb(51 153 255 / 0%)" },
+          },
+          visited: {
+            opaque: { value: "rgb(153 102 255 / 100%)" },
+            transparent: { value: "rgb(153 102 255 / 0%)" },
+          },
+        },
       },
     },
     breakpoints: {

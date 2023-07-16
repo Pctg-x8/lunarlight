@@ -2,7 +2,7 @@ import { TimelineMode } from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
 import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { css } from "@styled-system/css";
+import { css, cx } from "@styled-system/css";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
@@ -63,7 +63,7 @@ export default function StatusRow({
             </Link>
           </h2>
           <AgoLabel className="ago" createdAt={status.created_at} />
-          <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
+          <div className={cx("text", TextStyle)} dangerouslySetInnerHTML={{ __html: status.content }} />
           <div className="statusActions">
             <StatusActions status={status} disabled={deleted} />
           </div>
@@ -94,7 +94,7 @@ export default function StatusRow({
               </Link>
             ) : undefined}
           </div>
-          <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
+          <div className={cx("text", TextStyle)} dangerouslySetInnerHTML={{ __html: status.content }} />
           <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={deleted}>
             <FontAwesomeIcon icon={faReply} />
           </button>
@@ -239,8 +239,8 @@ const NormalStatusRow = css({
   },
   "& .text": {
     gridArea: "text",
-    margin: "6px 2px",
     marginBottom: "8px",
+    margin: "6px 2px",
   },
   "& .statusActions": {
     gridArea: "a",
@@ -249,5 +249,19 @@ const NormalStatusRow = css({
   _deleted: {
     textDecoration: "line-through",
     opacity: 0.5,
+  },
+});
+
+const TextStyle = css({
+  "& a ": {
+    position: "relative",
+    color: "var(--link-text-color)",
+    transition: "text-shadow 0.15s ease, border 0.15s ease",
+    borderBottomWidth: "1px",
+    borderBottomStyle: "solid",
+    borderBottomColor: { base: "var(--link-text-color-trans)", _hover: "var(--link-text-color)" },
+    textShadow: { base: "0 0 0px var(--link-text-color)", _hover: "0 0 2px var(--link-text-color)" },
+    "--link-text-color": { base: "colors.link.default.opaque", _visited: "colors.link.visited.opaque" },
+    "--link-text-color-trans": { base: "colors.link.default.transparent", _visited: "colors.link.visited.transparent" },
   },
 });
