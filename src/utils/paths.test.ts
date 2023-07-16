@@ -12,6 +12,10 @@ const NonSlashTerminatedAppBasePath = fc
   .map(x => `/${x}`)
   .filter(x => !x.endsWith("/"));
 
+jest.mock("@/utils/server-client", () => ({
+  alterCS: <R>(c: () => R, _s: () => R) => c(),
+}));
+
 describe("realPath", () => {
   // process.env mockup https://stackoverflow.com/a/48042799
   const OriginalEnv = process.env;
