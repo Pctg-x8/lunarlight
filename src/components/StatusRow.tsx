@@ -1,5 +1,6 @@
 import { TimelineMode } from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
+import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css, cx } from "@styled-system/css";
@@ -24,14 +25,11 @@ export default function StatusRow({
     if (!contentRef.current) return;
 
     const cancellation = new AbortController();
-    function recursiveProcessLink(e: ChildNode) {
+    recursiveProcessDOMNodes(contentRef.current, e => {
       if (e instanceof HTMLAnchorElement || e instanceof HTMLButtonElement) {
         e.addEventListener("click", e => e.stopPropagation(), { signal: cancellation.signal });
       }
-
-      for (const child of e.childNodes) recursiveProcessLink(child);
-    }
-    for (const child of contentRef.current.childNodes) recursiveProcessLink(child);
+    });
     return () => cancellation.abort();
   }, [contentRef]);
 
