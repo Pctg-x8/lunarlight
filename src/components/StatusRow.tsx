@@ -94,7 +94,7 @@ export default function StatusRow({
               </Link>
             ) : undefined}
           </div>
-          <div className="text" dangerouslySetInnerHTML={{ __html: status.content }} />
+          <div className={cx("text", TextStyle)} dangerouslySetInnerHTML={{ __html: status.content }} />
           <button title={`返信(${status.counters.replied})`} className="reply ab" disabled={deleted}>
             <FontAwesomeIcon icon={faReply} />
           </button>
@@ -240,6 +240,7 @@ const NormalStatusRow = css({
   "& .text": {
     gridArea: "text",
     marginBottom: "8px",
+    margin: "6px 2px",
   },
   "& .statusActions": {
     gridArea: "a",
@@ -252,7 +253,6 @@ const NormalStatusRow = css({
 });
 
 const TextStyle = css({
-  margin: "6px 2px",
   "& a ": {
     position: "relative",
     color: "var(--link-text-color)",
