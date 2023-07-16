@@ -26,6 +26,21 @@ describe("realPath", () => {
     process.env = OriginalEnv;
   });
 
+  it("converts special root onto app base path", () => {
+    // @ts-ignore
+    delete process.env.NEXT_PUBLIC_BASE_PATH;
+
+    expect(realPath("/")).toStrictEqual("/");
+
+    fc.assert(
+      fc.property(NonSlashTerminatedAppBasePath, abp => {
+        // @ts-ignore
+        process.env.NEXT_PUBLIC_BASE_PATH = abp;
+
+        expect(realPath("/")).toStrictEqual(abp);
+      })
+    );
+  });
   it("converts onto app base path", () =>
     fc.assert(
       fc.property(NonAbsPath, NonSlashTerminatedAppBasePath, (vap, abp) => {

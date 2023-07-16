@@ -25,5 +25,10 @@ export function appBasePath(): string {
 }
 
 export function realPath(virtualAbsPath: string): string {
+  if (virtualAbsPath === "/") {
+    // no conversion if virtualAbsPath is simply root
+    return appBasePath();
+  }
+
   return stripSuffix(appBasePath(), "/") + "/" + stripPrefix(virtualAbsPath, "/");
 }
