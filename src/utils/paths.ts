@@ -1,4 +1,5 @@
 import { stripPrefix, stripSuffix } from ".";
+import { alterCS } from "./server-client";
 
 /** Full URL for App Root */
 export function baseUrl() {
@@ -25,10 +26,16 @@ export function appBasePath(): string {
 }
 
 export function realPath(virtualAbsPath: string): string {
-  if (virtualAbsPath === "/") {
-    // no conversion if virtualAbsPath is simply root
-    return appBasePath();
-  }
+  return alterCS(
+    () => {
+      if (virtualAbsPath === "/") {
+        // no conversion if virtualAbsPath is simply root
+        return appBasePath();
+      }
 
-  return stripSuffix(appBasePath(), "/") + "/" + stripPrefix(virtualAbsPath, "/");
+      return stripSuffix(appBasePath(), "/") + "/" + stripPrefix(virtualAbsPath, "/");
+    },
+    // Note: Server側実行の場合はbasePathの影響を受けないらしい
+    () => virtualAbsPath
+  );
 }
