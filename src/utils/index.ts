@@ -7,7 +7,11 @@ export function ellipsisText(input: string, maxLength = 50): string {
 }
 
 export function stripPrefix(input: string, prefix: string): string {
-  return input.startsWith(prefix) ? input.slice(prefix.length) : input;
+  return !prefix ? input : input.startsWith(prefix) ? input.slice(prefix.length) : input;
+}
+
+export function stripSuffix(input: string, suffix: string): string {
+  return !suffix ? input : input.endsWith(suffix) ? input.slice(0, -suffix.length) : input;
 }
 
 export function isDefined<T>(value: T | undefined | null): value is NonNullable<T> {

@@ -1,3 +1,5 @@
+import { stripPrefix, stripSuffix } from ".";
+
 /** Full URL for App Root */
 export function baseUrl() {
   // browser: use relative path
@@ -20,4 +22,8 @@ export function baseUrl() {
 
 export function appBasePath(): string {
   return process.env.NEXT_PUBLIC_BASE_PATH ?? "/";
+}
+
+export function realPath(virtualAbsPath: string): string {
+  return stripSuffix(appBasePath(), "/") + "/" + stripPrefix(virtualAbsPath, "/");
 }
