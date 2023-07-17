@@ -101,13 +101,15 @@ export class NodeInfoResolver {
   }
 }
 
-export type APIFamily = "Mastodon" | "Misskey";
+export type APIFamily = "Mastodon" | "Misskey" | "Mastodon/Fedibird";
 export function detectAPIFamily(nodeinfo: KnownNodeInfo): APIFamily | undefined {
   switch (nodeinfo.software_name.toLowerCase()) {
     case "mastodon":
       return "Mastodon";
     case "misskey":
       return "Misskey";
+    case "fedibird":
+      return "Mastodon/Fedibird";
     default:
       return undefined;
   }

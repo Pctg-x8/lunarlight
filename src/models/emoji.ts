@@ -156,6 +156,7 @@ export default class EmojiResolver {
             fetchedNodeInfoMap.map(async nodeinfo => {
               switch (detectAPIFamily(nodeinfo)) {
                 case "Mastodon":
+                case "Mastodon/Fedibird":
                   // Note: これは全部取るしかない
                   return await getCustomEmojis
                     .send(EmptyRequestBody.instance, ForeignInstance.fromDomainName(nodeinfo.domain))
