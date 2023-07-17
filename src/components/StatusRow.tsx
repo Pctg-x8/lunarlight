@@ -159,7 +159,7 @@ const ExpertStatusRow = css({
       textOverflow: "ellipsis",
     },
     "& img": {
-      height: "1em",
+      height: "1.5em",
       display: "inline-block",
     },
   },
@@ -246,6 +246,10 @@ const NormalStatusRow = css({
     gridArea: "text",
     marginBottom: "8px",
     margin: "6px 2px",
+    "& img": {
+      height: "1.5em",
+      display: "inline-block",
+    },
   },
   "& .statusActions": {
     gridArea: "a",

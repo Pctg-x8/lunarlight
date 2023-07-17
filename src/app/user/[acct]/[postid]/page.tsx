@@ -1,10 +1,13 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
-import { DefaultInstance, HTTPError } from "@/models/api";
+import { DefaultInstance, EmptyRequestBody, HTTPError } from "@/models/api";
+import { getStatus } from "@/models/api/mastodon/status";
+import { ssrGetAuthorizationToken } from "@/models/auth";
+import EmojiResolver from "@/models/emoji";
 import { RebloggedStatus, Status } from "@/models/status";
 import singleCardStyle from "@/styles/components/singleCard.module.scss";
-import { ellipsisText } from "@/utils";
+import { ellipsisText, isDefined } from "@/utils";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
@@ -12,8 +15,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 async function getPost(_acct: string, postid: string) {
+  const token = ssrGetAuthorizationToken();
+  const instance = isDefined(token) ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
+
   try {
-    return await Status.get(postid);
+    return await getStatus(postid)
+      .send(EmptyRequestBody.instance, instance)
+      .then(s => new EmojiResolver().resolveAllInStatus(s, instance))
+      .then(Status.fromApiData);
   } catch (e) {
     if (e instanceof HTTPError.NotFoundError) {
       notFound();

@@ -69,14 +69,17 @@ export const appRpcRouter = t.router({
       .query(({ input, ctx }) => {
         const tok = ctx.getAuthorizedToken();
         const instance = tok ? DefaultInstance.withAuthorizationToken(tok) : DefaultInstance;
+        const emojiResolver = new EmojiResolver();
 
-        return getStatusesForAccount(input.accountId).send(
-          new SearchParamsRequestBody({
-            max_id: input.max_id,
-            limit: input.limit,
-          }),
-          instance
-        );
+        return getStatusesForAccount(input.accountId)
+          .send(
+            new SearchParamsRequestBody({
+              max_id: input.max_id,
+              limit: input.limit,
+            }),
+            instance
+          )
+          .then(s => emojiResolver.resolveAllInStatus(s, instance));
       }),
   }),
   homeTimeline: stdProcedure
