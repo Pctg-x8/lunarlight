@@ -162,6 +162,12 @@ export namespace HTTPError {
     }
   }
 
+  export class InternalServerError extends HTTPErrorBase {
+    constructor(respText: string) {
+      super(`Internal Server Error ${respText}`);
+    }
+  }
+
   export async function sanitizeStatusCode(resp: Response) {
     switch (resp.status) {
       case 400:
@@ -174,6 +180,8 @@ export namespace HTTPError {
         throw new HTTPError.NotFoundError(await resp.text());
       case 422:
         throw new HTTPError.UnprocessableEntityError(await resp.text());
+      case 500:
+        throw new HTTPError.InternalServerError(await resp.text());
     }
 
     return resp;

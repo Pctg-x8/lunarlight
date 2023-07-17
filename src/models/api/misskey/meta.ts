@@ -1,20 +1,21 @@
-import { GetAPI, JsonRequestBody } from "..";
+import { MisskeyStdAPI } from "./base";
 
-export type MetaParams = {
-  /** @default true */
-  readonly detail?: boolean;
-};
-
-export type Emoji = {
+export type EmojiDetailed = {
   readonly id: string;
-  readonly aliases: string[];
+  readonly aliases?: string[];
+  readonly name: string;
   readonly category: string | null;
   readonly host: string | null;
   readonly url: string;
+  // ここから下はあまり使わないかも
+  readonly license: string | null;
+  readonly isSensitive: boolean;
+  readonly localOnly: boolean;
+  readonly roleIdsThatCanBeUsedThisEmojiAsReaction: string[];
 };
 
-export type InstanceMetadata = {
-  readonly emojis: Emoji[];
+export type EmojiRequestParams = {
+  readonly name: string;
 };
 
-export const getInstanceMeta = new GetAPI<JsonRequestBody<MetaParams>, InstanceMetadata>("api/meta");
+export const getEmojiDetails = new MisskeyStdAPI<EmojiRequestParams, EmojiDetailed>("api/emoji");

@@ -2,10 +2,14 @@ import { isDefined } from "@/utils";
 import { snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
 import Immutable from "immutable";
-import { EmptyRequestBody, ForeignInstance, JsonRequestBody } from "./api";
+import { EmptyRequestBody, ForeignInstance, JsonRequestBody, RemoteInstance } from "./api";
 import { getCustomEmojis } from "./api/mastodon/instance";
-import { getInstanceMeta } from "./api/misskey/meta";
+import { Status } from "./api/mastodon/status";
+import { getEmojiDetails } from "./api/misskey/meta";
 import { NodeInfoResolver, detectAPIFamily } from "./nodeinfo";
+import Webfinger from "./webfinger";
+
+const EmojiPattern = /:([^:\/]+):/g;
 
 export default class EmojiResolver {
   private readonly db = new PrismaClient();
@@ -13,6 +17,35 @@ export default class EmojiResolver {
   async resolveUrl(name: string, preferredDomain?: string): Promise<string | undefined> {
     const results = await this.scheduleRequest(name, preferredDomain);
     return isDefined(preferredDomain) ? results[name]?.[1]?.[preferredDomain] : results[name]?.[0];
+  }
+
+  async resolveMultiple(names: string[], preferredDomain?: string): Promise<Immutable.Map<string, string>> {
+    const resolved = await Promise.all(
+      Immutable.Set(names)
+        .map(n => this.resolveUrl(n, preferredDomain).then(url => [n, url] as const))
+        .toArray()
+    );
+
+    return Immutable.Map(resolved.filter((v): v is [string, string] => isDefined(v[1])));
+  }
+
+  async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Status> {
+    const captures = [...status.content.matchAll(EmojiPattern)];
+    const emojiReplacements = captures.map(c => ({ emojiName: c[1], startAt: c.index ?? 1 }));
+
+    const preferredDomain = (await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance)).domain;
+    const resolvedEmojis = await this.resolveMultiple(
+      emojiReplacements.map(({ emojiName }) => emojiName),
+      preferredDomain
+    );
+    console.log(status.content, resolvedEmojis.toObject(), emojiReplacements);
+
+    const newContent = emojiReplacements
+      .filter(e => resolvedEmojis.has(e.emojiName))
+      .map(e => [e.emojiName, resolvedEmojis.get(e.emojiName)!!])
+      .reduce((c, [e, u]) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:">`), status.content);
+
+    return { ...status, content: newContent };
   }
 
   // batching
@@ -70,7 +103,7 @@ export default class EmojiResolver {
                   found[n] = [undefined, {}];
                 }
                 found[n][1][pd] = nameMatch.asset_url;
-                // PreferredDomainになければ念のためfetchする
+                // PreferredDomainにないので念のためfetchする
                 requiredFetching.push([n, pd] as const);
               } else {
                 if (!(n in found)) {
@@ -88,13 +121,18 @@ export default class EmojiResolver {
             }
           }
 
-          const fetchedDomains = Immutable.Set(requiredFetching.map(snd));
+          const fetchRequestsByDomain = Immutable.List(requiredFetching)
+            .groupBy(v => v[1])
+            .map(xs => Immutable.Set(xs.map(x => x[0])))
+            .toMap();
+          const fetchedDomains = fetchRequestsByDomain.keySeq();
           const niResolver = new NodeInfoResolver();
           const fetchedNodeInfoMap = await Promise.all(fetchedDomains.map(d => niResolver.query(d)).toArray());
           const fetchedEmojis = await Promise.all(
             fetchedNodeInfoMap.map(async nodeinfo => {
               switch (detectAPIFamily(nodeinfo)) {
                 case "Mastodon":
+                  // Note: これは全部取るしかない
                   return await getCustomEmojis
                     .send(EmptyRequestBody.instance, ForeignInstance.fromDomainName(nodeinfo.domain))
                     .then(xs =>
@@ -108,17 +146,41 @@ export default class EmojiResolver {
                       )
                     );
                 case "Misskey":
-                  return await getInstanceMeta
-                    .send(new JsonRequestBody({}), ForeignInstance.fromDomainName(nodeinfo.domain))
-                    .then(m =>
-                      m.emojis.flatMap(e => [
-                        { name: e.id, domain: nodeinfo.domain, asset_url: e.url } as Omit<RemoteEmoji, "id">,
-                        ...e.aliases.map(
-                          alias =>
-                            ({ name: alias, domain: nodeinfo.domain, asset_url: e.url } as Omit<RemoteEmoji, "id">)
-                        ),
-                      ])
-                    );
+                  // Note: こっちは個別に取れる
+                  return await Promise.allSettled(
+                    fetchRequestsByDomain
+                      .get(nodeinfo.domain, Immutable.Set<string>())
+                      .map(e =>
+                        getEmojiDetails.send(
+                          new JsonRequestBody({ name: e }),
+                          ForeignInstance.fromDomainName(nodeinfo.domain)
+                        )
+                      )
+                      .toArray()
+                  ).then(xs =>
+                    xs.flatMap(res => {
+                      switch (res.status) {
+                        case "fulfilled":
+                          return [
+                            { name: res.value.name, domain: nodeinfo.domain, asset_url: res.value.url } as Omit<
+                              RemoteEmoji,
+                              "id"
+                            >,
+                            ...(res.value.aliases ?? []).map(
+                              alias =>
+                                ({ name: alias, domain: nodeinfo.domain, asset_url: res.value.url } as Omit<
+                                  RemoteEmoji,
+                                  "id"
+                                >)
+                            ),
+                          ];
+                        case "rejected":
+                          // TODO: あとでLoggerつくる
+                          console.error(res.reason);
+                          return [];
+                      }
+                    })
+                  );
                 case undefined:
                   console.warn("unknown api family", nodeinfo);
                   return [];

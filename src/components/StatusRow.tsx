@@ -32,6 +32,7 @@ export default function StatusRow({
       for (const child of e.childNodes) recursiveProcessLink(child);
     }
     for (const child of contentRef.current.childNodes) recursiveProcessLink(child);
+
     return () => cancellation.abort();
   }, [contentRef]);
 

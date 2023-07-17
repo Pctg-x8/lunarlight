@@ -11,6 +11,7 @@ import {
 } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
+import EmojiResolver from "@/models/emoji";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
@@ -81,9 +82,13 @@ export const appRpcRouter = t.router({
   homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) =>
-      homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
-    ),
+    .query(({ input, ctx: { token } }) => {
+      const emojiResolver = new EmojiResolver();
+      const instance = DefaultInstance.withAuthorizationToken(token);
+      return homeTimeline
+        .send(new SearchParamsRequestBody(input), instance)
+        .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
+    }),
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
     .input(PublicTimelineRequestParamsZ)
