@@ -1,24 +1,19 @@
 import { RebloggedStatus, Status } from "@/models/status";
 import { TextStyle } from "@/styles/StatusRowSharedStyles";
+import { isDefined } from "@/utils";
 import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css, cx } from "@styled-system/css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
 import StatusActions from "../StatusActions";
 
-export default function NormalStatusRow({
-  status,
-  deleted = false,
-  onPreview,
-}: {
-  readonly status: Status;
-  readonly deleted?: boolean;
-  readonly onPreview: (status: Status) => void;
-}) {
-  const contentRef = useRef<HTMLDivElement>(null);
+export function Row({ status, deleted = false }: { readonly status: Status; readonly deleted?: boolean }) {
+  const nav = useRouter();
+  const contentRef = useRef<HTMLLIElement>(null);
 
   useLayoutEffect(() => {
     if (!contentRef.current) return;
@@ -34,7 +29,7 @@ export default function NormalStatusRow({
   }, [contentRef]);
 
   return (
-    <article className={MainStyle} ref={contentRef} onClick={() => onPreview(status)} data-deleted={deleted}>
+    <li className={RowStyle} ref={contentRef} onClick={() => nav.push(status.previewPath)} data-deleted={deleted}>
       {status instanceof RebloggedStatus ? (
         <p className={RebloggedBy}>
           <FontAwesomeIcon icon={faRetweet} className="icon" />
@@ -63,11 +58,31 @@ export default function NormalStatusRow({
       <div className={ActionsArea}>
         <StatusActions status={status} disabled={deleted} />
       </div>
-    </article>
+    </li>
   );
 }
 
-const MainStyle = css({
+export default function NormalTimelineView({
+  statuses,
+  deletedIds,
+}: {
+  readonly statuses: Status[];
+  readonly deletedIds?: Immutable.Set<string>;
+}) {
+  const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
+
+  return (
+    <ul>
+      {statuses.map(s => (
+        <Row key={s.timelineId} status={s} deleted={hasDeleted(s)} />
+      ))}
+    </ul>
+  );
+}
+
+const RowStyle = css({
+  borderBottom: "1px solid",
+  borderBottomColor: "status.border",
   display: "grid",
   gridTemplateAreas:
     '"space2 rebloggedBy rebloggedBy rebloggedBy ago" "image displayName acct space ago" "image text text text text" "a a a a a"',
@@ -80,6 +95,7 @@ const MainStyle = css({
   _deleted: {
     textDecoration: "line-through",
     opacity: 0.5,
+    cursor: "default",
   },
 });
 

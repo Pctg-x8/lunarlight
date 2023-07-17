@@ -1,23 +1,20 @@
-import Component from "@/components/StatusRow/Normal";
-import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
+import Immutable from "immutable";
+import React from "react";
+import Component from "../components/Timeline/Normal";
+import { Status } from "../models/status";
 
 type StoryArgs = {
   readonly deleted: boolean;
-  readonly onPreview: (status: Status) => void;
   readonly displayName: string;
   readonly content: string;
   readonly acct: string;
 };
 export default {
-  component: Component,
-  title: "Lunarlight/StatusRow/Normal",
+  title: "Lunarlight/TimelineView/Normal",
   argTypes: {
-    onPreview: {
-      action: "onPreview",
-    },
     // @ts-ignore
-    status: {
+    statuses: {
       control: false,
     },
   },
@@ -27,10 +24,15 @@ export default {
     acct: "test_account@example.com",
   },
   render,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 } satisfies Meta<StoryArgs>;
 
 type Story = StoryObj<StoryArgs>;
-function render({ deleted, onPreview, displayName, content, acct }: StoryArgs) {
+function render({ deleted, displayName, content, acct }: StoryArgs) {
   const status = Status.fromApiData({
     id: "12345",
     created_at: Date.now().toString(),
@@ -55,8 +57,9 @@ function render({ deleted, onPreview, displayName, content, acct }: StoryArgs) {
       followers_count: 0,
     },
   });
+  const deletedIds = deleted ? Immutable.Set.of(status.timelineId) : undefined;
 
-  return <Component status={status} deleted={deleted} onPreview={onPreview} />;
+  return <Component statuses={[status]} deletedIds={deletedIds} />;
 }
 
 export const Default: Story = {
