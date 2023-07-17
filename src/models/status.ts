@@ -1,7 +1,8 @@
 import { stripTags } from "@/utils";
 import { Account } from "./account";
-import { DefaultInstance, EmptyRequestBody } from "./api";
+import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
+import EmojiResolver from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
 
 export type Counters = {
@@ -33,6 +34,7 @@ export abstract class Status {
   declare abstract readonly application: Application | undefined;
   declare abstract readonly created_at: string;
   declare abstract readonly counters: Counters;
+  abstract resolveEmojis(resolver: EmojiResolver, instance?: RemoteInstance): Promise<this>;
 }
 
 export class NormalStatus extends Status {
@@ -75,6 +77,11 @@ export class NormalStatus extends Status {
       favorited: this.values.favourites_count ?? 0,
       reblogged: this.values.reblogs_count ?? 0,
     };
+  }
+
+  async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
+    // @ts-ignore
+    return new NormalStatus(await resolver.resolveAllInStatus(this.values, instance));
   }
 }
 
@@ -122,5 +129,14 @@ export class RebloggedStatus extends Status {
       favorited: this.values.favourites_count ?? 0,
       reblogged: this.values.reblogs_count ?? 0,
     };
+  }
+
+  async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
+    // @ts-ignore
+    return new RebloggedStatus(
+      await resolver.resolveAllInStatus(this.values, instance),
+      this.rebloggedBy,
+      this.rebloggedId
+    );
   }
 }

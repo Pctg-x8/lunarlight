@@ -2,8 +2,7 @@ import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
 import { transformDisplayNameTags } from "@/components/domTransformer/emoji";
-import { DefaultInstance, EmptyRequestBody, HTTPError } from "@/models/api";
-import { getStatus } from "@/models/api/mastodon/status";
+import { DefaultInstance, HTTPError } from "@/models/api";
 import { ssrGetAuthorizationToken } from "@/models/auth";
 import EmojiResolver from "@/models/emoji";
 import { RebloggedStatus, Status } from "@/models/status";
@@ -20,10 +19,7 @@ async function getPost(_acct: string, postid: string) {
   const instance = isDefined(token) ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
 
   try {
-    return await getStatus(postid)
-      .send(EmptyRequestBody.instance, instance)
-      .then(s => new EmojiResolver().resolveAllInStatus(s, instance))
-      .then(Status.fromApiData);
+    return await Status.get(postid, { instance }).then(s => s.resolveEmojis(new EmojiResolver(), instance));
   } catch (e) {
     if (e instanceof HTTPError.NotFoundError) {
       notFound();
