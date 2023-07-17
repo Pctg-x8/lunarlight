@@ -79,7 +79,7 @@ export const appRpcRouter = t.router({
             }),
             instance
           )
-          .then(s => emojiResolver.resolveAllInStatus(s, instance));
+          .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
       }),
   }),
   homeTimeline: stdProcedure
@@ -95,12 +95,14 @@ export const appRpcRouter = t.router({
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
     .input(PublicTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) =>
-      publicTimeline.send(
-        new SearchParamsRequestBody(input),
-        token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance
-      )
-    ),
+    .query(({ input, ctx: { token } }) => {
+      const emojiResolver = new EmojiResolver();
+      const instance = token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
+
+      return publicTimeline
+        .send(new SearchParamsRequestBody(input), instance)
+        .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
+    }),
   streamingTimeline: stdProcedure
     .use(requireAuthorized)
     .input(z.object({ stream: StreamsType }))
@@ -114,7 +116,8 @@ export const appRpcRouter = t.router({
         const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
         url.protocol = "wss:";
         const client = new ws(url);
-        client.on("message", (msg, isBinary) => {
+        const emojiResolver = new EmojiResolver();
+        client.on("message", async (msg, isBinary) => {
           if (isBinary) {
             console.log("unknown binary msg", msg);
             return;
@@ -132,7 +135,15 @@ export const appRpcRouter = t.router({
             msgString = new TextDecoder().decode(msg);
           }
 
-          observer.next(JSON.parse(msgString));
+          const e: Event = JSON.parse(msgString);
+          if (e.event === "update") {
+            // payload is Status
+            // Note: これたぶん表示順が前後するパターンがありそうなので別途キューイングするかクライアント側で並べ替える必要がありそう
+            const resolvedStatus = await emojiResolver.resolveAllInStatus(JSON.parse(e.payload), DefaultInstance);
+            msgString = JSON.stringify({ ...e, payload: JSON.stringify(resolvedStatus) });
+          }
+
+          observer.next(e);
         });
 
         return () => {

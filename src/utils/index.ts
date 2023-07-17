@@ -25,3 +25,7 @@ export function requireEnv(name: string): string {
 export function throwException(except: () => void): never {
   throw except();
 }
+
+export function intersperse<T>(values: T[], inner: T): T[] {
+  return values.reduce((a, v, n) => (n > 0 ? [...a, inner, v] : [v]), [] as T[]);
+}

@@ -1,5 +1,6 @@
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
+import EmojiResolver from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
 
@@ -68,5 +69,13 @@ export class Account {
 
   get isRemote(): boolean {
     return isRemoteAccount(this.values);
+  }
+
+  get displayNameEmojiUrlReplacements() {
+    return this.values.displayNameEmojiUrlReplacements ?? {};
+  }
+
+  async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<Account> {
+    return new Account(await resolver.resolveAllInAccount(this.values, instance));
   }
 }

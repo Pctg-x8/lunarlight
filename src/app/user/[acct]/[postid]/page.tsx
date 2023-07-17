@@ -1,6 +1,7 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
+import { transformDisplayNameTags } from "@/components/domTransformer/emoji";
 import { DefaultInstance, EmptyRequestBody, HTTPError } from "@/models/api";
 import { getStatus } from "@/models/api/mastodon/status";
 import { ssrGetAuthorizationToken } from "@/models/auth";
@@ -71,7 +72,7 @@ export default async function SinglePostPage({
         </Link>
         <h1>
           <Link className="non-colored" href={`/@${status.account.acct}`}>
-            {status.account.displayName}
+            {transformDisplayNameTags(status.account)}
           </Link>
         </h1>
         <h2>

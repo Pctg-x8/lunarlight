@@ -3,6 +3,7 @@ import { snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
 import Immutable from "immutable";
 import { EmptyRequestBody, ForeignInstance, JsonRequestBody, RemoteInstance } from "./api";
+import { Account } from "./api/mastodon/account";
 import { getCustomEmojis } from "./api/mastodon/instance";
 import { Status } from "./api/mastodon/status";
 import { getEmojiDetails } from "./api/misskey/meta";
@@ -30,18 +31,45 @@ export default class EmojiResolver {
   }
 
   async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Status> {
-    const captures = [...status.content.matchAll(EmojiPattern)];
+    const captures = [...status.content.matchAll(EmojiPattern), ...status.account.display_name.matchAll(EmojiPattern)];
     const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
 
     const preferredDomain = (await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance)).domain;
     const resolvedEmojis = await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
 
-    const newContent = emojiReplacements
-      .filter(e => resolvedEmojis.has(e))
-      .map(e => [e, resolvedEmojis.get(e)!!])
-      .reduce((c, [e, u]) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:">`), status.content);
+    const availableEmojiReplacements = emojiReplacements
+      .map(e => [e, resolvedEmojis.get(e)])
+      .filter((v): v is [string, string] => isDefined(v[1]));
+    const newContent = availableEmojiReplacements.reduce(
+      (c, [e, u]) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:" title=":${e}:">`),
+      status.content
+    );
 
-    return { ...status, content: newContent };
+    return {
+      ...status,
+      content: newContent,
+      account: {
+        ...status.account,
+        displayNameEmojiUrlReplacements: Object.fromEntries(availableEmojiReplacements),
+      },
+    };
+  }
+
+  async resolveAllInAccount(account: Account, instance: RemoteInstance): Promise<Account> {
+    const captures = [...account.display_name.matchAll(EmojiPattern)];
+    const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
+
+    const preferredDomain = (await Webfinger.Address.decompose(account.acct).resolveDomainPart(instance)).domain;
+    const resolvedEmojis = await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
+
+    const availableEmojiReplacements = emojiReplacements
+      .map(e => [e, resolvedEmojis.get(e)])
+      .filter((v): v is [string, string] => isDefined(v[1]));
+
+    return {
+      ...account,
+      displayNameEmojiUrlReplacements: Object.fromEntries(availableEmojiReplacements),
+    };
   }
 
   // batching
