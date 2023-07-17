@@ -27,6 +27,30 @@ if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
   global.db = db;
 }
 
+export class ForeignInstance implements RemoteInstance {
+  static fromDomainName(domain: string): ForeignInstance {
+    return new ForeignInstance(new URL(`https://${domain}`));
+  }
+
+  constructor(readonly baseUrl: URL) {}
+
+  buildFullUrl(path: string): URL {
+    return new URL(path, this.baseUrl);
+  }
+
+  tweakRequest(req: Request): Request {
+    return req;
+  }
+
+  async queryAppInfo(_createOps: (instance: RemoteInstance) => Promise<Application>): Promise<Application> {
+    throw new Error("queryAppInfo for ForeignInstance is not implemented");
+  }
+
+  send<Base extends API<Req, Resp>, Req extends RequestBody, Resp>(req: BodyBoundAPI<Base, Req, Resp>): Promise<Resp> {
+    return req.send(this);
+  }
+}
+
 export default class ProdInstance implements RemoteInstance {
   readonly baseUrl = new URL("https://crescent.ct2.io");
 
@@ -208,6 +232,20 @@ export class FormDataRequestBody<Params extends Record<string, { toString(): str
       body: new URLSearchParams(Object.fromEntries(Object.entries(this.data).map(([k, v]) => [k, v.toString()]))),
       // @ts-ignore
       duplex: "half",
+    });
+  }
+}
+export class JsonRequestBody<Params> extends RequestBody {
+  constructor(readonly data: Params) {
+    super();
+  }
+
+  override tweakRequest(req: Request): Request {
+    return new Request(req, {
+      body: JSON.stringify(this.data),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   }
 }
