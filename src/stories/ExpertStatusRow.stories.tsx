@@ -1,10 +1,8 @@
-import StatusRow from "@/components/StatusRow";
-import { TimelineMode } from "@/models/localPreferences";
+import Component from "@/components/StatusRow/Expert";
 import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
 
 type StoryArgs = {
-  readonly mode: TimelineMode;
   readonly deleted: boolean;
   readonly onPreview: (status: Status) => void;
   readonly displayName: string;
@@ -12,8 +10,8 @@ type StoryArgs = {
   readonly acct: string;
 };
 export default {
-  component: StatusRow,
-  title: "Lunarlight/StatusRow",
+  component: Component,
+  title: "Lunarlight/StatusRow/Expert",
   argTypes: {
     onPreview: {
       action: "onPreview",
@@ -32,7 +30,7 @@ export default {
 } satisfies Meta<StoryArgs>;
 
 type Story = StoryObj<StoryArgs>;
-function render({ mode, deleted, onPreview, displayName, content, acct }: StoryArgs) {
+function render({ deleted, onPreview, displayName, content, acct }: StoryArgs) {
   const status = Status.fromApiData({
     id: "12345",
     created_at: Date.now().toString(),
@@ -58,31 +56,16 @@ function render({ mode, deleted, onPreview, displayName, content, acct }: StoryA
     },
   });
 
-  return <StatusRow status={status} deleted={deleted} mode={mode} onPreview={onPreview} />;
+  return <Component status={status} deleted={deleted} onPreview={onPreview} />;
 }
 
 export const Default: Story = {
   args: {
-    mode: "normal",
     deleted: false,
   },
-  render,
 };
 export const Deleted: Story = {
   args: {
-    mode: "normal",
-    deleted: true,
-  },
-};
-export const Expert: Story = {
-  args: {
-    mode: "expert",
-    deleted: false,
-  },
-};
-export const ExpertDeleted: Story = {
-  args: {
-    mode: "expert",
     deleted: true,
   },
 };
