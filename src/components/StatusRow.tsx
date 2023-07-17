@@ -158,6 +158,10 @@ const ExpertStatusRow = css({
       overflow: "hidden",
       textOverflow: "ellipsis",
     },
+    "& img": {
+      height: "1em",
+      display: "inline-block",
+    },
   },
   "& .reply": {
     gridArea: "reply",

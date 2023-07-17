@@ -31,18 +31,14 @@ export default class EmojiResolver {
 
   async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Status> {
     const captures = [...status.content.matchAll(EmojiPattern)];
-    const emojiReplacements = captures.map(c => ({ emojiName: c[1], startAt: c.index ?? 1 }));
+    const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
 
     const preferredDomain = (await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance)).domain;
-    const resolvedEmojis = await this.resolveMultiple(
-      emojiReplacements.map(({ emojiName }) => emojiName),
-      preferredDomain
-    );
-    console.log(status.content, resolvedEmojis.toObject(), emojiReplacements);
+    const resolvedEmojis = await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
 
     const newContent = emojiReplacements
-      .filter(e => resolvedEmojis.has(e.emojiName))
-      .map(e => [e.emojiName, resolvedEmojis.get(e.emojiName)!!])
+      .filter(e => resolvedEmojis.has(e))
+      .map(e => [e, resolvedEmojis.get(e)!!])
       .reduce((c, [e, u]) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:">`), status.content);
 
     return { ...status, content: newContent };
