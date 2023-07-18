@@ -1,3 +1,4 @@
+import LocalPreferences from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
 import { TextStyle } from "@/styles/StatusRowSharedStyles";
 import { isDefined } from "@/utils";
@@ -7,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css, cx } from "@styled-system/css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
 
 function Header({ onDisplayNameWidthChanged }: { readonly onDisplayNameWidthChanged: (newWidth: number) => void }) {
@@ -125,7 +126,8 @@ export default function ExpertTimelineView({
 }) {
   const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
   const nav = useRouter();
-  const [displayNameWidth, setDisplayNameWidth] = useState(160);
+  const [displayNameWidth, setDisplayNameWidth] =
+    LocalPreferences.EXPERT_TIMELINE_DISPLAY_NAME_WIDTH.useReactiveStore(160);
 
   return (
     <ul style={{ "--expert-timeline-dn-width": `${displayNameWidth}px` } as CSSProperties}>
