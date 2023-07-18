@@ -11,7 +11,7 @@ import { useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
 import StatusActions from "../StatusActions";
 
-export function Row({ status, deleted = false }: { readonly status: Status; readonly deleted?: boolean }) {
+function Row({ status, deleted = false }: { readonly status: Status; readonly deleted?: boolean }) {
   const nav = useRouter();
   const contentRef = useRef<HTMLLIElement>(null);
 

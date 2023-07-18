@@ -5,7 +5,7 @@ import { rpcClient } from "@/rpc/client";
 import dynamic from "next/dynamic";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
-import Timeline from "./Timeline";
+import NormalTimelineView from "./Timeline/Normal";
 
 function Component({ accountId }: { readonly accountId: string }) {
   return (
@@ -45,7 +45,7 @@ function Content({ accountId }: { readonly accountId: string }) {
 
   return (
     <>
-      <Timeline statuses={statuses} />
+      <NormalTimelineView statuses={statuses} />
       <div ref={sentinelRef} />
     </>
   );

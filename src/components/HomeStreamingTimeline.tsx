@@ -9,6 +9,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
 import Timeline from "./Timeline";
+import NormalTimelineView from "./Timeline/Normal";
 
 export default function HomeStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
@@ -55,7 +56,11 @@ export default function HomeStreamingTimeline() {
 
   return (
     <>
-      <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
+      {mode === "normal" ? (
+        <NormalTimelineView statuses={statuses} deletedIds={deletedIds} />
+      ) : (
+        <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
+      )}
       <div ref={sentinelRef} />
     </>
   );
