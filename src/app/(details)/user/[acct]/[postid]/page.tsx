@@ -11,6 +11,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+type PageParams = {
+  readonly acct: string;
+  readonly postid: string;
+};
+
 async function getPost(_acct: string, postid: string) {
   try {
     return await Status.get(postid);
@@ -23,11 +28,7 @@ async function getPost(_acct: string, postid: string) {
   }
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  readonly params: { readonly acct: string; readonly postid: string };
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { readonly params: PageParams }): Promise<Metadata> {
   const status = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
 
   return {
@@ -35,11 +36,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function SinglePostPage({
-  params,
-}: {
-  readonly params: { readonly acct: string; readonly postid: string };
-}): Promise<JSX.Element> {
+export default async function SinglePostPage({ params }: { readonly params: PageParams }): Promise<JSX.Element> {
   const status = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
   const fullAccountPath = (await status.account.fullAcct(DefaultInstance)).toString();
 

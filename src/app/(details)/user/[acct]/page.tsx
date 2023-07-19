@@ -7,6 +7,10 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+export type PageParams = {
+  readonly acct: string;
+};
+
 async function getData(acct: string): Promise<{ readonly account: Account; readonly fullAcct: string }> {
   try {
     const account = await Account.lookup(acct);
@@ -21,17 +25,13 @@ async function getData(acct: string): Promise<{ readonly account: Account; reado
   }
 }
 
-export async function generateMetadata({ params }: { readonly params: { readonly acct: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { readonly params: PageParams }): Promise<Metadata> {
   const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
 
   return { title: `${account.displayName}(@${fullAcct})` };
 }
 
-export default async function UserPage({
-  params,
-}: {
-  readonly params: { readonly acct: string };
-}): Promise<JSX.Element> {
+export default async function UserPage({ params }: { readonly params: PageParams }): Promise<JSX.Element> {
   // strip prefixing @(%40)
   const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
 
