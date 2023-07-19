@@ -24,7 +24,6 @@ export default function App({ children }: { readonly children: React.ReactNode }
         <div className={ContentWrapper}>
           <SideMenu />
           <ClientPreferencesProvider>{children}</ClientPreferencesProvider>
-          <section className={RightContent} />
         </div>
         <BottomMenu />
       </body>
@@ -36,7 +35,6 @@ const ContentWrapper = css({
   width: "100%",
   display: "flex",
   flexDirection: "row",
-  justifyContent: "center",
   "& > nav": {
     position: "sticky",
     // なぞの1px(これがないとずれる)
@@ -50,13 +48,7 @@ const ContentWrapper = css({
       top: "calc(16px + 16px + 20px + 1px + 1px)",
     },
   },
-});
-
-const RightContent = css({
-  width: "320px",
-  flex: "0 0 320px",
-  display: "none",
-  lgr: {
-    display: "initial",
+  "& > main": {
+    flex: "1",
   },
 });
