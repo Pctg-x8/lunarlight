@@ -2,20 +2,11 @@
 
 import { Status } from "@/models/status";
 import { rpcClient } from "@/rpc/client";
-import dynamic from "next/dynamic";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
 import Timeline from "./Timeline";
 
-function Component({ accountId }: { readonly accountId: string }) {
-  return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <Content accountId={accountId} key={accountId} />
-    </Suspense>
-  );
-}
-
-function Content({ accountId }: { readonly accountId: string }) {
+export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, setSize } = useSWRInfinite(
     (_, prevPageData: Status[] | null): { readonly max_id?: string; readonly limit?: number } | null => {
       if (!prevPageData) return { limit: 20 };
@@ -50,6 +41,3 @@ function Content({ accountId }: { readonly accountId: string }) {
     </>
   );
 }
-
-const AccountTimeline = dynamic(() => Promise.resolve(Component), { ssr: false });
-export default AccountTimeline;

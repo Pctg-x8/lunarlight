@@ -1,11 +1,10 @@
-import AccountTimeline from "@/components/AccountTimeline";
 import UserHeader from "@/components/UserHeader";
 import { Account } from "@/models/account";
 import { DefaultInstance, HTTPError } from "@/models/api";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 export type PageParams = {
   readonly acct: string;
@@ -31,6 +30,11 @@ export async function generateMetadata({ params }: { readonly params: PageParams
   return { title: `${account.displayName}(@${fullAcct})` };
 }
 
+const AccountTimeline = dynamic(() => import("@/components/AccountTimeline"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
+
 export default async function UserPage({ params }: { readonly params: PageParams }): Promise<JSX.Element> {
   // strip prefixing @(%40)
   const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
@@ -38,9 +42,7 @@ export default async function UserPage({ params }: { readonly params: PageParams
   return (
     <>
       <UserHeader account={account} fullAcct={fullAcct} />
-      <Suspense fallback={<p>Loading...</p>}>
-        <AccountTimeline accountId={account.id} />
-      </Suspense>
+      <AccountTimeline accountId={account.id} />
     </>
   );
 }
