@@ -87,7 +87,7 @@ export default defineConfig({
   },
   globalCss: defineGlobalStyles({
     "html, body": {
-      fontSize: "12px",
+      fontSize: "14px",
     },
     body: {
       color: "app.text",
