@@ -25,7 +25,9 @@ export default defineConfig({
         app: {
           background: { value: "rgb(24, 28, 42)" },
           text: { value: "#ffe" },
+          textTransparent: { value: "rgb(255 255 238 / 0%)" },
           subtext: { value: "#ccc" },
+          subtextTransparent: { value: "rgb(192 192 192 / 0%)" },
         },
         appheader: {
           bottom: { value: "#046" },
