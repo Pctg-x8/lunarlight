@@ -1,4 +1,3 @@
-import StreamingTimelineOuterStyle from "@/components/StreamingTimelineOuterStyle";
 import { getAuthorizedAccountSSR } from "@/models/auth";
 import dynamic from "next/dynamic";
 
@@ -11,9 +10,5 @@ export default async function Home() {
 
   if (!hasLoggedIn) return <p></p>;
 
-  return (
-    <StreamingTimelineOuterStyle>
-      <StreamingTimeline />
-    </StreamingTimelineOuterStyle>
-  );
+  return <StreamingTimeline />;
 }
