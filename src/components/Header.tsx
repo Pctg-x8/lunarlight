@@ -1,19 +1,18 @@
-import { getAuthorizedAccountSSR } from "@/models/auth";
-import { css } from "@styled-system/css";
-import { Suspense } from "react";
-import LoginAccountMenu from "./Header/LoginAccountMenu";
-import LoginButton from "./Header/LoginButton";
+"use client";
 
-export default function Header() {
+import { css } from "@styled-system/css";
+import { ReactNode } from "react";
+
+export default function Header({ currentUserView }: { readonly currentUserView: ReactNode }) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <header className={AppHeader}>
+    <header className={AppHeader} onClick={scrollToTop}>
       <AppName />
       <div className={Spacer} />
-      <section className={LoginStatusArea}>
-        <Suspense>
-          <LoginStatus />
-        </Suspense>
-      </section>
+      <section className={LoginStatusArea}>{currentUserView}</section>
     </header>
   );
 }
@@ -33,12 +32,6 @@ function AppName() {
       <h2>BETA</h2>
     </section>
   );
-}
-
-async function LoginStatus() {
-  const login = await getAuthorizedAccountSSR();
-
-  return login ? <LoginAccountMenu account={login} /> : <LoginButton />;
 }
 
 const AppHeader = css({
