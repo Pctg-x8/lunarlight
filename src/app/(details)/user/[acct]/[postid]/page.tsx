@@ -3,10 +3,10 @@ import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
 import { DefaultInstance, HTTPError } from "@/models/api";
 import { RebloggedStatus, Status } from "@/models/status";
-import singleCardStyle from "@/styles/components/singleCard.module.scss";
 import { ellipsisText } from "@/utils";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { css } from "@styled-system/css";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -43,32 +43,32 @@ export default async function SinglePostPage({ params }: { readonly params: Page
   return (
     <>
       <BackLinkRow />
-      <article className={singleCardStyle.singleCard}>
+      <article className={SingleCardStyle}>
         {status instanceof RebloggedStatus ? (
-          <p className={singleCardStyle.rebloggedBy}>
-            <FontAwesomeIcon icon={faRetweet} className={singleCardStyle.icon} />
+          <p className="rebloggedBy">
+            <FontAwesomeIcon icon={faRetweet} className="icon" />
             Boosted by{" "}
             <Link href={status.rebloggedBy.pagePath} className="sub-colored">
               {status.rebloggedBy.displayName}
             </Link>
           </p>
         ) : undefined}
-        <Link className={`${singleCardStyle.avatarImage} clickableImage`} href={`/@${status.account.acct}`}>
+        <Link className="avatarImage clickableImage" href={`/@${status.account.acct}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={status.account.avatarUrl} alt={fullAccountPath} />
         </Link>
-        <h1>
+        <h1 className="displayName">
           <Link className="non-colored" href={`/@${status.account.acct}`}>
             {status.account.displayName}
           </Link>
         </h1>
-        <h2>
+        <h2 className="accountFullname">
           <Link className="sub-colored" href={`/@${status.account.acct}`}>
             @{fullAccountPath}
           </Link>
         </h2>
-        <div className={singleCardStyle.content} dangerouslySetInnerHTML={{ __html: status.content }} />
-        <div className={singleCardStyle.footer}>
+        <div className="content" dangerouslySetInnerHTML={{ __html: status.content }} />
+        <div className="footer">
           {status.application ? (
             <>
               {status.application.website ? (
@@ -83,10 +83,68 @@ export default async function SinglePostPage({ params }: { readonly params: Page
           )}
           <DateTimeLabel at={status.created_at} />
         </div>
-        <div className={singleCardStyle.actions}>
+        <div className="actions">
           <StatusActions status={status} />
         </div>
       </article>
     </>
   );
 }
+
+const SingleCardStyle = css({
+  padding: "16px",
+  display: "grid",
+  gridTemplateColumns: "auto 1fr",
+  gridTemplateAreas:
+    '"space reblogged_by" "avatar display_name" "avatar account_fullname" "content content" "footer footer" "actions actions"',
+  background: "status.background.default",
+  "& .displayName": {
+    gridArea: "display_name",
+    fontSize: "1.5rem",
+    fontWeight: "bolder",
+    pl: "4px",
+  },
+  "& .accountFullname": {
+    gridArea: "account_fullname",
+    color: "app.subtext",
+    fontSize: "1rem",
+    fontWeight: "normal",
+    pl: "4px",
+  },
+  "& .rebloggedBy": {
+    gridArea: "reblogged_by",
+    mb: "8px",
+    fontSize: "0.75rem",
+    fontWeight: "bolder",
+    fontStyle: "italic",
+    color: "app.subtext",
+    "& > .icon": {
+      fontSize: "125%",
+      mr: "0.4em",
+    },
+  },
+  "& .avatarImage": {
+    gridArea: "avatar",
+    mr: "4px",
+    "& > img": {
+      width: "auto",
+      height: "48px",
+      objectFit: "cover",
+      borderRadius: "4px",
+    },
+  },
+  "& .content": {
+    gridArea: "content",
+    p: "8px",
+  },
+  "& .footer": {
+    gridArea: "footer",
+    color: "app.subtext",
+    fontSize: "0.8rem",
+    ml: "8px",
+  },
+  "& .actions": {
+    gridArea: "actions",
+    mt: "16px",
+  },
+});
