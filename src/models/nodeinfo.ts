@@ -2,43 +2,38 @@ import { isDefined } from "@/utils";
 import { fst, snd } from "@/utils/tuple";
 import { KnownNodeInfo, PrismaClient } from "@prisma/client";
 import Immutable from "immutable";
+import { HTTPError } from "./api";
 
-export type WellKnownNodeinfoLinks = {
-  readonly links: {
-    readonly rel: string;
-    readonly href: string;
-  }[];
+export type LinkResourceDescriptor = {
+  readonly rel: string;
+  readonly href: string;
 };
-export function isLinksData(document: unknown): document is WellKnownNodeinfoLinks {
-  return isDefined(document) && typeof document === "object" && "links" in document;
+export type ResourceDescriptor = {
+  readonly links: LinkResourceDescriptor[];
+};
+export function fetchResourceDescriptor(url: URL | string): Promise<ResourceDescriptor> {
+  return fetch(url, { method: "GET" })
+    .then(HTTPError.sanitizeStatusCode)
+    .then(r => r.json());
 }
 
 export type NodeInfo2 = {
   readonly software: { readonly name: string; readonly version: string };
 };
 const NODEINFO2_REL_SCHEMA_URL = "http://nodeinfo.diaspora.software/ns/schema/2.0";
-export async function resolveNodeInfoFromLinks(links: WellKnownNodeinfoLinks): Promise<NodeInfo2> {
-  const candidates = links.links.find(l => l.rel === NODEINFO2_REL_SCHEMA_URL);
+export async function resolveNodeInfoFromRD(jrd: ResourceDescriptor): Promise<NodeInfo2> {
+  const candidates = jrd.links.find(l => l.rel === NODEINFO2_REL_SCHEMA_URL);
   if (!isDefined(candidates)) {
     throw new Error("No available nodeinfo relations found");
   }
 
-  const resp = await fetch(candidates.href, { method: "GET" });
-  if (resp.status !== 200) {
-    throw new Error(resp.statusText);
-  }
-
+  const resp = await fetch(candidates.href, { method: "GET" }).then(HTTPError.sanitizeStatusCode);
   return (await resp.json()) as NodeInfo2;
 }
 
 export async function fetchServerNodeinfo(domain: string): Promise<NodeInfo2> {
-  const resp = await fetch(`https://${domain}/.well-known/nodeinfo`, { method: "GET" });
-  if (resp.status !== 200) {
-    throw new Error(resp.statusText);
-  }
-  const document = await resp.json();
-
-  return isLinksData(document) ? await resolveNodeInfoFromLinks(document) : (document as NodeInfo2);
+  const url = new URL("/.well-known/nodeinfo", `https://${domain}`);
+  return fetchResourceDescriptor(url).then(resolveNodeInfoFromRD);
 }
 
 export class NodeInfoResolver {
