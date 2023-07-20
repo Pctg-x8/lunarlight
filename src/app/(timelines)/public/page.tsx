@@ -1,4 +1,3 @@
-import StreamingTimelineOuterStyle from "@/components/StreamingTimelineOuterStyle";
 import dynamic from "next/dynamic";
 
 const StreamingTimeline = dynamic(() => import("@/components/PublicStreamingTimeline"), {
@@ -6,9 +5,5 @@ const StreamingTimeline = dynamic(() => import("@/components/PublicStreamingTime
   loading: () => <p>Loading...</p>,
 });
 export default async function PublicTimelinePage() {
-  return (
-    <StreamingTimelineOuterStyle>
-      <StreamingTimeline />
-    </StreamingTimelineOuterStyle>
-  );
+  return <StreamingTimeline />;
 }
