@@ -4,14 +4,28 @@ import SuperJSON from "superjson";
 import { Account } from "./account";
 import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
-import EmojiResolver from "./emoji";
+import EmojiResolver, { EmojiPattern } from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
+import Webfinger from "./webfinger";
 
 export type Counters = {
   readonly replied: number;
   readonly favorited: number;
   readonly reblogged: number;
 };
+
+export async function resolveStatusEmojis(
+  status: ApiStatusData,
+  resolver: EmojiResolver,
+  instance: RemoteInstance
+): Promise<Immutable.Map<string, string>> {
+  const emojis = Immutable.Set.of(...Array.from(status.content.matchAll(EmojiPattern), c => c[1]));
+  const { domain: preferredDomain } = await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(
+    instance
+  );
+
+  return await resolver.resolveMultiple(emojis.toArray(), preferredDomain);
+}
 
 export function rewriteStatusContentEmojis(
   orgStatus: ApiStatusData,
@@ -98,7 +112,7 @@ export class NormalStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
-    const emojiToUrlMap = await resolver.resolveAllInStatus(this.values, instance);
+    const emojiToUrlMap = await resolveStatusEmojis(this.values, resolver, instance);
 
     // @ts-ignore
     return new NormalStatus(rewriteStatusContentEmojis(this.values, emojiToUrlMap), emojiToUrlMap);
@@ -162,7 +176,7 @@ export class RebloggedStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
-    const emojiToUrlMap = await resolver.resolveAllInStatus(this.values, instance);
+    const emojiToUrlMap = await resolveStatusEmojis(this.values, resolver, instance);
 
     // @ts-ignore
     return new RebloggedStatus(

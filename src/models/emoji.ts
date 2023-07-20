@@ -2,15 +2,12 @@ import { isDefined } from "@/utils";
 import { snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
 import Immutable from "immutable";
-import { EmptyRequestBody, ForeignInstance, JsonRequestBody, RemoteInstance } from "./api";
-import { Account } from "./api/mastodon/account";
+import { EmptyRequestBody, ForeignInstance, JsonRequestBody } from "./api";
 import { getCustomEmojis } from "./api/mastodon/instance";
-import { Status } from "./api/mastodon/status";
 import { getEmojiDetails } from "./api/misskey/meta";
 import { NodeInfoResolver, detectAPIFamily } from "./nodeinfo";
-import Webfinger from "./webfinger";
 
-const EmojiPattern = /:([^:\/]+):/g;
+export const EmojiPattern = /:([^:\/]+):/g;
 export type EmojiNameFragment<N extends string> = `:${N}:`;
 export function isEmojiName(input: string): input is EmojiNameFragment<string> {
   return input.startsWith(":") && input.endsWith(":");
@@ -49,22 +46,6 @@ export default class EmojiResolver {
     );
 
     return Immutable.Map(resolved.filter((v): v is [string, string] => isDefined(v[1])));
-  }
-
-  async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Immutable.Map<string, string>> {
-    const captures = [...status.content.matchAll(EmojiPattern), ...status.account.display_name.matchAll(EmojiPattern)];
-    const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
-
-    const preferredDomain = (await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance)).domain;
-    return await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
-  }
-
-  async resolveAllInAccount(account: Account, instance: RemoteInstance): Promise<Immutable.Map<string, string>> {
-    const captures = [...account.display_name.matchAll(EmojiPattern)];
-    const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
-
-    const preferredDomain = (await Webfinger.Address.decompose(account.acct).resolveDomainPart(instance)).domain;
-    return await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
   }
 
   // batching

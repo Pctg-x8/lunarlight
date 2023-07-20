@@ -2,9 +2,20 @@ import Immutable from "immutable";
 import SuperJSON from "superjson";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
-import EmojiResolver, { rewriteHtmlTextEmojis } from "./emoji";
+import EmojiResolver, { EmojiPattern, rewriteHtmlTextEmojis } from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
+
+export async function resolveAccountEmojis(
+  account: ApiAccountData,
+  resolver: EmojiResolver,
+  instance: RemoteInstance
+): Promise<Immutable.Map<string, string>> {
+  const emojis = Immutable.Set.of(...Array.from(account.display_name.matchAll(EmojiPattern), c => c[1]));
+  const { domain: preferredDomain } = await Webfinger.Address.decompose(account.acct).resolveDomainPart(instance);
+
+  return await resolver.resolveMultiple(emojis.toArray(), preferredDomain);
+}
 
 export function rewriteAccountContentEmojis(
   source: ApiAccountData,
@@ -85,7 +96,7 @@ export class Account {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<Account> {
-    return new Account(this.values, await resolver.resolveAllInAccount(this.values, instance));
+    return new Account(this.values, await resolveAccountEmojis(this.values, resolver, instance));
   }
 }
 

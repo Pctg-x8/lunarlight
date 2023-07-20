@@ -12,7 +12,7 @@ import {
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
 import EmojiResolver from "@/models/emoji";
-import { Status } from "@/models/status";
+import { Status, resolveStatusEmojis } from "@/models/status";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
@@ -141,7 +141,7 @@ export const appRpcRouter = t.router({
           if (e.event === "update") {
             // payload is Status
             // Note: これたぶん表示順が前後するパターンがありそうなので別途キューイングするかクライアント側で並べ替える必要がありそう
-            const resolvedStatus = await emojiResolver.resolveAllInStatus(JSON.parse(e.payload), DefaultInstance);
+            const resolvedStatus = await resolveStatusEmojis(JSON.parse(e.payload), emojiResolver, DefaultInstance);
             msgString = JSON.stringify({ ...e, payload: JSON.stringify(resolvedStatus) });
           }
 
