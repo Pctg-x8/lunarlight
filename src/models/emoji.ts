@@ -12,6 +12,13 @@ import Webfinger from "./webfinger";
 
 const EmojiPattern = /:([^:\/]+):/g;
 
+export function rewriteHtmlTextEmojis(source: string, emojiToUrlMap: Immutable.Map<string, string>): string {
+  return emojiToUrlMap.reduce(
+    (c, u, e) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:" title=":${e}:">`),
+    source
+  );
+}
+
 export default class EmojiResolver {
   private readonly db = new PrismaClient();
 

@@ -2,9 +2,16 @@ import Immutable from "immutable";
 import SuperJSON from "superjson";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
-import EmojiResolver from "./emoji";
+import EmojiResolver, { rewriteHtmlTextEmojis } from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
+
+export function rewriteAccountContentEmojis(
+  source: ApiAccountData,
+  emojiToUrlMap: Immutable.Map<string, string>
+): ApiAccountData {
+  return { ...source, note: rewriteHtmlTextEmojis(source.note, emojiToUrlMap) };
+}
 
 export type AccountCounters = {
   readonly posts: number;
@@ -47,8 +54,9 @@ export class Account {
     return this.values.header;
   }
 
+  private _cachedRewritedNote: string | null = null;
   get note(): string {
-    return this.values.note;
+    return (this._cachedRewritedNote ??= rewriteHtmlTextEmojis(this.values.note, this.emojiToUrlMap));
   }
 
   get counters(): AccountCounters {
