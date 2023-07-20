@@ -6,7 +6,7 @@ import { PropsWithChildren, useLayoutEffect, useRef } from "react";
 
 export default function TimelinesWidthLimiter({ children }: PropsWithChildren) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const timelineMode = LocalPreferences.TIMELINE_MODE.useReactiveValue();
+  const timelineMode = LocalPreferences.TIMELINE_MODE.useReactiveValue("normal");
 
   // reflect style by timeline mode(that available only in client)
   useLayoutEffect(() => {
