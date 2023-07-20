@@ -68,10 +68,10 @@ export async function getAuthorizedAccount(token: string): Promise<CredentialAcc
 }
 
 export async function getAuthorizedAccountSSR(): Promise<CredentialAccount | null> {
-  const token = cookies().get(AUTHORIZATION_TOKEN_COOKIE_NAME);
+  const token = ssrGetAuthorizationToken();
   if (!token) return null;
 
-  return await getAuthorizedAccount(token.value);
+  return await getAuthorizedAccount(token);
 }
 
 export async function getLoginUrl() {

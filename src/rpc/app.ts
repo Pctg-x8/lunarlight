@@ -12,9 +12,11 @@ import {
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
 import EmojiResolver from "@/models/emoji";
+import { Status } from "@/models/status";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
+import superjson from "superjson";
 import ws from "ws";
 import z from "zod";
 
@@ -28,7 +30,7 @@ export async function createContext(opts: CreateNextContextOptions) {
   };
 }
 
-const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create();
+const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create({ transformer: superjson });
 const requireAuthorized = t.middleware(async ({ ctx, next }) => {
   const token = ctx.getAuthorizedToken();
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -79,7 +81,7 @@ export const appRpcRouter = t.router({
             }),
             instance
           )
-          .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
+          .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
       }),
   }),
   homeTimeline: stdProcedure
@@ -90,7 +92,7 @@ export const appRpcRouter = t.router({
       const instance = DefaultInstance.withAuthorizationToken(token);
       return homeTimeline
         .send(new SearchParamsRequestBody(input), instance)
-        .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
+        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
     }),
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
@@ -101,7 +103,7 @@ export const appRpcRouter = t.router({
 
       return publicTimeline
         .send(new SearchParamsRequestBody(input), instance)
-        .then(xs => Promise.all(xs.map(s => emojiResolver.resolveAllInStatus(s, instance))));
+        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
     }),
   streamingTimeline: stdProcedure
     .use(requireAuthorized)

@@ -1,4 +1,6 @@
 import { stripTags } from "@/utils";
+import Immutable from "immutable";
+import SuperJSON from "superjson";
 import { Account } from "./account";
 import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
@@ -10,6 +12,18 @@ export type Counters = {
   readonly favorited: number;
   readonly reblogged: number;
 };
+
+export function rewriteStatusContentEmojis(
+  orgStatus: ApiStatusData,
+  emojiToUrlMap: Immutable.Map<string, string>
+): ApiStatusData {
+  const newContent = emojiToUrlMap.reduce(
+    (c, u, e) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:" title=":${e}:">`),
+    orgStatus.content
+  );
+
+  return { ...orgStatus, content: newContent };
+}
 
 export abstract class Status {
   static fromApiData(data: ApiStatusData): Status {
@@ -35,10 +49,14 @@ export abstract class Status {
   declare abstract readonly created_at: string;
   declare abstract readonly counters: Counters;
   abstract resolveEmojis(resolver: EmojiResolver, instance?: RemoteInstance): Promise<this>;
+  abstract withResolvedEmojiToUrlMap(map: Immutable.Map<string, string>): this;
 }
 
 export class NormalStatus extends Status {
-  constructor(readonly values: ApiStatusData) {
+  constructor(
+    readonly values: ApiStatusData,
+    private readonly emojiToUrlMap: Immutable.Map<string, string> = Immutable.Map()
+  ) {
     super();
   }
 
@@ -48,7 +66,7 @@ export class NormalStatus extends Status {
 
   private _account: Account | null = null;
   get account() {
-    return (this._account ??= new Account(this.values.account));
+    return (this._account ??= new Account(this.values.account, this.emojiToUrlMap));
   }
 
   get timelineId() {
@@ -80,13 +98,25 @@ export class NormalStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
+    const emojiToUrlMap = await resolver.resolveAllInStatus(this.values, instance);
+
     // @ts-ignore
-    return new NormalStatus(await resolver.resolveAllInStatus(this.values, instance));
+    return new NormalStatus(rewriteStatusContentEmojis(this.values, emojiToUrlMap), emojiToUrlMap);
+  }
+
+  override withResolvedEmojiToUrlMap(map: Immutable.Map<string, string>): this {
+    // @ts-ignore
+    return new NormalStatus(this.values, map);
   }
 }
 
 export class RebloggedStatus extends Status {
-  constructor(readonly values: ApiStatusData, readonly rebloggedBy: Account, readonly rebloggedId: string) {
+  constructor(
+    readonly values: ApiStatusData,
+    readonly rebloggedBy: Account,
+    readonly rebloggedId: string,
+    private readonly emojiToUrlMap: Immutable.Map<string, string> = Immutable.Map()
+  ) {
     super();
   }
 
@@ -96,7 +126,7 @@ export class RebloggedStatus extends Status {
 
   private _account: Account | null = null;
   get account() {
-    return (this._account ??= new Account(this.values.account));
+    return (this._account ??= new Account(this.values.account, this.emojiToUrlMap));
   }
 
   get id() {
@@ -132,11 +162,22 @@ export class RebloggedStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
+    const emojiToUrlMap = await resolver.resolveAllInStatus(this.values, instance);
+
     // @ts-ignore
     return new RebloggedStatus(
-      await resolver.resolveAllInStatus(this.values, instance),
+      rewriteStatusContentEmojis(this.values, emojiToUrlMap),
       this.rebloggedBy,
-      this.rebloggedId
+      this.rebloggedId,
+      emojiToUrlMap
     );
   }
+
+  override withResolvedEmojiToUrlMap(map: Immutable.Map<string, string>): this {
+    // @ts-ignore
+    return new RebloggedStatus(this.values, this.rebloggedBy, this.rebloggedId, map);
+  }
 }
+
+SuperJSON.registerClass(NormalStatus, { identifier: "Lunarlight.Models.NormalStatus" });
+SuperJSON.registerClass(RebloggedStatus, { identifier: "Lunarlight.Models.RebloggedStatus" });

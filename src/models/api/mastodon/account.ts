@@ -17,8 +17,6 @@ export type Account = {
   readonly statuses_count: number;
   readonly following_count: number;
   readonly followers_count: number;
-  // Lunarlight extension
-  readonly displayNameEmojiUrlReplacements?: Record<string, string>;
 };
 export type CredentialAccount = Account;
 

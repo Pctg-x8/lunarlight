@@ -20,6 +20,13 @@ export default class EmojiResolver {
     return isDefined(preferredDomain) ? results[name]?.[1]?.[preferredDomain] : results[name]?.[0];
   }
 
+  /**
+   * resolves multiple emojis in one time
+   *
+   * @param names emoji names(excluding leading/trailing colons)
+   * @param preferredDomain preferred domain for selecting emojis
+   * @returns emoji name to url map, contains only found emojis
+   */
   async resolveMultiple(names: string[], preferredDomain?: string): Promise<Immutable.Map<string, string>> {
     const resolved = await Promise.all(
       Immutable.Set(names)
@@ -30,46 +37,20 @@ export default class EmojiResolver {
     return Immutable.Map(resolved.filter((v): v is [string, string] => isDefined(v[1])));
   }
 
-  async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Status> {
+  async resolveAllInStatus(status: Status, instance: RemoteInstance): Promise<Immutable.Map<string, string>> {
     const captures = [...status.content.matchAll(EmojiPattern), ...status.account.display_name.matchAll(EmojiPattern)];
     const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
 
     const preferredDomain = (await Webfinger.Address.decompose(status.account.acct).resolveDomainPart(instance)).domain;
-    const resolvedEmojis = await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
-
-    const availableEmojiReplacements = emojiReplacements
-      .map(e => [e, resolvedEmojis.get(e)])
-      .filter((v): v is [string, string] => isDefined(v[1]));
-    const newContent = availableEmojiReplacements.reduce(
-      (c, [e, u]) => c.replaceAll(`:${e}:`, `<img src="${u}" alt=":${e}:" title=":${e}:">`),
-      status.content
-    );
-
-    return {
-      ...status,
-      content: newContent,
-      account: {
-        ...status.account,
-        displayNameEmojiUrlReplacements: Object.fromEntries(availableEmojiReplacements),
-      },
-    };
+    return await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
   }
 
-  async resolveAllInAccount(account: Account, instance: RemoteInstance): Promise<Account> {
+  async resolveAllInAccount(account: Account, instance: RemoteInstance): Promise<Immutable.Map<string, string>> {
     const captures = [...account.display_name.matchAll(EmojiPattern)];
     const emojiReplacements = Immutable.Set(captures.map(c => c[1]));
 
     const preferredDomain = (await Webfinger.Address.decompose(account.acct).resolveDomainPart(instance)).domain;
-    const resolvedEmojis = await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
-
-    const availableEmojiReplacements = emojiReplacements
-      .map(e => [e, resolvedEmojis.get(e)])
-      .filter((v): v is [string, string] => isDefined(v[1]));
-
-    return {
-      ...account,
-      displayNameEmojiUrlReplacements: Object.fromEntries(availableEmojiReplacements),
-    };
+    return await this.resolveMultiple(emojiReplacements.toArray(), preferredDomain);
   }
 
   // batching

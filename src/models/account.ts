@@ -1,3 +1,5 @@
+import Immutable from "immutable";
+import SuperJSON from "superjson";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
 import EmojiResolver from "./emoji";
@@ -20,7 +22,10 @@ export class Account {
     return new Account(values);
   }
 
-  constructor(private readonly values: ApiAccountData) {}
+  constructor(
+    private readonly values: ApiAccountData,
+    readonly emojiToUrlMap: Immutable.Map<string, string> = Immutable.Map()
+  ) {}
 
   get pagePath(): string {
     return `/@${this.values.acct}`;
@@ -71,11 +76,9 @@ export class Account {
     return isRemoteAccount(this.values);
   }
 
-  get displayNameEmojiUrlReplacements() {
-    return this.values.displayNameEmojiUrlReplacements ?? {};
-  }
-
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<Account> {
-    return new Account(await resolver.resolveAllInAccount(this.values, instance));
+    return new Account(this.values, await resolver.resolveAllInAccount(this.values, instance));
   }
 }
+
+SuperJSON.registerClass(Account, { identifier: "Lunarlight.Models.Account" });
