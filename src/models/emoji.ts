@@ -1,5 +1,5 @@
 import { isDefined } from "@/utils";
-import { snd } from "@/utils/tuple";
+import { fst, snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
 import Immutable from "immutable";
 import { EmptyRequestBody, ForeignInstance, JsonRequestBody } from "./api";
@@ -122,8 +122,8 @@ export default class EmojiResolver {
           }
 
           const fetchRequestsByDomain = Immutable.List(requiredFetching)
-            .groupBy(v => v[1])
-            .map(xs => Immutable.Set(xs.map(x => x[0])))
+            .groupBy(snd)
+            .map(xs => Immutable.Set(xs.map(fst)))
             .toMap();
           const fetchedDomains = fetchRequestsByDomain.keySeq();
           const niResolver = new NodeInfoResolver();
