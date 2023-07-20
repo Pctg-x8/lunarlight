@@ -142,6 +142,10 @@ const SingleCardStyle = css({
   "& .content": {
     gridArea: "content",
     p: "8px",
+    "& img": {
+      display: "inline-block",
+      height: "1.5em",
+    },
   },
   "& .footer": {
     gridArea: "footer",
