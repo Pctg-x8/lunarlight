@@ -1,11 +1,12 @@
 import BottomMenu from "@/components/BottomMenu";
 import ClientPreferencesProvider from "@/components/ClientPreferencesProvider";
 import SideMenu from "@/components/SideMenu";
+import TimelinesWidthLimiter from "@/components/TimelinesWidthLimiter";
 import { css } from "@styled-system/css";
 
 export default function TimelinesLayout({ children }: { readonly children: React.ReactNode }) {
   return (
-    <>
+    <TimelinesWidthLimiter>
       <div className={ContentWrapper}>
         <SideMenu />
         <main>
@@ -13,7 +14,7 @@ export default function TimelinesLayout({ children }: { readonly children: React
         </main>
       </div>
       <BottomMenu />
-    </>
+    </TimelinesWidthLimiter>
   );
 }
 

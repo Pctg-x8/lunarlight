@@ -16,7 +16,7 @@ export default defineConfig({
     tokens: {
       sizes: {
         content: {
-          maxWidth: { value: "800px" },
+          maxWidth: { value: "1024px" },
         },
       },
     },
