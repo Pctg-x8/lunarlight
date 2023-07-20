@@ -1,3 +1,4 @@
+import { createAppLogger } from "@/logger";
 import { isDefined } from "@/utils";
 import { fst, snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
@@ -24,6 +25,8 @@ export function rewriteHtmlTextEmojis(source: string, emojiToUrlMap: Immutable.M
 }
 
 export default class EmojiResolver {
+  private static readonly Logger = createAppLogger({ name: "EmojiResolver" });
+
   private readonly db = new PrismaClient();
 
   async resolveUrl(name: string, preferredDomain?: string): Promise<string | undefined> {
@@ -176,14 +179,13 @@ export default class EmojiResolver {
                             ),
                           ];
                         case "rejected":
-                          // TODO: あとでLoggerつくる
-                          console.error(res.reason);
+                          EmojiResolver.Logger.error({ reason: res.reason }, "Error in fetching emojis");
                           return [];
                       }
                     })
                   );
                 case undefined:
-                  console.warn("unknown api family", nodeinfo);
+                  EmojiResolver.Logger.warn({ nodeinfo }, "unknown api family");
                   return [];
               }
             })
