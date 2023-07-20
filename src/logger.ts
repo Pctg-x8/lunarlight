@@ -1,7 +1,12 @@
 import pino from "pino";
-import pretty from "pino-pretty";
+import { isServer } from "./utils/server-client";
 
 export function createAppLogger(options: pino.LoggerOptions) {
-  const logStream = process.env.NODE_ENV === "development" ? pretty({ colorize: true }) : pino.destination(1);
-  return pino(options, logStream);
+  if (isServer()) {
+    const logStream =
+      process.env.NODE_ENV === "development" ? require("pino-pretty")({ colorize: true }) : pino.destination(1);
+    return pino(options, logStream);
+  } else {
+    return pino(options);
+  }
 }
