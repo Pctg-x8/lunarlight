@@ -38,6 +38,7 @@
     "@types/react": "18.2.8",
     "@types/react-dom": "18.2.4",
     "@types/ws": "^8.5.4",
+    "browserslist": "^4.21.9",
     "classnames": "^2.3.2",
     "cookie": "^0.5.0",
     "dayjs": "^1.11.7",
@@ -102,5 +103,8 @@
         }
       ]
     ]
-  }
+  },
+  "browserslist": [
+    "> 0.2%, not dead"
+  ]
 }
