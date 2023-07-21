@@ -1,5 +1,5 @@
+import { superjsonSerializableClass } from "@/utils/decorators/superjson";
 import Immutable from "immutable";
-import SuperJSON from "superjson";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
 import EmojiResolver, { EmojiPattern, rewriteHtmlTextEmojis } from "./emoji";
@@ -29,6 +29,8 @@ export type AccountCounters = {
   readonly followers: number;
   readonly followings: number;
 };
+
+@superjsonSerializableClass({ identifier: "Lunarlight.Models.Account" })
 export class Account {
   static async lookup(acct: string, options: Partial<CustomInstanceOption> = {}) {
     return lookup
@@ -99,5 +101,3 @@ export class Account {
     return new Account(this.values, await resolveAccountEmojis(this.values, resolver, instance));
   }
 }
-
-SuperJSON.registerClass(Account, { identifier: "Lunarlight.Models.Account" });

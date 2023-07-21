@@ -1,6 +1,6 @@
 import { stripTags } from "@/utils";
+import { superjsonSerializableClass } from "@/utils/decorators/superjson";
 import Immutable from "immutable";
-import SuperJSON from "superjson";
 import { Account } from "./account";
 import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
@@ -66,6 +66,7 @@ export abstract class Status {
   abstract withResolvedEmojiToUrlMap(map: Immutable.Map<string, string>): this;
 }
 
+@superjsonSerializableClass({ identifier: "Lunarlight.Models.NormalStatus" })
 export class NormalStatus extends Status {
   constructor(
     readonly values: ApiStatusData,
@@ -124,6 +125,7 @@ export class NormalStatus extends Status {
   }
 }
 
+@superjsonSerializableClass({ identifier: "Lunarlight.Models.RebloggedStatus" })
 export class RebloggedStatus extends Status {
   constructor(
     readonly values: ApiStatusData,
@@ -192,6 +194,3 @@ export class RebloggedStatus extends Status {
     return new RebloggedStatus(this.values, this.rebloggedBy, this.rebloggedId, map);
   }
 }
-
-SuperJSON.registerClass(NormalStatus, { identifier: "Lunarlight.Models.NormalStatus" });
-SuperJSON.registerClass(RebloggedStatus, { identifier: "Lunarlight.Models.RebloggedStatus" });
