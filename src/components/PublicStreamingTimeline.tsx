@@ -19,7 +19,7 @@ export default function PublicStreamingTimeline() {
       if (prevPageData.length === 0) return null;
       return { timeline: "public", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    req => rpcClient.publicTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
+    req => rpcClient.publicTimeline.query(req),
     { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);

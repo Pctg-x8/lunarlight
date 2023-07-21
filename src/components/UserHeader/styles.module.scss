@@ -28,6 +28,10 @@
     grid-area: displayName;
     font-size: 20px;
     font-weight: bolder;
+    & img {
+      display: inline-block;
+      height: 1.2em;
+    }
   }
 
   & > h2 {

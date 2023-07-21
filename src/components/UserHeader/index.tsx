@@ -1,4 +1,5 @@
 import { Account } from "@/models/account";
+import { transformDisplayNameTags } from "../domTransformer/emoji";
 import styles from "./styles.module.scss";
 
 export default function UserHeader({ account, fullAcct }: { readonly account: Account; readonly fullAcct: string }) {
@@ -11,7 +12,7 @@ export default function UserHeader({ account, fullAcct }: { readonly account: Ac
       <article className={styles.baseInfoGrid}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={account.avatarUrl} alt={fullAcct} />
-        <h1>{account.displayName}</h1>
+        <h1>{transformDisplayNameTags(account)}</h1>
         <h2>@{fullAcct}</h2>
       </article>
       <div className={styles.note} dangerouslySetInnerHTML={{ __html: account.note }} />

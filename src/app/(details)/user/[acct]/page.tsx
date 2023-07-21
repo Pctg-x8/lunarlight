@@ -1,6 +1,7 @@
 import UserHeader from "@/components/UserHeader";
 import { Account } from "@/models/account";
 import { DefaultInstance, HTTPError } from "@/models/api";
+import EmojiResolver from "@/models/emoji";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -12,7 +13,7 @@ export type PageParams = {
 
 async function getData(acct: string): Promise<{ readonly account: Account; readonly fullAcct: string }> {
   try {
-    const account = await Account.lookup(acct);
+    const account = await (await Account.lookup(acct)).resolveEmojis(new EmojiResolver());
 
     return { account, fullAcct: (await account.fullAcct(DefaultInstance)).toString() };
   } catch (e) {

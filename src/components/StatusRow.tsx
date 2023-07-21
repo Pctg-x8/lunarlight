@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import AgoLabel from "./AgoLabel";
 import StatusActions from "./StatusActions";
+import { transformDisplayNameTags } from "./domTransformer/emoji";
 
 export default function StatusRow({
   status,
@@ -32,6 +33,7 @@ export default function StatusRow({
       for (const child of e.childNodes) recursiveProcessLink(child);
     }
     for (const child of contentRef.current.childNodes) recursiveProcessLink(child);
+
     return () => cancellation.abort();
   }, [contentRef]);
 
@@ -54,7 +56,7 @@ export default function StatusRow({
           </Link>
           <h1 className="displayName">
             <Link className="non-colored" href={status.account.pagePath}>
-              {status.account.displayName}
+              {transformDisplayNameTags(status.account)}
             </Link>
           </h1>
           <h2 className="acct">
@@ -79,8 +81,8 @@ export default function StatusRow({
               title={`${status.account.displayName} (@${status.account.acct.toString()})`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={status.account.avatarUrl} alt={status.account.acct.toString()} />
-              {status.account.displayName}
+              <img src={status.account.avatarUrl} alt={status.account.acct.toString()} className="icon" />
+              {transformDisplayNameTags(status.account)}
             </Link>
           </h1>
           <div className="rebloggedIcon">
@@ -130,8 +132,10 @@ const ExpertStatusRow = css({
     textOverflow: "ellipsis",
     whiteSpace: "pre",
     "& img": {
-      display: "inline",
-      height: "1em",
+      display: "inline-block",
+      height: "1.2em",
+    },
+    "& .icon": {
       marginRight: "4px",
     },
   },
@@ -156,6 +160,10 @@ const ExpertStatusRow = css({
     "& > *": {
       overflow: "hidden",
       textOverflow: "ellipsis",
+    },
+    "& img": {
+      height: "1.5em",
+      display: "inline-block",
     },
   },
   "& .reply": {
@@ -224,6 +232,10 @@ const NormalStatusRow = css({
     gridArea: "displayName",
     fontSize: "14px",
     alignSelf: "baseline",
+    "& img": {
+      display: "inline-block",
+      height: "1.2em",
+    },
   },
   "& .acct": {
     gridArea: "acct",
@@ -241,6 +253,10 @@ const NormalStatusRow = css({
     gridArea: "text",
     marginBottom: "8px",
     margin: "6px 2px",
+    "& img": {
+      height: "1.5em",
+      display: "inline-block",
+    },
   },
   "& .statusActions": {
     gridArea: "a",

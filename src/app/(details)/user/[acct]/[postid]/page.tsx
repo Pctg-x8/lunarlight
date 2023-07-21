@@ -1,9 +1,12 @@
 import BackLinkRow from "@/components/BackLinkRow";
 import DateTimeLabel from "@/components/DateTimeLabel";
 import StatusActions from "@/components/StatusActions";
+import { transformDisplayNameTags } from "@/components/domTransformer/emoji";
 import { DefaultInstance, HTTPError } from "@/models/api";
+import { ssrGetAuthorizationToken } from "@/models/auth";
+import EmojiResolver from "@/models/emoji";
 import { RebloggedStatus, Status } from "@/models/status";
-import { ellipsisText } from "@/utils";
+import { ellipsisText, isDefined } from "@/utils";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css } from "@styled-system/css";
@@ -17,8 +20,11 @@ type PageParams = {
 };
 
 async function getPost(_acct: string, postid: string) {
+  const token = ssrGetAuthorizationToken();
+  const instance = isDefined(token) ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
+
   try {
-    return await Status.get(postid);
+    return await Status.get(postid, { instance }).then(s => s.resolveEmojis(new EmojiResolver(), instance));
   } catch (e) {
     if (e instanceof HTTPError.NotFoundError) {
       notFound();
@@ -59,7 +65,7 @@ export default async function SinglePostPage({ params }: { readonly params: Page
         </Link>
         <h1 className="displayName">
           <Link className="non-colored" href={`/@${status.account.acct}`}>
-            {status.account.displayName}
+            {transformDisplayNameTags(status.account)}
           </Link>
         </h1>
         <h2 className="accountFullname">
@@ -136,6 +142,10 @@ const SingleCardStyle = css({
   "& .content": {
     gridArea: "content",
     p: "8px",
+    "& img": {
+      display: "inline-block",
+      height: "1.5em",
+    },
   },
   "& .footer": {
     gridArea: "footer",
