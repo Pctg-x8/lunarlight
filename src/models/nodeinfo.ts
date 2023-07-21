@@ -41,7 +41,6 @@ export class NodeInfoResolver {
 
   async query(domain: string): Promise<KnownNodeInfo> {
     const results = await this.scheduleBatchRequest(domain);
-    console.log("nodeinfo", domain, results[domain]);
     return results[domain];
   }
 
