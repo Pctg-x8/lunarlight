@@ -1,25 +1,20 @@
-import StatusRow from "@/components/StatusRow";
-import { TimelineMode } from "@/models/localPreferences";
-import { Status } from "@/models/status";
 import { Meta, StoryObj } from "@storybook/react";
+import Immutable from "immutable";
+import React from "react";
+import Component from "../components/Timeline/Normal";
+import { Status } from "../models/status";
 
 type StoryArgs = {
-  readonly mode: TimelineMode;
   readonly deleted: boolean;
-  readonly onPreview: (status: Status) => void;
   readonly displayName: string;
   readonly content: string;
   readonly acct: string;
 };
 export default {
-  component: StatusRow,
-  title: "Lunarlight/StatusRow",
+  title: "Lunarlight/TimelineView/Normal",
   argTypes: {
-    onPreview: {
-      action: "onPreview",
-    },
     // @ts-ignore
-    status: {
+    statuses: {
       control: false,
     },
   },
@@ -29,10 +24,15 @@ export default {
     acct: "test_account@example.com",
   },
   render,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 } satisfies Meta<StoryArgs>;
 
 type Story = StoryObj<StoryArgs>;
-function render({ mode, deleted, onPreview, displayName, content, acct }: StoryArgs) {
+function render({ deleted, displayName, content, acct }: StoryArgs) {
   const status = Status.fromApiData({
     id: "12345",
     created_at: Date.now().toString(),
@@ -57,32 +57,18 @@ function render({ mode, deleted, onPreview, displayName, content, acct }: StoryA
       followers_count: 0,
     },
   });
+  const deletedIds = deleted ? Immutable.Set.of(status.timelineId) : undefined;
 
-  return <StatusRow status={status} deleted={deleted} mode={mode} onPreview={onPreview} />;
+  return <Component statuses={[status]} deletedIds={deletedIds} />;
 }
 
 export const Default: Story = {
   args: {
-    mode: "normal",
     deleted: false,
   },
-  render,
 };
 export const Deleted: Story = {
   args: {
-    mode: "normal",
-    deleted: true,
-  },
-};
-export const Expert: Story = {
-  args: {
-    mode: "expert",
-    deleted: false,
-  },
-};
-export const ExpertDeleted: Story = {
-  args: {
-    mode: "expert",
     deleted: true,
   },
 };

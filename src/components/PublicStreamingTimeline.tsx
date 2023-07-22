@@ -8,7 +8,8 @@ import Immutable from "immutable";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
-import Timeline from "./Timeline";
+import ExpertTimelineView from "./Timeline/Expert";
+import NormalTimelineView from "./Timeline/Normal";
 
 export default function PublicStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
@@ -55,7 +56,11 @@ export default function PublicStreamingTimeline() {
 
   return (
     <>
-      <Timeline statuses={statuses} deletedIds={deletedIds} mode={mode} />
+      {mode === "normal" ? (
+        <NormalTimelineView statuses={statuses} deletedIds={deletedIds} />
+      ) : (
+        <ExpertTimelineView statuses={statuses} deletedIds={deletedIds} />
+      )}
       <div ref={sentinelRef} />
     </>
   );

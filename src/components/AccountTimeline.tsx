@@ -4,7 +4,7 @@ import { Status } from "@/models/status";
 import { rpcClient } from "@/rpc/client";
 import { useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
-import Timeline from "./Timeline";
+import NormalTimelineView from "./Timeline/Normal";
 
 export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, setSize } = useSWRInfinite(
@@ -36,7 +36,7 @@ export default function AccountTimeline({ accountId }: { readonly accountId: str
 
   return (
     <>
-      <Timeline statuses={statuses} />
+      <NormalTimelineView statuses={statuses} />
       <div ref={sentinelRef} />
     </>
   );

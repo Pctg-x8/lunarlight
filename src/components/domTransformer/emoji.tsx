@@ -3,10 +3,9 @@ import { extractEmojiName, isEmojiName } from "@/models/emoji";
 import { intersperse } from "@/utils";
 
 export function transformDisplayNameTags(account: Account) {
-  const splitted = Object.keys(account.emojiToUrlMap).reduce(
-    (xs, k) => xs.flatMap(x => intersperse(x.split(`:${k}:`), `:${k}:`)),
-    [account.displayName]
-  );
+  const splitted = account.emojiToUrlMap
+    .keySeq()
+    .reduce((xs, k) => xs.flatMap(x => intersperse(x.split(`:${k}:`), `:${k}:`)), [account.displayName]);
 
   return splitted
     .filter(x => x !== "")

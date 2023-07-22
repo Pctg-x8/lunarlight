@@ -13,6 +13,7 @@ import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
 import EmojiResolver from "@/models/emoji";
 import { Status, resolveStatusEmojis } from "@/models/status";
+import "@/superJsonExtraInitializers";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";

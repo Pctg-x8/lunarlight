@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 export type TimelineMode = "normal" | "expert";
 
@@ -34,9 +34,24 @@ namespace LocalPreferences {
         () => serverValue
       );
     }
+
+    useReactiveStore(serverValue: T): [T, (valueOrUpdater: T | ((value: T) => T)) => void] {
+      return [
+        this.useReactiveValue(serverValue),
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useCallback(valueOrUpdater => {
+          if (valueOrUpdater instanceof Function) {
+            this.store(valueOrUpdater(this.load()));
+          } else {
+            this.store(valueOrUpdater);
+          }
+        }, []),
+      ];
+    }
   }
 
   export const TIMELINE_MODE = new Key<TimelineMode>("TimelineMode", "normal");
+  export const EXPERT_TIMELINE_DISPLAY_NAME_WIDTH = new Key<number>("ExpertTimelinedisplayNameWidth", 160);
 }
 
 export default LocalPreferences;

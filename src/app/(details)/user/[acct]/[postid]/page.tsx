@@ -59,7 +59,7 @@ export default async function SinglePostPage({ params }: { readonly params: Page
             </Link>
           </p>
         ) : undefined}
-        <Link className="avatarImage clickableImage" href={`/@${status.account.acct}`}>
+        <Link className="avatarImage" href={`/@${status.account.acct}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={status.account.avatarUrl} alt={fullAccountPath} />
         </Link>

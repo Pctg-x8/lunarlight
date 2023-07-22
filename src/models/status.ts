@@ -1,7 +1,7 @@
 import { stripTags } from "@/utils";
 import { superjsonSerializableClass } from "@/utils/decorators/superjson";
 import Immutable from "immutable";
-import { Account } from "./account";
+import { Account, resolveAccountEmojis } from "./account";
 import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
 import EmojiResolver, { EmojiPattern } from "./emoji";
@@ -113,7 +113,10 @@ export class NormalStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
-    const emojiToUrlMap = await resolveStatusEmojis(this.values, resolver, instance);
+    const emojiToUrlMap = await Promise.all([
+      resolveStatusEmojis(this.values, resolver, instance),
+      resolveAccountEmojis(this.values.account, resolver, instance),
+    ]).then(xs => xs.reduce((a, b) => a.concat(b)));
 
     // @ts-ignore
     return new NormalStatus(rewriteStatusContentEmojis(this.values, emojiToUrlMap), emojiToUrlMap);
@@ -178,7 +181,10 @@ export class RebloggedStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
-    const emojiToUrlMap = await resolveStatusEmojis(this.values, resolver, instance);
+    const emojiToUrlMap = await Promise.all([
+      resolveStatusEmojis(this.values, resolver, instance),
+      resolveAccountEmojis(this.values.account, resolver, instance),
+    ]).then(xs => xs.reduce((a, b) => a.concat(b)));
 
     // @ts-ignore
     return new RebloggedStatus(

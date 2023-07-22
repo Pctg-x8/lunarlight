@@ -1,5 +1,5 @@
 import type { StorybookConfig } from "@storybook/nextjs";
-import path from "path";
+import * as path from "path";
 import { merge } from "webpack-merge";
 
 export default {
