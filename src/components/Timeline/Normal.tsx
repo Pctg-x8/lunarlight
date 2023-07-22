@@ -34,25 +34,18 @@ function Row({ status, deleted = false }: { readonly status: Status; readonly de
       {status instanceof RebloggedStatus ? (
         <p className={RebloggedBy}>
           <FontAwesomeIcon icon={faRetweet} className="icon" />
-          Boosted by{" "}
-          <Link href={status.rebloggedBy.pagePath} className="sub-colored">
-            {transformDisplayNameTags(status.rebloggedBy)}
-          </Link>
+          Boosted by <Link href={status.rebloggedBy.pagePath}>{transformDisplayNameTags(status.rebloggedBy)}</Link>
         </p>
       ) : undefined}
-      <Link className={cx(Avatar, "clickableImage")} href={status.account.pagePath}>
+      <Link className={Avatar} href={status.account.pagePath}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={status.account.avatarUrl} alt={status.account.acct.toString()} />
       </Link>
       <h1 className={DisplayName}>
-        <Link className="non-colored" href={status.account.pagePath}>
-          {transformDisplayNameTags(status.account)}
-        </Link>
+        <Link href={status.account.pagePath}>{transformDisplayNameTags(status.account)}</Link>
       </h1>
       <h2 className={Acct}>
-        <Link className="sub-colored" href={status.account.pagePath}>
-          @{status.account.acct.toString()}
-        </Link>
+        <Link href={status.account.pagePath}>@{status.account.acct.toString()}</Link>
       </h2>
       <AgoLabel className={Ago} createdAt={status.created_at} />
       <div className={cx(Text, TextStyle)} dangerouslySetInnerHTML={{ __html: status.content }} />

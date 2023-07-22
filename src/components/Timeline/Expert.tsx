@@ -83,7 +83,6 @@ function Row({
     >
       <h1 className="displayName">
         <Link
-          className="non-colored"
           href={status.account.pagePath}
           title={`${status.account.displayName} (@${status.account.acct.toString()})`}
         >
@@ -94,11 +93,7 @@ function Row({
       </h1>
       <div className="rebloggedIcon">
         {status instanceof RebloggedStatus ? (
-          <Link
-            href={status.rebloggedBy.pagePath}
-            className="sub-colored"
-            title={`Boosted by ${status.rebloggedBy.displayName}`}
-          >
+          <Link href={status.rebloggedBy.pagePath} title={`Boosted by ${status.rebloggedBy.displayName}`}>
             <FontAwesomeIcon icon={faRetweet} className="icon" />
           </Link>
         ) : undefined}
