@@ -20,12 +20,12 @@ function Header({ onDisplayNameWidthChanged }: { readonly onDisplayNameWidthChan
     if (!displayNameRef.current) return;
 
     let lastWidth = displayNameRef.current.getBoundingClientRect().width;
+    onDisplayNameWidthChanged(lastWidth);
     const observer = new MutationObserver(e => {
       const event = e[0];
       if (!event) return;
 
       const w = (event.target as HTMLDivElement).getBoundingClientRect().width;
-      console.log("nw", w);
       if (lastWidth !== w) {
         // update
         onDisplayNameWidthChanged(w);
