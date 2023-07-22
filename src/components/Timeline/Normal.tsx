@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
 import StatusActions from "../StatusActions";
+import { transformDisplayNameTags } from "../domTransformer/emoji";
 
 function Row({ status, deleted = false }: { readonly status: Status; readonly deleted?: boolean }) {
   const nav = useRouter();
@@ -35,7 +36,7 @@ function Row({ status, deleted = false }: { readonly status: Status; readonly de
           <FontAwesomeIcon icon={faRetweet} className="icon" />
           Boosted by{" "}
           <Link href={status.rebloggedBy.pagePath} className="sub-colored">
-            {status.rebloggedBy.displayName}
+            {transformDisplayNameTags(status.rebloggedBy)}
           </Link>
         </p>
       ) : undefined}
@@ -45,7 +46,7 @@ function Row({ status, deleted = false }: { readonly status: Status; readonly de
       </Link>
       <h1 className={DisplayName}>
         <Link className="non-colored" href={status.account.pagePath}>
-          {status.account.displayName}
+          {transformDisplayNameTags(status.account)}
         </Link>
       </h1>
       <h2 className={Acct}>

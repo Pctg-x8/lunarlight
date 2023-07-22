@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
+import { transformDisplayNameTags } from "../domTransformer/emoji";
 
 function Header({ onDisplayNameWidthChanged }: { readonly onDisplayNameWidthChanged: (newWidth: number) => void }) {
   const contentRef = useRef<HTMLLIElement>(null);
@@ -88,7 +89,7 @@ function Row({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={status.account.avatarUrl} alt={status.account.acct.toString()} />
-          {status.account.displayName}
+          {transformDisplayNameTags(status.account)}
         </Link>
       </h1>
       <div className="rebloggedIcon">
