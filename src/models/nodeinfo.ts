@@ -1,4 +1,6 @@
+import { createAppLogger } from "@/logger";
 import { isDefined } from "@/utils";
+import { rethrowWithDescription } from "@/utils/error";
 import { fst, snd } from "@/utils/tuple";
 import { KnownNodeInfo, PrismaClient } from "@prisma/client";
 import Immutable from "immutable";
@@ -27,20 +29,32 @@ export async function resolveNodeInfoFromRD(jrd: ResourceDescriptor): Promise<No
     throw new Error("No available nodeinfo relations found");
   }
 
-  const resp = await fetch(candidates.href, { method: "GET" }).then(HTTPError.sanitizeStatusCode);
+  const resp = await fetch(candidates.href, { method: "GET" }).then(
+    HTTPError.sanitizeStatusCode,
+    rethrowWithDescription(() => `Failed to fetch nodeinfo2.0 content from ${candidates.href}`)
+  );
   return (await resp.json()) as NodeInfo2;
 }
 
 export async function fetchServerNodeinfo(domain: string): Promise<NodeInfo2> {
   const url = new URL("/.well-known/nodeinfo", `https://${domain}`);
-  return fetchResourceDescriptor(url).then(resolveNodeInfoFromRD);
+  return fetchResourceDescriptor(url).then(
+    resolveNodeInfoFromRD,
+    rethrowWithDescription(() => `Failed to fetch nodeinfo for ${domain}`)
+  );
 }
 
 export class NodeInfoResolver {
+  private static readonly Logger = createAppLogger({ name: "NodeInfoResolver" });
+
   private db = new PrismaClient();
 
   async query(domain: string): Promise<KnownNodeInfo> {
-    const results = await this.scheduleBatchRequest(domain);
+    const results = await this.scheduleBatchRequest(domain).catch(e => {
+      NodeInfoResolver.Logger.error({ error: e, domain }, "Failed to query nodeinfo");
+      throw e;
+    });
+
     return results[domain];
   }
 

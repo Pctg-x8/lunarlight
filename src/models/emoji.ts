@@ -1,5 +1,6 @@
 import { createAppLogger } from "@/logger";
 import { isDefined } from "@/utils";
+import { rethrowWithDescription } from "@/utils/error";
 import { fst, snd } from "@/utils/tuple";
 import { PrismaClient, RemoteEmoji } from "@prisma/client";
 import Immutable from "immutable";
@@ -30,7 +31,11 @@ export default class EmojiResolver {
   private readonly db = new PrismaClient();
 
   async resolveUrl(name: string, preferredDomain?: string): Promise<string | undefined> {
-    const results = await this.scheduleRequest(name, preferredDomain);
+    const results = await this.scheduleRequest(name, preferredDomain).catch(e => {
+      EmojiResolver.Logger.error({ error: e, name, preferredDomain }, "Failed to fetch emojis");
+      throw e;
+    });
+
     return isDefined(preferredDomain) ? results[name]?.[1]?.[preferredDomain] : results[name]?.[0];
   }
 
@@ -139,15 +144,17 @@ export default class EmojiResolver {
                   // Note: これは全部取るしかない
                   return await getCustomEmojis
                     .send(EmptyRequestBody.instance, ForeignInstance.fromDomainName(nodeinfo.domain))
-                    .then(xs =>
-                      xs.map(
-                        e =>
-                          ({
-                            name: e.shortcode,
-                            domain: nodeinfo.domain,
-                            asset_url: e.static_url,
-                          } as Omit<RemoteEmoji, "id">)
-                      )
+                    .then(
+                      xs =>
+                        xs.map(
+                          e =>
+                            ({
+                              name: e.shortcode,
+                              domain: nodeinfo.domain,
+                              asset_url: e.static_url,
+                            } as Omit<RemoteEmoji, "id">)
+                        ),
+                      rethrowWithDescription(() => `Failed to fetch custom emojis for ${nodeinfo.domain}`)
                     );
                 case "Misskey":
                   // Note: こっちは個別に取れる
@@ -179,13 +186,16 @@ export default class EmojiResolver {
                             ),
                           ];
                         case "rejected":
-                          EmojiResolver.Logger.error({ reason: res.reason }, "Error in fetching emojis");
+                          EmojiResolver.Logger.error(
+                            { reason: res.reason, domain: nodeinfo.domain },
+                            "Error in fetching emojis"
+                          );
                           return [];
                       }
                     })
                   );
                 case undefined:
-                  EmojiResolver.Logger.warn({ nodeinfo }, "unknown api family");
+                  EmojiResolver.Logger.warn({ nodeinfo, domain: nodeinfo.domain }, "unknown api family");
                   return [];
               }
             })
