@@ -61,8 +61,6 @@ function Row({
 }) {
   const contentRef = useRef<HTMLLIElement>(null);
 
-  console.log("render", status);
-
   useLayoutEffect(() => {
     if (!contentRef.current) return;
 
@@ -182,6 +180,10 @@ const RowGridStyle = css({
     "& > *": {
       overflow: "hidden",
       textOverflow: "ellipsis",
+    },
+    "& img": {
+      display: "inline-block",
+      height: "1.25em",
     },
   },
   "& .reply": {

@@ -142,6 +142,10 @@ const Text = css({
   gridArea: "text",
   marginBottom: "8px",
   margin: "6px 2px",
+  "& img": {
+    display: "inline-block",
+    height: "1.25em",
+  },
 });
 const ActionsArea = css({
   gridArea: "a",
