@@ -61,6 +61,8 @@ function Row({
 }) {
   const contentRef = useRef<HTMLLIElement>(null);
 
+  console.log("render", status);
+
   useLayoutEffect(() => {
     if (!contentRef.current) return;
 

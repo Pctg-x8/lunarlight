@@ -1,3 +1,4 @@
+import "@/superJsonExtraInitializers";
 import { throwException } from "@/utils";
 import { baseUrl } from "@/utils/paths";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
