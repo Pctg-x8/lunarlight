@@ -181,7 +181,10 @@ export class RebloggedStatus extends Status {
   }
 
   async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<this> {
-    const emojiToUrlMap = await resolveStatusEmojis(this.values, resolver, instance);
+    const emojiToUrlMap = await Promise.all([
+      resolveStatusEmojis(this.values, resolver, instance),
+      resolveAccountEmojis(this.values.account, resolver, instance),
+    ]).then(xs => xs.reduce((a, b) => a.concat(b)));
 
     // @ts-ignore
     return new RebloggedStatus(
