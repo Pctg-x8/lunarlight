@@ -23,6 +23,7 @@ module.exports = {
     cfg.resolve.alias["child_process"] = false;
     cfg.resolve.alias["fs"] = false;
     cfg.resolve.alias["path"] = false;
+    cfg.resolve.alias["worker_threads"] = false;
     return cfg;
   },
 };

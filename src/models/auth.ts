@@ -16,6 +16,9 @@ export type ApiResponseModifier = (res: NextApiResponse) => void;
 export type ResponseModifier = StateModifier<NextResponse>;
 
 export const AUTHORIZATION_TOKEN_COOKIE_NAME = "_lla";
+export function ssrGetAuthorizationToken(): string | undefined {
+  return cookies().get(AUTHORIZATION_TOKEN_COOKIE_NAME)?.value;
+}
 export function getAuthorizationToken(req: NextApiRequest): string | undefined {
   return req.cookies[AUTHORIZATION_TOKEN_COOKIE_NAME];
 }
@@ -65,10 +68,10 @@ export async function getAuthorizedAccount(token: string): Promise<CredentialAcc
 }
 
 export async function getAuthorizedAccountSSR(): Promise<CredentialAccount | null> {
-  const token = cookies().get(AUTHORIZATION_TOKEN_COOKIE_NAME);
+  const token = ssrGetAuthorizationToken();
   if (!token) return null;
 
-  return await getAuthorizedAccount(token.value);
+  return await getAuthorizedAccount(token);
 }
 
 export async function getLoginUrl() {

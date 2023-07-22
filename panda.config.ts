@@ -16,7 +16,7 @@ export default defineConfig({
     tokens: {
       sizes: {
         content: {
-          maxWidth: { value: "800px" },
+          maxWidth: { value: "1024px" },
         },
       },
     },
@@ -25,7 +25,9 @@ export default defineConfig({
         app: {
           background: { value: "rgb(24, 28, 42)" },
           text: { value: "#ffe" },
+          textTransparent: { value: "rgb(255 255 238 / 0%)" },
           subtext: { value: "#ccc" },
+          subtextTransparent: { value: "rgb(192 192 192 / 0%)" },
         },
         appheader: {
           bottom: { value: "#046" },
@@ -87,7 +89,7 @@ export default defineConfig({
   },
   globalCss: defineGlobalStyles({
     "html, body": {
-      fontSize: "12px",
+      fontSize: "14px",
     },
     body: {
       color: "app.text",

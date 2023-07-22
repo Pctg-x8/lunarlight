@@ -11,9 +11,12 @@ import {
 } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
+import EmojiResolver from "@/models/emoji";
+import { Status, resolveStatusEmojis } from "@/models/status";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
+import superjson from "superjson";
 import ws from "ws";
 import z from "zod";
 
@@ -27,7 +30,7 @@ export async function createContext(opts: CreateNextContextOptions) {
   };
 }
 
-const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create();
+const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create({ transformer: superjson });
 const requireAuthorized = t.middleware(async ({ ctx, next }) => {
   const token = ctx.getAuthorizedToken();
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -68,31 +71,40 @@ export const appRpcRouter = t.router({
       .query(({ input, ctx }) => {
         const tok = ctx.getAuthorizedToken();
         const instance = tok ? DefaultInstance.withAuthorizationToken(tok) : DefaultInstance;
+        const emojiResolver = new EmojiResolver();
 
-        return getStatusesForAccount(input.accountId).send(
-          new SearchParamsRequestBody({
-            max_id: input.max_id,
-            limit: input.limit,
-          }),
-          instance
-        );
+        return getStatusesForAccount(input.accountId)
+          .send(
+            new SearchParamsRequestBody({
+              max_id: input.max_id,
+              limit: input.limit,
+            }),
+            instance
+          )
+          .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
       }),
   }),
   homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) =>
-      homeTimeline.send(new SearchParamsRequestBody(input), DefaultInstance.withAuthorizationToken(token))
-    ),
+    .query(({ input, ctx: { token } }) => {
+      const emojiResolver = new EmojiResolver();
+      const instance = DefaultInstance.withAuthorizationToken(token);
+      return homeTimeline
+        .send(new SearchParamsRequestBody(input), instance)
+        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
+    }),
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
     .input(PublicTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) =>
-      publicTimeline.send(
-        new SearchParamsRequestBody(input),
-        token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance
-      )
-    ),
+    .query(({ input, ctx: { token } }) => {
+      const emojiResolver = new EmojiResolver();
+      const instance = token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
+
+      return publicTimeline
+        .send(new SearchParamsRequestBody(input), instance)
+        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
+    }),
   streamingTimeline: stdProcedure
     .use(requireAuthorized)
     .input(z.object({ stream: StreamsType }))
@@ -106,7 +118,8 @@ export const appRpcRouter = t.router({
         const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
         url.protocol = "wss:";
         const client = new ws(url);
-        client.on("message", (msg, isBinary) => {
+        const emojiResolver = new EmojiResolver();
+        client.on("message", async (msg, isBinary) => {
           if (isBinary) {
             console.log("unknown binary msg", msg);
             return;
@@ -124,7 +137,15 @@ export const appRpcRouter = t.router({
             msgString = new TextDecoder().decode(msg);
           }
 
-          observer.next(JSON.parse(msgString));
+          const e: Event = JSON.parse(msgString);
+          if (e.event === "update") {
+            // payload is Status
+            // Note: これたぶん表示順が前後するパターンがありそうなので別途キューイングするかクライアント側で並べ替える必要がありそう
+            const resolvedStatus = await resolveStatusEmojis(JSON.parse(e.payload), emojiResolver, DefaultInstance);
+            msgString = JSON.stringify({ ...e, payload: JSON.stringify(resolvedStatus) });
+          }
+
+          observer.next(e);
         });
 
         return () => {

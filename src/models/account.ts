@@ -1,13 +1,36 @@
+import { superjsonSerializableClass } from "@/utils/decorators/superjson";
+import Immutable from "immutable";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
+import EmojiResolver, { EmojiPattern, rewriteHtmlTextEmojis } from "./emoji";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
+
+export async function resolveAccountEmojis(
+  account: ApiAccountData,
+  resolver: EmojiResolver,
+  instance: RemoteInstance
+): Promise<Immutable.Map<string, string>> {
+  const emojis = Immutable.Set.of(...Array.from(account.display_name.matchAll(EmojiPattern), c => c[1]));
+  const { domain: preferredDomain } = await Webfinger.Address.decompose(account.acct).resolveDomainPart(instance);
+
+  return await resolver.resolveMultiple(emojis.toArray(), preferredDomain);
+}
+
+export function rewriteAccountContentEmojis(
+  source: ApiAccountData,
+  emojiToUrlMap: Immutable.Map<string, string>
+): ApiAccountData {
+  return { ...source, note: rewriteHtmlTextEmojis(source.note, emojiToUrlMap) };
+}
 
 export type AccountCounters = {
   readonly posts: number;
   readonly followers: number;
   readonly followings: number;
 };
+
+@superjsonSerializableClass({ identifier: "Lunarlight.Models.Account" })
 export class Account {
   static async lookup(acct: string, options: Partial<CustomInstanceOption> = {}) {
     return lookup
@@ -19,7 +42,10 @@ export class Account {
     return new Account(values);
   }
 
-  constructor(private readonly values: ApiAccountData) {}
+  constructor(
+    private readonly values: ApiAccountData,
+    readonly emojiToUrlMap: Immutable.Map<string, string> = Immutable.Map()
+  ) {}
 
   get pagePath(): string {
     return `/@${this.values.acct}`;
@@ -41,8 +67,9 @@ export class Account {
     return this.values.header;
   }
 
+  private _cachedRewritedNote: string | null = null;
   get note(): string {
-    return this.values.note;
+    return (this._cachedRewritedNote ??= rewriteHtmlTextEmojis(this.values.note, this.emojiToUrlMap));
   }
 
   get counters(): AccountCounters {
@@ -68,5 +95,9 @@ export class Account {
 
   get isRemote(): boolean {
     return isRemoteAccount(this.values);
+  }
+
+  async resolveEmojis(resolver: EmojiResolver, instance: RemoteInstance = DefaultInstance): Promise<Account> {
+    return new Account(this.values, await resolveAccountEmojis(this.values, resolver, instance));
   }
 }

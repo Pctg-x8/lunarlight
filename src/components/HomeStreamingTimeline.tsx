@@ -20,7 +20,7 @@ export default function HomeStreamingTimeline() {
       if (prevPageData.length === 0) return null;
       return { timeline: "home", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
-    req => rpcClient.homeTimeline.query(req).then(xs => xs.map(Status.fromApiData)),
+    req => rpcClient.homeTimeline.query(req),
     { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);

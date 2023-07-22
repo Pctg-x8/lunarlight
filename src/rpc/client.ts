@@ -1,6 +1,7 @@
 import { throwException } from "@/utils";
 import { baseUrl } from "@/utils/paths";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
+import superjson from "superjson";
 import { AppRpcRouter } from "./app";
 
 const wsClient = createWSClient({
@@ -8,6 +9,7 @@ const wsClient = createWSClient({
 });
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
+  transformer: superjson,
   links: [
     splitLink({
       condition: op => op.type === "subscription",
