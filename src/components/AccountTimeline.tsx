@@ -4,7 +4,7 @@ import { Status } from "@/models/status";
 import { rpcClient } from "@/rpc/client";
 import { useEffect, useMemo, useRef } from "react";
 import useSWRInfinite from "swr/infinite";
-import NormalTimelineRow from "./Timeline/Normal";
+import NormalTimelineRow from "./TimelineRow/Normal";
 
 export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, setSize } = useSWRInfinite(

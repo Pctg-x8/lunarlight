@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import NormalTimelineRow from "../components/Timeline/Normal";
+import NormalTimelineRow from "../components/TimelineRow/Normal";
 import { Status } from "../models/status";
 
 type StoryArgs = {

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import { ExpertTimelineContainer, ExpertTimelineRow } from "../components/Timeline/Expert";
+import { ExpertTimelineContainer, ExpertTimelineRow } from "../components/TimelineRow/Expert";
 import { Status } from "../models/status";
 
 type StoryArgs = {

@@ -9,8 +9,8 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
 import NormalPostView from "./PostView/Normal";
-import { ExpertTimelineContainer, ExpertTimelineRow } from "./Timeline/Expert";
-import NormalTimelineRow from "./Timeline/Normal";
+import { ExpertTimelineContainer, ExpertTimelineRow } from "./TimelineRow/Expert";
+import NormalTimelineRow from "./TimelineRow/Normal";
 
 export default function PublicStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
