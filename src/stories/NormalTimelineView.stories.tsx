@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Immutable from "immutable";
-import React from "react";
-import Component from "../components/Timeline/Normal";
+import * as React from "react";
+import NormalTimelineRow from "../components/Timeline/Normal";
 import { Status } from "../models/status";
 
 type StoryArgs = {
@@ -57,9 +56,12 @@ function render({ deleted, displayName, content, acct }: StoryArgs) {
       followers_count: 0,
     },
   });
-  const deletedIds = deleted ? Immutable.Set.of(status.timelineId) : undefined;
 
-  return <Component statuses={[status]} deletedIds={deletedIds} />;
+  return (
+    <ul>
+      <NormalTimelineRow status={status} deleted={deleted} />
+    </ul>
+  );
 }
 
 export const Default: Story = {
