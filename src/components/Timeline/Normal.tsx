@@ -84,6 +84,10 @@ const DisplayName = css({
   gridArea: "displayName",
   fontSize: "14px",
   alignSelf: "baseline",
+  "& img": {
+    display: "inline-block",
+    height: "1.25em",
+  },
 });
 const Acct = css({
   gridArea: "acct",
@@ -109,6 +113,10 @@ const RebloggedBy = css({
   fontStyle: "italic",
   marginBottom: "8px",
   color: "app.subtext",
+  "& img": {
+    display: "inline-block",
+    height: "1.25em",
+  },
   "& > .icon": {
     fontSize: "125%",
     marginRight: "0.4em",
