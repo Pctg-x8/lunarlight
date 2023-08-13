@@ -1,14 +1,13 @@
 import LocalPreferences from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
 import { TextStyle } from "@/styles/StatusRowSharedStyles";
-import { isDefined } from "@/utils";
 import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css, cx } from "@styled-system/css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
+import React, { CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import AgoLabel from "../AgoLabel";
 import { transformDisplayNameTags } from "../domTransformer/emoji";
 
@@ -50,16 +49,16 @@ function Header({ onDisplayNameWidthChanged }: { readonly onDisplayNameWidthChan
     </li>
   );
 }
-function Row({
+
+export function ExpertTimelineRow({
   status,
   deleted = false,
-  onPreview,
 }: {
   readonly status: Status;
   readonly deleted?: boolean;
-  readonly onPreview: (status: Status) => void;
 }) {
   const contentRef = useRef<HTMLLIElement>(null);
+  const nav = useRouter();
 
   useLayoutEffect(() => {
     if (!contentRef.current) return;
@@ -78,7 +77,7 @@ function Row({
     <li
       className={cx(RowStyle, RowGridStyle)}
       ref={contentRef}
-      onClick={() => onPreview(status)}
+      onClick={() => nav.push(status.previewPath)}
       data-deleted={deleted}
     >
       <h1 className="displayName">
@@ -113,24 +112,14 @@ function Row({
   );
 }
 
-export default function ExpertTimelineView({
-  statuses,
-  deletedIds,
-}: {
-  readonly statuses: Status[];
-  readonly deletedIds?: Immutable.Set<string>;
-}) {
-  const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
-  const nav = useRouter();
+export function ExpertTimelineContainer({ children }: React.PropsWithChildren) {
   const [displayNameWidth, setDisplayNameWidth] =
     LocalPreferences.EXPERT_TIMELINE_DISPLAY_NAME_WIDTH.useReactiveStore(160);
 
   return (
     <ul style={{ "--expert-timeline-dn-width": `${displayNameWidth}px` } as CSSProperties}>
       <Header onDisplayNameWidthChanged={setDisplayNameWidth} />
-      {statuses.map(s => (
-        <Row key={s.timelineId} status={s} deleted={hasDeleted(s)} onPreview={s => nav.push(s.previewPath)} />
-      ))}
+      {children}
     </ul>
   );
 }

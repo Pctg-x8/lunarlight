@@ -8,8 +8,9 @@ import Immutable from "immutable";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import { ClientPreferencesContext } from "./ClientPreferencesProvider";
-import ExpertTimelineView from "./Timeline/Expert";
-import NormalTimelineView from "./Timeline/Normal";
+import NormalPostView from "./PostView/Normal";
+import { ExpertTimelineContainer, ExpertTimelineRow } from "./Timeline/Expert";
+import NormalTimelineRow from "./Timeline/Normal";
 
 export default function HomeStreamingTimeline() {
   const { timelineMode: mode } = useContext(ClientPreferencesContext);
@@ -57,9 +58,18 @@ export default function HomeStreamingTimeline() {
   return (
     <>
       {mode === "normal" ? (
-        <NormalTimelineView statuses={statuses} deletedIds={deletedIds} />
+        <ul>
+          <NormalPostView />
+          {statuses.map(s => (
+            <NormalTimelineRow key={s.timelineId} status={s} deleted={deletedIds.has(s.timelineId)} />
+          ))}
+        </ul>
       ) : (
-        <ExpertTimelineView statuses={statuses} deletedIds={deletedIds} />
+        <ExpertTimelineContainer>
+          {statuses.map(s => (
+            <ExpertTimelineRow key={s.timelineId} status={s} deleted={deletedIds.has(s.timelineId)} />
+          ))}
+        </ExpertTimelineContainer>
       )}
       <div ref={sentinelRef} />
     </>

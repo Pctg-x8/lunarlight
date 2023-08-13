@@ -1,6 +1,5 @@
 import { RebloggedStatus, Status } from "@/models/status";
 import { TextStyle } from "@/styles/StatusRowSharedStyles";
-import { isDefined } from "@/utils";
 import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +11,13 @@ import AgoLabel from "../AgoLabel";
 import StatusActions from "../StatusActions";
 import { transformDisplayNameTags } from "../domTransformer/emoji";
 
-function Row({ status, deleted = false }: { readonly status: Status; readonly deleted?: boolean }) {
+export default function NormalTimelineRow({
+  status,
+  deleted = false,
+}: {
+  readonly status: Status;
+  readonly deleted?: boolean;
+}) {
   const nav = useRouter();
   const contentRef = useRef<HTMLLIElement>(null);
 
@@ -53,24 +58,6 @@ function Row({ status, deleted = false }: { readonly status: Status; readonly de
         <StatusActions status={status} disabled={deleted} />
       </div>
     </li>
-  );
-}
-
-export default function NormalTimelineView({
-  statuses,
-  deletedIds,
-}: {
-  readonly statuses: Status[];
-  readonly deletedIds?: Immutable.Set<string>;
-}) {
-  const hasDeleted = (s: Status) => isDefined(deletedIds) && deletedIds.has(s.timelineId);
-
-  return (
-    <ul>
-      {statuses.map(s => (
-        <Row key={s.timelineId} status={s} deleted={hasDeleted(s)} />
-      ))}
-    </ul>
   );
 }
 
