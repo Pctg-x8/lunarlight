@@ -18,7 +18,7 @@ let targetPlatforms = "linux/amd64,linux/arm64"
 let cacheDockerLayers =
       GHA.Step::{
       , name = "setup cache for docker layers"
-      , uses = Some "actions/cache@v2"
+      , uses = Some "actions/cache@v4"
       , `with` = Some
           ( toMap
               { path = GHA.WithParameterType.Text "/tmp/.buildx-cache"
