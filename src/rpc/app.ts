@@ -16,9 +16,9 @@ import { Status, resolveStatusEmojis } from "@/models/status";
 import "@/superJsonExtraInitializers";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { observable } from "@trpc/server/observable";
 import superjson from "superjson";
 import ws from "ws";
+import { on } from "events";
 import z from "zod";
 
 const apiAccessLogger = createAppLogger({ name: "trpc" });
@@ -110,50 +110,44 @@ export const appRpcRouter = t.router({
   streamingTimeline: stdProcedure
     .use(requireAuthorized)
     .input(z.object({ stream: StreamsType }))
-    .subscription(({ input, ctx: { token } }) =>
-      observable<Event, unknown>(observer => {
-        const params = new SearchParamsRequestBody({
-          access_token: token,
-          stream: input.stream,
-        });
+    .subscription(async function* ({ input, ctx: { token } }) {
+      const params = new SearchParamsRequestBody({
+        access_token: token,
+        stream: input.stream,
+      });
 
-        const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
-        url.protocol = "wss:";
-        const client = new ws(url);
-        const emojiResolver = new EmojiResolver();
-        client.on("message", async (msg, isBinary) => {
-          if (isBinary) {
-            console.log("unknown binary msg", msg);
-            return;
-          }
+      const url = params.tweakURL(DefaultInstance.buildFullUrl("/api/v1/streaming"));
+      url.protocol = "wss:";
+      const client = new ws(url);
+      const emojiResolver = new EmojiResolver();
+      for await (const [msg, isBinary] of on(client, "message")) {
+        if (isBinary) {
+          console.log("unknown binary msg", msg);
+          return;
+        }
 
-          let msgString: string;
-          if (msg instanceof Array) {
-            // chunked
+        let msgString: string;
+        if (msg instanceof Array) {
+          // chunked
 
-            const decoder = new TextDecoder();
-            msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
-          } else {
-            // not chunked
+          const decoder = new TextDecoder();
+          msgString = msg.reduce((a, b) => a + decoder.decode(b, { stream: true }), "");
+        } else {
+          // not chunked
 
-            msgString = new TextDecoder().decode(msg);
-          }
+          msgString = new TextDecoder().decode(msg);
+        }
 
-          const e: Event = JSON.parse(msgString);
-          if (e.event === "update") {
-            // payload is Status
-            // Note: これたぶん表示順が前後するパターンがありそうなので別途キューイングするかクライアント側で並べ替える必要がありそう
-            const resolvedStatus = await resolveStatusEmojis(JSON.parse(e.payload), emojiResolver, DefaultInstance);
-            msgString = JSON.stringify({ ...e, payload: JSON.stringify(resolvedStatus) });
-          }
+        const e: Event = JSON.parse(msgString);
+        if (e.event === "update") {
+          // payload is Status
+          // Note: これたぶん表示順が前後するパターンがありそうなので別途キューイングするかクライアント側で並べ替える必要がありそう
+          const resolvedStatus = await resolveStatusEmojis(JSON.parse(e.payload), emojiResolver, DefaultInstance);
+          msgString = JSON.stringify({ ...e, payload: JSON.stringify(resolvedStatus) });
+        }
 
-          observer.next(e);
-        });
-
-        return () => {
-          client.close();
-        };
-      })
-    ),
+        yield e;
+      }
+    }),
 });
 export type AppRpcRouter = typeof appRpcRouter;
