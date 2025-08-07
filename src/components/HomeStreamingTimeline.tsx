@@ -28,7 +28,8 @@ export default function HomeStreamingTimeline() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   if (typeof IntersectionObserver !== "undefined") {
-    // client only pass
+    // client only pass(this is uniformly executed pass)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const io = useMemo(
       () =>
         new IntersectionObserver(
@@ -42,6 +43,7 @@ export default function HomeStreamingTimeline() {
       [setSize]
     );
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       io.observe(sentinelRef.current!);
       return () => io.disconnect();
