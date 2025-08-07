@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 // @ts-ignore
 import { URL } from "universal-url";
 import { Application } from "./mastodon/apps";
+import { createAppLogger } from "@/logger";
 
 export interface RemoteInstance {
   buildFullUrl(path: string): URL;
@@ -26,6 +27,8 @@ if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
   // cache db connection instance for production hot reloading
   global.db = db;
 }
+
+const externalApiRequestLogger = createAppLogger({ name: "ExternalAPIRequest", level: "trace" });
 
 export class ForeignInstance implements RemoteInstance {
   static fromDomainName(domain: string): ForeignInstance {
@@ -285,6 +288,7 @@ export class GetAPI<Req extends RequestBody, Resp> extends API<Req, Resp> {
       method: "GET",
       cache: this.options.cacheOptions,
     });
+    externalApiRequestLogger.debug({ url: req.url });
     const resp = await fetch(client.tweakRequest(params.tweakRequest(req)));
 
     return await (await HTTPError.sanitizeStatusCode(resp)).json();
