@@ -16,9 +16,9 @@ export default function HomeStreamingTimeline() {
 
   const { data, setSize, mutate } = useSWRInfinite(
     (_, prevPageData: Status[] | null): (HomeTimelineRequestParams & { readonly timeline: "home" }) | null => {
-      if (!prevPageData) return { timeline: "home", limit: 50 };
+      if (!prevPageData) return { timeline: "home", limit: 40 };
       if (prevPageData.length === 0) return null;
-      return { timeline: "home", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
+      return { timeline: "home", limit: 40, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.homeTimeline.query(req),
     { revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
@@ -26,26 +26,27 @@ export default function HomeStreamingTimeline() {
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
   const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
 
-  const io = useMemo(
-    () =>
-      new IntersectionObserver(
-        e => {
-          if (e.length < 1 || !e[0].isIntersecting) return;
-
-          setSize(x => x + 1);
-        },
-        { threshold: 1.0 }
-      ),
-    [setSize]
-  );
-
   const sentinelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const sentinel = sentinelRef.current!;
+  if (typeof IntersectionObserver !== "undefined") {
+    // client only pass
+    const io = useMemo(
+      () =>
+        new IntersectionObserver(
+          e => {
+            if (e.length < 1 || !e[0].isIntersecting) return;
 
-    io.observe(sentinel);
-    return () => io.disconnect();
-  }, [io]);
+            setSize(x => x + 1);
+          },
+          { threshold: 1.0 }
+        ),
+      [setSize]
+    );
+
+    useEffect(() => {
+      io.observe(sentinelRef.current!);
+      return () => io.disconnect();
+    }, [io]);
+  }
 
   const handleEvents = useCallback(
     (e: Event) => {
