@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import LoginAccountMenu from "@/components/Header/LoginAccountMenu";
 import LoginButton from "@/components/Header/LoginButton";
 import { getAuthorizedAccountSSR } from "@/models/auth";
-import "@/styles/globals.scss";
+import "./globals.css";
 import { isDefined } from "@/utils";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";

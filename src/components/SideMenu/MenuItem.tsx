@@ -1,22 +1,26 @@
+"use client";
+
+import { realPath } from "@/utils/paths";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { css } from "@styled-system/css";
 import { styled } from "@styled-system/jsx";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 export default function MenuItem({
   icon,
-  active,
   href,
   children,
 }: React.PropsWithChildren<{
   readonly icon: IconProp;
-  readonly active: boolean;
   readonly href: string;
 }>) {
+  const currentPath = usePathname();
+
   return (
-    <Link href={href} className={LinkStyle} data-active={active}>
+    <Link href={href} className={LinkStyle} data-active={currentPath === realPath(href)}>
       <FontAwesomeIcon icon={icon} className={Icon} />
       {children}
     </Link>
@@ -52,5 +56,8 @@ const FullLabel = styled("span", {
     display: { base: "none", lg: "initial" },
   },
 });
-MenuItem.ShortLabel = ShortLabel;
-MenuItem.FullLabel = FullLabel;
+
+export const MenuShortLabel = ShortLabel;
+export const MenuFullLabel = FullLabel;
+// MenuItem.ShortLabel = ShortLabel;
+// MenuItem.FullLabel = FullLabel;

@@ -1,6 +1,6 @@
 import LocalPreferences from "@/models/localPreferences";
 import { RebloggedStatus, Status } from "@/models/status";
-import { TextStyle } from "@/styles/StatusRowSharedStyles";
+import { TextStyle } from "../styles/StatusRowSharedStyles";
 import { isDefined } from "@/utils";
 import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faReply, faRetweet, faStar } from "@fortawesome/free-solid-svg-icons";

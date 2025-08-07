@@ -1,5 +1,5 @@
 import { RebloggedStatus, Status } from "@/models/status";
-import { TextStyle } from "@/styles/StatusRowSharedStyles";
+import { TextStyle } from "../styles/StatusRowSharedStyles";
 import { isDefined } from "@/utils";
 import { recursiveProcessDOMNodes } from "@/utils/DOMRecursiveProcessor";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";

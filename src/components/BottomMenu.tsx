@@ -1,29 +1,23 @@
-"use client";
-
-import { realPath } from "@/utils/paths";
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
-import { usePathname } from "next/navigation";
-import MenuItem from "./menu/MenuItem";
+import MenuItem from "./SideMenu/MenuItem";
 
-export default function BottomMenu(): JSX.Element {
-  const pathname = usePathname();
-
+export default function BottomMenu() {
   return (
     <footer className={Frame}>
       <ul>
         <li>
-          <MenuItem href="/" active={pathname === realPath("/")} icon={faHouseChimney}>
+          <MenuItem href="/" icon={faHouseChimney}>
             Home
           </MenuItem>
         </li>
         <li>
-          <MenuItem href="/public" active={pathname === realPath("/public")} icon={faGlobe}>
+          <MenuItem href="/public" icon={faGlobe}>
             Public
           </MenuItem>
         </li>
         <li>
-          <MenuItem href="/preferences" active={pathname === realPath("/preferences")} icon={faGear}>
+          <MenuItem href="/preferences" icon={faGear}>
             Prefs
           </MenuItem>
         </li>

@@ -1,7 +1,6 @@
 import BottomMenu from "@/components/BottomMenu";
 import ClientPreferencesProvider from "@/components/ClientPreferencesProvider";
 import SideMenu from "@/components/SideMenu";
-import "@/styles/globals.scss";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { css } from "@styled-system/css";
 import React from "react";

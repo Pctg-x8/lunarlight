@@ -1,10 +1,10 @@
+import AccountTimeline from "@/components/AccountTimeline";
 import UserHeader from "@/components/UserHeader";
 import { Account } from "@/models/account";
 import { DefaultInstance, HTTPError } from "@/models/api";
 import EmojiResolver from "@/models/emoji";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 export type PageParams = {
@@ -25,20 +25,17 @@ async function getData(acct: string): Promise<{ readonly account: Account; reado
   }
 }
 
-export async function generateMetadata({ params }: { readonly params: PageParams }): Promise<Metadata> {
-  const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
+export async function generateMetadata({ params }: { readonly params: Promise<PageParams> }): Promise<Metadata> {
+  const { acct } = await params;
+  const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(acct), "@"));
 
   return { title: `${account.displayName}(@${fullAcct})` };
 }
 
-const AccountTimeline = dynamic(() => import("@/components/AccountTimeline"), {
-  ssr: false,
-  loading: () => <p>Loading...</p>,
-});
-
-export default async function UserPage({ params }: { readonly params: PageParams }): Promise<JSX.Element> {
+export default async function UserPage({ params }: { readonly params: Promise<PageParams> }): Promise<JSX.Element> {
+  const { acct } = await params;
   // strip prefixing @(%40)
-  const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(params.acct), "@"));
+  const { account, fullAcct } = await getData(stripPrefix(decodeURIComponent(acct), "@"));
 
   return (
     <>

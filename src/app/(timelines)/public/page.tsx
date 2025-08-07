@@ -1,9 +1,5 @@
-import dynamic from "next/dynamic";
+import PublicStreamingTimeline from "@/components/PublicStreamingTimeline";
 
-const StreamingTimeline = dynamic(() => import("@/components/PublicStreamingTimeline"), {
-  ssr: false,
-  loading: () => <p>Loading...</p>,
-});
-export default async function PublicTimelinePage() {
-  return <StreamingTimeline />;
+export default function PublicTimelinePage() {
+  return <PublicStreamingTimeline />;
 }

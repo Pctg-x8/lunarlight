@@ -21,26 +21,24 @@ export default function HomeStreamingTimeline() {
       return { timeline: "home", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.homeTimeline.query(req),
-    { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
+    { revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
   const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
 
+  const io = useMemo(() => new IntersectionObserver(e => {
+    if (e.length < 1 || !e[0].isIntersecting) return;
+
+    setSize(x => x + 1);
+  }, { threshold: 1.0 }), [setSize]);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!sentinelRef.current) return;
+    const sentinel = sentinelRef.current!;
 
-    const io = new IntersectionObserver(
-      e => {
-        if (e.length < 1 || !e[0].isIntersecting) return;
-
-        setSize(x => x + 1);
-      },
-      { threshold: 1.0 }
-    );
-    io.observe(sentinelRef.current);
+    io.observe(sentinel);
     return () => io.disconnect();
-  }, [setSize]);
+  }, [io]);
 
   const handleEvents = useCallback(
     (e: Event) => {

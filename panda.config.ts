@@ -5,7 +5,7 @@ export default defineConfig({
   preflight: true,
 
   // Where to look for your css declarations
-  include: ["./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}"],
+  include: ["./src/components/**/*.{js,jsx,ts,tsx}", "./src/app/**/*.{js,jsx,ts,tsx}"],
 
   // Files to exclude
   exclude: [],
@@ -73,12 +73,22 @@ export default defineConfig({
           default: {
             opaque: { value: "rgb(51 153 255 / 100%)" },
             transparent: { value: "rgb(51 153 255 / 0%)" },
+            text: { value: "#39f" }
           },
           visited: {
             opaque: { value: "rgb(153 102 255 / 100%)" },
             transparent: { value: "rgb(153 102 255 / 0%)" },
+            text: { value: "#96f" }
           },
         },
+        backlink: {
+          default: {
+            background: { value: "rgb(#12263a / 0%)" }
+          },
+          hover: {
+            background: { value: "#12263a" }
+          }
+        }
       },
     },
     breakpoints: {

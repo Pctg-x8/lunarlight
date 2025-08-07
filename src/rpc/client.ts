@@ -10,12 +10,11 @@ const wsClient = createWSClient({
 });
 
 export const rpcClient = createTRPCProxyClient<AppRpcRouter>({
-  transformer: superjson,
   links: [
     splitLink({
       condition: op => op.type === "subscription",
-      true: wsLink({ client: wsClient }),
-      false: httpBatchLink({ url: `${baseUrl()}/api/trpc` }),
+      true: wsLink({ client: wsClient, transformer: superjson }),
+      false: httpBatchLink({ url: `${baseUrl()}/api/trpc`, transformer: superjson }),
     }),
   ],
 });

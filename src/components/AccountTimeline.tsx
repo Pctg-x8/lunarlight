@@ -8,20 +8,18 @@ import NormalTimelineView from "./Timeline/Normal";
 
 export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, setSize } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): { readonly max_id?: string; readonly limit?: number } | null => {
-      if (!prevPageData) return { limit: 20 };
+    (_, prevPageData: Status[] | null): { readonly max_id?: string; readonly limit?: number, readonly accountId: string } | null => {
+      if (!prevPageData) return { limit: 20, accountId };
       if (prevPageData.length === 0) return null;
-      return { limit: 20, max_id: prevPageData[prevPageData.length - 1].timelineId };
+      return { limit: 20, max_id: prevPageData[prevPageData.length - 1].timelineId, accountId };
     },
-    req => rpcClient.account.statuses.query({ accountId, ...req }),
+    req => rpcClient.account.statuses.query(req),
     { revalidateFirstPage: false, revalidateAll: false, suspense: true }
   );
   const statuses: Status[] = useMemo(() => data?.flat() ?? [], [data]);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sentinelRef.current) return;
-
     const io = new IntersectionObserver(
       e => {
         if (e.length < 1 || !e[0].isIntersecting) return;
@@ -30,7 +28,7 @@ export default function AccountTimeline({ accountId }: { readonly accountId: str
       },
       { threshold: 1.0 }
     );
-    io.observe(sentinelRef.current);
+    io.observe(sentinelRef.current!);
     return () => io.disconnect();
   }, [setSize]);
 

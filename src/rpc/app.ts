@@ -14,7 +14,7 @@ import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifie
 import EmojiResolver from "@/models/emoji";
 import { Status, resolveStatusEmojis } from "@/models/status";
 import "@/superJsonExtraInitializers";
-import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { observable } from "@trpc/server/observable";
 import superjson from "superjson";
@@ -31,7 +31,7 @@ export async function createContext(opts: CreateNextContextOptions) {
   };
 }
 
-const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create({ transformer: superjson });
+const t = initTRPC.context<Awaited<ReturnType<typeof createContext>>>().create({ transformer: superjson });
 const requireAuthorized = t.middleware(async ({ ctx, next }) => {
   const token = ctx.getAuthorizedToken();
   if (!token) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -41,9 +41,15 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
 const maybeAuthorized = t.middleware(async ({ ctx, next }) => {
   return await next({ ctx: { token: ctx.getAuthorizedToken() } });
 });
-const accessLogger = t.middleware(async ({ path, input, next }) => {
-  const r = await next();
-  apiAccessLogger.info({ path, input, success: r.ok });
+const accessLogger = t.middleware(async (opts) => {
+  const start = Date.now();
+  const r = await opts.next();
+  const elapsed = Date.now() - start;
+  if (r.ok) {
+    apiAccessLogger.info({ path: opts.path, duration_ms: elapsed });
+  } else {
+    apiAccessLogger.error({ path: opts.path, duration_ms: elapsed, error: r.error });
+  }
   return r;
 });
 
@@ -98,13 +104,12 @@ export const appRpcRouter = t.router({
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
     .input(PublicTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) => {
+    .query(async ({ input, ctx: { token } }) => {
       const emojiResolver = new EmojiResolver();
       const instance = token ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
 
-      return publicTimeline
-        .send(new SearchParamsRequestBody(input), instance)
-        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
+      const xs = await publicTimeline.send(new SearchParamsRequestBody(input), instance);
+      return await Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver)));
     }),
   streamingTimeline: stdProcedure
     .use(requireAuthorized)

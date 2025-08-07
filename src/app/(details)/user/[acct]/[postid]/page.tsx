@@ -20,7 +20,7 @@ type PageParams = {
 };
 
 async function getPost(_acct: string, postid: string) {
-  const token = ssrGetAuthorizationToken();
+  const token = await ssrGetAuthorizationToken();
   const instance = isDefined(token) ? DefaultInstance.withAuthorizationToken(token) : DefaultInstance;
 
   try {
@@ -34,16 +34,18 @@ async function getPost(_acct: string, postid: string) {
   }
 }
 
-export async function generateMetadata({ params }: { readonly params: PageParams }): Promise<Metadata> {
-  const status = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
+export async function generateMetadata({ params }: { readonly params: Promise<PageParams> }): Promise<Metadata> {
+  const { acct, postid } = await params;
+  const status = await getPost(decodeURIComponent(acct), decodeURIComponent(postid));
 
   return {
     title: `${status.account.displayName}: "${ellipsisText(status.spoiler)}"`,
   };
 }
 
-export default async function SinglePostPage({ params }: { readonly params: PageParams }): Promise<JSX.Element> {
-  const status = await getPost(decodeURIComponent(params.acct), decodeURIComponent(params.postid));
+export default async function SinglePostPage({ params }: { readonly params: Promise<PageParams> }): Promise<JSX.Element> {
+  const { acct, postid } = await params;
+  const status = await getPost(decodeURIComponent(acct), decodeURIComponent(postid));
   const fullAccountPath = (await status.account.fullAcct(DefaultInstance)).toString();
 
   return (

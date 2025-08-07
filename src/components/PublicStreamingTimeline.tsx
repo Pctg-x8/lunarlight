@@ -21,7 +21,7 @@ export default function PublicStreamingTimeline() {
       return { timeline: "public", limit: 50, max_id: prevPageData[prevPageData.length - 1].timelineId };
     },
     req => rpcClient.publicTimeline.query(req),
-    { suspense: true, revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
+    { revalidateFirstPage: false, revalidateAll: false, revalidateOnMount: true }
   );
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
   const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
