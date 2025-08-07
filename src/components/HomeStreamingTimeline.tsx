@@ -26,11 +26,18 @@ export default function HomeStreamingTimeline() {
   const statuses = useMemo(() => data?.flat() ?? [], [data]);
   const [deletedIds, setDeletedIds] = useState(() => Immutable.Set<string>());
 
-  const io = useMemo(() => new IntersectionObserver(e => {
-    if (e.length < 1 || !e[0].isIntersecting) return;
+  const io = useMemo(
+    () =>
+      new IntersectionObserver(
+        e => {
+          if (e.length < 1 || !e[0].isIntersecting) return;
 
-    setSize(x => x + 1);
-  }, { threshold: 1.0 }), [setSize]);
+          setSize(x => x + 1);
+        },
+        { threshold: 1.0 }
+      ),
+    [setSize]
+  );
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

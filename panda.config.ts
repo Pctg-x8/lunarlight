@@ -73,22 +73,22 @@ export default defineConfig({
           default: {
             opaque: { value: "rgb(51 153 255 / 100%)" },
             transparent: { value: "rgb(51 153 255 / 0%)" },
-            text: { value: "#39f" }
+            text: { value: "#39f" },
           },
           visited: {
             opaque: { value: "rgb(153 102 255 / 100%)" },
             transparent: { value: "rgb(153 102 255 / 0%)" },
-            text: { value: "#96f" }
+            text: { value: "#96f" },
           },
         },
         backlink: {
           default: {
-            background: { value: "rgb(#12263a / 0%)" }
+            background: { value: "rgb(#12263a / 0%)" },
           },
           hover: {
-            background: { value: "#12263a" }
-          }
-        }
+            background: { value: "#12263a" },
+          },
+        },
       },
     },
     breakpoints: {

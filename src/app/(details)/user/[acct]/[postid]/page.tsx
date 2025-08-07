@@ -43,7 +43,11 @@ export async function generateMetadata({ params }: { readonly params: Promise<Pa
   };
 }
 
-export default async function SinglePostPage({ params }: { readonly params: Promise<PageParams> }): Promise<JSX.Element> {
+export default async function SinglePostPage({
+  params,
+}: {
+  readonly params: Promise<PageParams>;
+}): Promise<JSX.Element> {
   const { acct, postid } = await params;
   const status = await getPost(decodeURIComponent(acct), decodeURIComponent(postid));
   const fullAccountPath = (await status.account.fullAcct(DefaultInstance)).toString();

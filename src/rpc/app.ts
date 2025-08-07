@@ -41,7 +41,7 @@ const requireAuthorized = t.middleware(async ({ ctx, next }) => {
 const maybeAuthorized = t.middleware(async ({ ctx, next }) => {
   return await next({ ctx: { token: ctx.getAuthorizedToken() } });
 });
-const accessLogger = t.middleware(async (opts) => {
+const accessLogger = t.middleware(async opts => {
   const start = Date.now();
   const r = await opts.next();
   const elapsed = Date.now() - start;
@@ -75,31 +75,27 @@ export const appRpcRouter = t.router({
   account: t.router({
     statuses: stdProcedure
       .input(z.object({ accountId: z.string(), max_id: z.string().optional(), limit: z.number().optional() }))
-      .query(({ input, ctx }) => {
+      .query(async ({ input, ctx }) => {
         const tok = ctx.getAuthorizedToken();
         const instance = tok ? DefaultInstance.withAuthorizationToken(tok) : DefaultInstance;
         const emojiResolver = new EmojiResolver();
 
-        return getStatusesForAccount(input.accountId)
-          .send(
-            new SearchParamsRequestBody({
-              max_id: input.max_id,
-              limit: input.limit,
-            }),
-            instance
-          )
-          .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
+        const xs = await getStatusesForAccount(input.accountId).send(
+          new SearchParamsRequestBody({ max_id: input.max_id, limit: input.limit }),
+          instance
+        );
+        return await Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver)));
       }),
   }),
   homeTimeline: stdProcedure
     .use(requireAuthorized)
     .input(HomeTimelineRequestParamsZ)
-    .query(({ input, ctx: { token } }) => {
+    .query(async ({ input, ctx: { token } }) => {
       const emojiResolver = new EmojiResolver();
       const instance = DefaultInstance.withAuthorizationToken(token);
-      return homeTimeline
-        .send(new SearchParamsRequestBody(input), instance)
-        .then(xs => Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver))));
+
+      const xs = await homeTimeline.send(new SearchParamsRequestBody(input), instance);
+      return await Promise.all(xs.map(s => Status.fromApiData(s).resolveEmojis(emojiResolver)));
     }),
   publicTimeline: stdProcedure
     .use(maybeAuthorized)
