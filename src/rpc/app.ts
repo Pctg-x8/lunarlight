@@ -11,7 +11,7 @@ import {
 } from "@/models/api/mastodon/timeline";
 import { CreateAppRequest } from "@/models/app";
 import { getAuthorizationToken, getLoginUrl, setAuthorizationToken_APIResModifier } from "@/models/auth";
-import EmojiResolver from "@/models/emoji";
+import EmojiResolver from "@/models/emoji_resolver";
 import { Status, resolveStatusEmojis } from "@/models/status";
 import "@/superJsonExtraInitializers";
 import { TRPCError, initTRPC } from "@trpc/server";

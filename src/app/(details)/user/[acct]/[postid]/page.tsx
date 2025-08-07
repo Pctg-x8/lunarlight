@@ -4,7 +4,7 @@ import StatusActions from "@/components/StatusActions";
 import { transformDisplayNameTags } from "@/components/domTransformer/emoji";
 import { DefaultInstance, HTTPError } from "@/models/api";
 import { ssrGetAuthorizationToken } from "@/models/auth";
-import EmojiResolver from "@/models/emoji";
+import EmojiResolver from "@/models/emoji_resolver";
 import { RebloggedStatus, Status } from "@/models/status";
 import { ellipsisText, isDefined } from "@/utils";
 import { faRetweet } from "@fortawesome/free-solid-svg-icons";

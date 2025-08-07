@@ -2,7 +2,7 @@ import AccountTimeline from "@/components/AccountTimeline";
 import UserHeader from "@/components/UserHeader";
 import { Account } from "@/models/account";
 import { DefaultInstance, HTTPError } from "@/models/api";
-import EmojiResolver from "@/models/emoji";
+import EmojiResolver from "@/models/emoji_resolver";
 import { stripPrefix } from "@/utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

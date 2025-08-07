@@ -4,7 +4,8 @@ import Immutable from "immutable";
 import { Account, resolveAccountEmojis } from "./account";
 import { DefaultInstance, EmptyRequestBody, RemoteInstance } from "./api";
 import { Status as ApiStatusData, Application, getStatus } from "./api/mastodon/status";
-import EmojiResolver, { EmojiPattern } from "./emoji";
+import { EmojiPattern } from "./emoji";
+import EmojiResolver from "./emoji_resolver";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
 
