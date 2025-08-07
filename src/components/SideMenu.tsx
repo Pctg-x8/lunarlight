@@ -1,6 +1,6 @@
 import { faGear, faGlobe, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@styled-system/css";
-import MenuItem, { MenuShortLabel, MenuFullLabel } from "./SideMenu/MenuItem";
+import MenuItem, { MenuShortLabel, MenuFullLabel } from "./MenuItem";
 
 export default function SideMenu() {
   return (

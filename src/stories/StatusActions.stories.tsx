@@ -1,6 +1,6 @@
 import Component from "@/components/StatusActions";
 import { Status } from "@/models/status";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 
 export default {
   component: Component,

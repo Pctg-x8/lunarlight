@@ -1,5 +1,5 @@
 import Button from "@/components/common/Button";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 
 export default {
   title: "Lunarlight/Common/Button",

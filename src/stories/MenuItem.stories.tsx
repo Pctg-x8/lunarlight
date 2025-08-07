@@ -1,7 +1,7 @@
-import Component from "@/components/menu/MenuItem";
+import Component from "@/components/MenuItem";
 import { isDefined } from "@/utils";
 import { faHouseChimney } from "@fortawesome/free-solid-svg-icons";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 import { ComponentProps } from "react";
 
 type StoryArgs = Omit<ComponentProps<typeof Component>, "children"> & {
