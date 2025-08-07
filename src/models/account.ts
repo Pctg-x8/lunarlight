@@ -2,7 +2,8 @@ import { superjsonSerializableClass } from "@/utils/decorators/superjson";
 import Immutable from "immutable";
 import { DefaultInstance, RemoteInstance, SearchParamsRequestBody } from "./api";
 import { AccountField, Account as ApiAccountData, isRemoteAccount, lookup } from "./api/mastodon/account";
-import EmojiResolver, { EmojiPattern, rewriteHtmlTextEmojis } from "./emoji";
+import { EmojiPattern, rewriteHtmlTextEmojis } from "./emoji";
+import EmojiResolver from "./emoji_resolver";
 import { CustomInstanceOption } from "./requestOptions";
 import Webfinger from "./webfinger";
 

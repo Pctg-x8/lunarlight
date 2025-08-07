@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/nextjs";
 import Immutable from "immutable";
 import React from "react";
 import Component from "../components/Timeline/Normal";

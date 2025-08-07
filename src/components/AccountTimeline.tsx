@@ -8,7 +8,10 @@ import NormalTimelineView from "./Timeline/Normal";
 
 export default function AccountTimeline({ accountId }: { readonly accountId: string }) {
   const { data, setSize } = useSWRInfinite(
-    (_, prevPageData: Status[] | null): { readonly max_id?: string; readonly limit?: number, readonly accountId: string } | null => {
+    (
+      _,
+      prevPageData: Status[] | null
+    ): { readonly max_id?: string; readonly limit?: number; readonly accountId: string } | null => {
       if (!prevPageData) return { limit: 20, accountId };
       if (prevPageData.length === 0) return null;
       return { limit: 20, max_id: prevPageData[prevPageData.length - 1].timelineId, accountId };

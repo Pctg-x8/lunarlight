@@ -11,7 +11,7 @@ import React from "react";
 
 config.autoAddCss = false;
 
-export const metadata = { title: { default: "Lunarlight", template: "%s - Lunarlight" } } satisfies Metadata;
+export const metadata: Metadata = { title: { default: "Lunarlight", template: "%s - Lunarlight" } };
 
 export default async function App({ children }: { readonly children: React.ReactNode }) {
   const currentUser = await getAuthorizedAccountSSR();

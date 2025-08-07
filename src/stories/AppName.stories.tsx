@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from "@storybook/react";
 import Component from "../components/Header/AppName";
+import { Meta, StoryObj } from "@storybook/nextjs";
 
 export default {
   component: Component,
